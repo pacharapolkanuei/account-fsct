@@ -655,7 +655,7 @@ Route::post('/percent_main_cost/update','Percent_maincostController@update')->na
 Route::get('/excelreportcustomercredit','ExcelController@excelreportcustomercredit'); //รายงานเจ้าหนี้การค้า (ค้างจ่าย)
 
 //--------- Setting -----------------
-Route::get('/settingtool', 'SettingController@settingtool');
+Route::get('/settingtool', 'SettingassettoolController@settingtool');
 
 
 ?>

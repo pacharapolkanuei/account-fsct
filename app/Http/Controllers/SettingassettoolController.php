@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Input;
 use Softon\SweetAlert\Facades\SWAL;
 use App\Api\Datetime;
 
-class SettingController extends Controller
+class SettingassettoolController extends Controller
 {
 
 
