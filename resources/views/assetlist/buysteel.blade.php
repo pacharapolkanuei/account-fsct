@@ -96,9 +96,33 @@ swal({!!Session::pull('sweetalert.json')!!});
                                         <!-- //สิ้นสุด ทำการ validate ช่องข้อมูล แสดง error -->
 
 
-                                                {{ csrf_field() }}
 
+                                                <div class="was-validated form-inline" style="margin: 10px 50px 0px 50px;">
+                                                  <!-- <div class="col-sm-6"> -->
+                                                  <div class="row">
+                                                    <label class="mb-2 mr-sm-2" id="fontslabel" for=""><b>Lot :</b></label>
+                                                    <input type="text" class="form-control mb-2 mr-sm-2" name="lotnumber"required>
 
+                                                    &nbsp;&nbsp;<label class="mb-2 mr-sm-2" id="fontslabel" for=""><b>วันที่ผลิตเสร็จ :</b></label>
+                                                    <input type="date" autocomplete="off" class="form-control mb-2 mr-sm-2" name="datenow" required>
+
+                                                    &nbsp;&nbsp;<label class="mb-2 mr-sm-2" for="modal-input-priceservice" id="fontslabel"><b>PO :</b></label>
+                                                    <input type="text" class="form-controller" id="search" name="search"></input>
+                                                    <br>
+
+                                                  </div>
+                                                  <!-- </div> -->
+                                                </div>
+                                                <table class="table table-bordered table-hover">
+                                                  <thead>
+                                                  <tr>
+                                                  <th>เลขที่ PO</th>
+                                                  <th>จำนวนเงิน</th>
+                                                  </tr>
+                                                  </thead>
+                                                  <tbody>
+                                                  </tbody>
+                                                </table>
 
                                       </div>
 
@@ -116,36 +140,7 @@ swal({!!Session::pull('sweetalert.json')!!});
                                   </div>
                                 </div>
 
-                                <div >
-                                  <div class="table-responsive">
-                                    <table id="example" class="table table-striped table-bordered fontslabel" style="width:100%">
-                                      <thead>
-                                        <tr>
-                                          <th>ลำดับ</th>
-                                          <th>เลขที่กลุ่มบัญชีทรัพย์สิน</th>
-                                          <th>คำอธิบาย(ภาษาไทย)</th>
-                                          <th>คำอธิบาย(ภาษาอังกฤษ)</th>
-                                          <th>เลขที่บัญชี</th>
-                                          <th>ชื่อบัญชี</th>
-                                          <th>เดบิต</th>
-                                          <th>เครดิต</th>
-                                          <th>สถานะ</th>
-                                        </tr>
-                                      </thead>
-                                      <tbody>
 
-                                        <tr>
-
-                                          <td>
-
-                                          </td>
-                                        </tr>
-
-                                      </tbody>
-                                    </table>
-                                    <br>
-                                  </div>
-                                </div>
 
                     </div>
       			<!-- END container-fluid -->
@@ -191,12 +186,33 @@ swal({!!Session::pull('sweetalert.json')!!});
   <!-- end iditmodal -->
 
 
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
-  <!-- <script type="text/javascript" src = 'js/accountjs/paycredit.js'></script> -->
-  <script type="text/javascript" src = 'js/accountjs/property.js'></script>
+  <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script> -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+  <script type="text/javascript" src = 'js/accountjs/buysteel.js'></script>
   <script>
       $(document).ready(function() {
       $('#example').DataTable();
       } );
   </script>
+
+  <script type="text/javascript">
+  $('#search').on('keyup',function(){
+  $value=$(this).val();
+  $.ajax({
+  type : 'get',
+  url : '{{URL::to('search')}}',
+  data:{'search':$value},
+  success:function(data){
+  $('tbody').html(data);
+  }
+  });
+  })
+  </script>
+
+  <script type="text/javascript">
+  $.ajaxSetup({ headers: { 'csrftoken' : '{{ csrf_token() }}' } });
+  </script>
+
+
+
 @endsection

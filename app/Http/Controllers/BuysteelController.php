@@ -8,7 +8,7 @@ use Softon\SweetAlert\Facades\SWAL;
 use App\Branch;
 use App\Accounttype;
 use App\Http\Requests\BankRequest;
-
+use DB;
 
 class BuysteelController extends Controller
 {
@@ -33,4 +33,32 @@ class BuysteelController extends Controller
       //     ->get();
       return view('assetlist.buysteel');
     }
+
+
+
+    public function search(Request $request)
+    {
+      if($request->ajax())
+      {
+      $output="";
+
+      $products = DB::connection('mysql2')
+  			->table('po_head')
+  			->where('po_number','LIKE','%'.$request->search."%")
+  			->get();
+
+          if($products)
+          {
+            foreach ($products as $key => $product) {
+            $output.='<tr>'.
+            '<td>'.$product->po_number.'</td>'.
+            '<td>'.$product->totolsumall.'</td>'.
+            '</tr>';
+            }
+          return Response($output);
+         }
+      }
+    }
+
+
 }
