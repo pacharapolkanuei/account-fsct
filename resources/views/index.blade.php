@@ -130,10 +130,25 @@ use App\Api\Connectdb;
 							<ul class="list-unstyled">
 								<li><a href="/account-fsct/public/define_property" id="fontsmenu2">กลุ่มบัญชีทรัพย์สิน</a></li>
 								<li><a href="/account-fsct/public/asset_list" id="fontsmenu2">เพิ่มรายการทรัพย์สิน</a></li>
-                <li><a href="/account-fsct/public/asset_innsert_tool" id="fontsmenu2">เพิ่มรายการต้นทุนแบบเหล็ก(ซื้อสำเร็จรูป)</a></li>
-                <li><a href="/account-fsct/public/asset_approve_innsert_tool" id="fontsmenu2">อนุมัติรายการต้นทุนแบบเหล็ก(ซื้อสำเร็จรูป)</a></li>
-                <li><a href="/account-fsct/public/asset_product_tool" id="fontsmenu2">เพิ่มรายการต้นทุนแบบเหล็ก(ซื้อมาผลิต)</a></li>
-                <li><a href="/account-fsct/public/asset_approve_product_tool" id="fontsmenu2">อนุมัติรายการต้นทุนแบบเหล็ก(ซื้อมาผลิต)</a></li>
+                <li class="submenu">
+                    <a href="#" id="fontsmenu2"><span>รายการต้นทุนแบบเหล็ก(ซื้อสำเร็จรูป)</span> <span class="menu-arrow"></span> </a>
+                        <ul style="">
+                            <li><a href="/account-fsct/public/asset_innsert_tool" id="fontsmenu2">เพิ่มรายการต้นทุนแบบเหล็ก(ซื้อสำเร็จรูป)</a></li>
+                            <li><a href="/account-fsct/public/asset_approve_innsert_tool" id="fontsmenu2">อนุมัติรายการต้นทุนแบบเหล็ก(ซื้อสำเร็จรูป)</a></li>
+                        </ul>
+                </li>
+                <li class="submenu">
+                    <a href="#" id="fontsmenu2"><span>เพิ่มรายการต้นทุนแบบเหล็ก(ซื้อมาผลิต)</span> <span class="menu-arrow"></span> </a>
+                        <ul style="">
+                            <li><a href="/account-fsct/public/asset_product_tool" id="fontsmenu2">เพิ่มรายการต้นทุนแบบเหล็ก(ซื้อมาผลิต)</a></li>
+                            <li><a href="/account-fsct/public/asset_approve_product_tool" id="fontsmenu2">อนุมัติรายการต้นทุนแบบเหล็ก(ซื้อมาผลิต)</a></li>
+                            <li><a href="/account-fsct/public/settingpotool" id="fontsmenu2">ใบ POวัตถุดิบ (ซื้อมาผลิต)</a></li>
+                            <li><a href="/account-fsct/public/settingdmtool" id="fontsmenu2">ใบเบิกวัตถุดิบ (ซื้อมาผลิต)</a></li>
+                            <li><a href="/account-fsct/public/settingsalaryemptool" id="fontsmenu2">ค่าแรงพนักงานผลิต (ซื้อมาผลิต)</a></li>
+                            <li><a href="/account-fsct/public/settingtool" id="fontsmenu2">การจัดการชิ้นส่วนสินค่าให้เช่า(ซื้อมาผลิต)</a></li>
+                        </ul>
+                </li>
+
 							</ul>
 						</li>
 
@@ -291,14 +306,7 @@ use App\Api\Connectdb;
 								<li><a href="/account-fsct/public/percent_main_cost" id="fontsmenu2">แก้ไขเปอร์เซ็นค่าบริหารกลาง</a></li>
 							</ul>
 						</li>
-            <li class="submenu">
-              <a href="#"><i class="fa fa-fw fa-book"></i><span>
-                  <fonts id="fontsmenu">ตั้งค่า</fonts>
-                </span> <span class="menu-arrow"></span></a>
-              <ul class="list-unstyled">
-                <li><a href="/account-fsct/public/settingtool" id="fontsmenu2">การจัดการชิ้นส่วนสินค่าให้เช่า</a></li>
-              </ul>
-            </li>
+
             @endif
 
 					</ul>
