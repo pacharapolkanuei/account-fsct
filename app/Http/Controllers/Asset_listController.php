@@ -54,6 +54,10 @@ class Asset_listController extends Controller
           ->where('asset_list.statususe',1)
           ->limit(0)
           ->get();
+
+
+
+
       return view('assetlist.asset_list' , compact('accounttypes' , 'group_propertys' , 'asset_lists' , 'branchs' ));
     }
 
@@ -185,8 +189,6 @@ class Asset_listController extends Controller
 
 
 
-
-
       $asset_list = new Asset_list;
       $asset_list->setConnection('mysql2');
       $asset_list->no_asset = $request->get('no_asset');
@@ -196,7 +198,7 @@ class Asset_listController extends Controller
       $asset_list->group_property_id = $request->get('groups');
       $asset_list->group_acc_id = $request->get('groups_acc');
       $asset_list->no_register = $request->get('no_register');
-      $asset_list->department = $request->get('department');
+      $asset_list->department = '';
 
       $asset_list->branch_id = $request->get('ins_branch');
 
@@ -213,14 +215,24 @@ class Asset_listController extends Controller
 
       $asset_list->date_sell = $request->get('date_sell');
 
-      $asset_list->year_depreciation = $request->get('year_depreciation');
-      $asset_list->month_depreciation = $request->get('month_depreciation');
+      $asset_list->year_depreciation = ''; //$request->get('year_depreciation');
+      $asset_list->month_depreciation = ''; // $request->get('month_depreciation');
 
-      $asset_list->day_depreciation_buy = $request->get('day_depreciation');
+      $asset_list->day_depreciation_buy = ''; //$request->get('day_depreciation');
       $asset_list->depreciation_sell = $request->get('depreciation_sell');
-      $asset_list->cal_date = $request->get('cal_date');
+      $asset_list->cal_date =  '';// $request->get('cal_date');
       $asset_list->profit_loss = $request->get('profit_loss');
       $asset_list->primary_depreciation = $request->get('primary_depreciation');
+      ////////////////// new ///////////////////////
+      if($request->get('assetlist_different')==2){
+          $asset_list->groups = $request->get('groups');
+          $asset_list->groups_acc = $request->get('groups_acc');
+          $asset_list->serachpayinid = $request->get('serachpayinid');
+          $asset_list->material_id = $request->get('material_id');
+          $asset_list->lot = $request->get('lot');
+      }
+
+
       // dd($asset_list);
       // exit;
       $asset_list->save();
@@ -301,6 +313,57 @@ class Asset_listController extends Controller
             $asset_list->update();
             return redirect()->route('asset_list');
         }
+    }
+
+    public function getlisttypeasset(){
+      $connect1 = Connectdb::Databaseall();
+      $baseAc1 = $connect1['fsctaccount'];
+
+      $sql1 = "SELECT $baseAc1.typeasset.* FROM $baseAc1.typeasset WHERE $baseAc1.typeasset.status = '1'";
+
+        $getdatas = DB::select($sql1);
+        return $getdatas;
+
+    }
+
+    public function getlisttypeassetrefaccnumber(){
+      $connect1 = Connectdb::Databaseall();
+      $baseAc1 = $connect1['fsctaccount'];
+
+      $sql1 = "SELECT $baseAc1.typeassetrefaccnub.*,
+                      $baseAc1.accounttype.accounttypefull
+              FROM $baseAc1.typeassetrefaccnub
+              INNER JOIN $baseAc1.accounttype
+              ON $baseAc1.accounttype.accounttypeno = $baseAc1.typeassetrefaccnub.numberaccount
+              WHERE $baseAc1.typeassetrefaccnub.status = '1'";
+        $getdatas = DB::select($sql1);
+        return $getdatas;
+
+    }
+
+    public function serchassetrefmaterial(){
+
+      $data= Input::all();
+      $connect1 = Connectdb::Databaseall();
+      $baseAc1 = $connect1['fsctaccount'];
+      $baseMan = $connect1['fsctmain'];
+
+      $idserch = $data['id'];
+      $sql1 = "SELECT $baseAc1.receiptasset.*,
+                      $baseAc1.receiptasset_detail.*,
+                      $baseAc1.receiptasset_detail.id as  receiptasset_detail_id,
+                      $baseMan.material.name as materialname
+              FROM $baseAc1.receiptasset
+              INNER JOIN $baseAc1.receiptasset_detail
+              ON $baseAc1.receiptasset.id = $baseAc1.receiptasset_detail.receiptasset_id
+              INNER JOIN $baseMan.material
+              ON $baseAc1.receiptasset_detail.material_id = $baseMan.material.id
+              WHERE $baseAc1.receiptasset.status = '1'
+              AND $baseAc1.receiptasset.receiptnum = '$idserch'";
+        $getdatas = DB::select($sql1);
+        return $getdatas;
+
+
     }
 
 }

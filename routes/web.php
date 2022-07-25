@@ -658,6 +658,8 @@ Route::get('/excelreportcustomercredit','ExcelController@excelreportcustomercred
 //--------- settingtool -----------------
 Route::get('/settingtool', 'SettingassettoolController@settingtool');
 Route::get('/settingpotool', 'SettingassettoolController@settingpotool');
+Route::get('/serchsettingpotool', 'SettingassettoolController@serchsettingpotool');
+
 
 
 

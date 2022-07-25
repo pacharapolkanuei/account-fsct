@@ -97,12 +97,6 @@ swal({!!Session::pull('sweetalert.json')!!});
                                                 <div class="was-validated form-inline" style="margin: 10px 50px 0px 50px;">
                                                   <!-- <div class="col-sm-6"> -->
                                                   <div class="row">
-                                                    <label class="mb-2 mr-sm-2" id="fontslabel" for=""><b>Lot :</b></label>
-                                                    <input type="text" class="form-control mb-2 mr-sm-2" name="lotnumber"required>
-
-                                                    &nbsp;&nbsp;<label class="mb-2 mr-sm-2" id="fontslabel" for=""><b>วันที่ผลิตเสร็จ :</b></label>
-                                                    <input type="date" autocomplete="off" class="form-control mb-2 mr-sm-2" name="datenow" required>
-
                                                     &nbsp;&nbsp;<label class="mb-2 mr-sm-2" for="modal-input-priceservice" id="fontslabel"><b>PO :</b></label>
                                                     <input type="text" class="form-controller" id="search" name="search"></input>
                                                     <button type="button" class="btn btn-primary" data-toggle="modal" onclick="serchpo()">
@@ -111,10 +105,14 @@ swal({!!Session::pull('sweetalert.json')!!});
                                                       </i>
                                                     </button>
                                                     <br>
+                                                    <label class="mb-2 mr-sm-2" id="fontslabel" for=""><b>Lot :</b></label>
+                                                    <input type="text" class="form-control mb-2 mr-sm-2" name="lotnumber"required>
+                                                    <br>
 
                                                   </div>
                                                   <!-- </div> -->
                                                 </div>
+                                                <br>
                                                 <table class="table table-bordered table-hover">
                                                   <thead>
                                                   <tr>
