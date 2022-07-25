@@ -303,6 +303,10 @@ Route::post('/serachreportpaycredit','ReportController@serachreportpaycredit');
 
 Route::get('/excelreportpaycredit','ExcelController@excelreportpaycredit'); //รายงานชำระค่าสินค้าและบริการ (เงินเชื่อ)
 
+Route::get('/reportcustomercredit','ReportController@reportcustomercredit'); //รายงานลูกหนี้
+
+Route::post('/serachreportcustomercredit','ReportController@serachreportcustomercredit');//ค้นหารายงานลูกหนี้
+
 
 //! ----------------------------- End รายงาน -----------------------------------
 
@@ -322,7 +326,7 @@ Route::get('/printledger_branch', function () { //แยกประเภทบ
 Route::get('/ledger_allbranch','LedgerController@ledger_allbranch'); //แยกประเภทบัญชี (ทั้งหมด)
 
 Route::post('/serachledger_allbranch','LedgerController@serachledger_allbranch'); //แยกประเภทบัญชี (ทั้งหมด)
-
+Route::post('/exportExcel', 'LedgerController@exportexcelledger');
 Route::get('/printledger_allbranch', function () { //แยกประเภทบัญชี (ทั้งหมด)
     $data = Input::all();
 	// print_r($data);
@@ -346,6 +350,15 @@ Route::get('/printtrial_balance', function () { //งบทดลอง (รา�
 	$pdf = PDF::loadView('printtrial_balance', $data);
     return @$pdf->stream();
 });
+
+Route::get('/reportcustomercreditdetailpdf', function () { //งบทดลอง (รายสาขา)
+    $data = Input::all();
+	// print_r($data);
+
+	$pdf = PDF::loadView('reportcustomercreditdetailpdf', $data);
+    return @$pdf->stream();
+});
+
 
 Route::get('/trial_allbalance','Trial_balanceController@trial_allbalance'); //งบทดลอง (ทั้งหมด)
 
@@ -624,6 +637,11 @@ Route::get('/getassetlistforedit/{id}', 'Asset_listController@getassetlist');
 Route::post('/asset_list/store','Asset_listController@store')->name('asset_list.store');
 Route::post('/asset_list/update','Asset_listController@update')->name('asset_list.update');
 Route::get('/asset_list/delete/{id}','Asset_listController@delete')->name('asset_list.delete');
+Route::get('/getlisttypeasset', 'Asset_listController@getlisttypeasset');
+Route::get('/getlisttypeassetrefaccnumber', 'Asset_listController@getlisttypeassetrefaccnumber');
+Route::get('/serchassetrefmaterial', 'Asset_listController@serchassetrefmaterial');
+
+
 //-----------------------------------------------
 
 //--------Percent_maincost--------------
@@ -633,5 +651,11 @@ Route::get('/getdata_percent/{id}', 'Percent_maincostController@getdata_percent'
 Route::post('/percent_main_cost/update','Percent_maincostController@update')->name('percent_main_cost.update');
 // Route::get('/define_property/delete/{id}','DefinePropertyController@delete')->name('define_property.delete');
 //-----------------------------------------------
+
+Route::get('/excelreportcustomercredit','ExcelController@excelreportcustomercredit'); //รายงานเจ้าหนี้การค้า (ค้างจ่าย)
+
+//--------- Setting -----------------
+Route::get('/settingtool', 'SettingController@index')->name('settingtool');
+
 
 ?>
