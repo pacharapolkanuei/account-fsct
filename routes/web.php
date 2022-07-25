@@ -659,6 +659,9 @@ Route::get('/excelreportcustomercredit','ExcelController@excelreportcustomercred
 Route::get('/settingtool', 'SettingassettoolController@settingtool');
 Route::get('/settingpotool', 'SettingassettoolController@settingpotool');
 Route::get('/serchsettingpotool', 'SettingassettoolController@serchsettingpotool');
+Route::post('/savesettingpotool/savesettingpotool','SettingassettoolController@savesettingpotool')->name('savesettingpotool');;
+Route::get('/settingdmtool', 'SettingassettoolController@settingdmtool');
+Route::get('/settingsalaryemptool', 'SettingassettoolController@settingsalaryemptool');
 
 
 

@@ -94,25 +94,50 @@ swal({!!Session::pull('sweetalert.json')!!});
                                         </div>
                                         @endif
                                         <!-- //สิ้นสุด ทำการ validate ช่องข้อมูล แสดง error -->
+                                        {!! Form::open(['route' => 'asset_list.store', 'method' => 'post' , 'id' => 'myForm' ,  'files' => true ]) !!}
+                                          {{ csrf_field() }}
                                                 <div class="was-validated form-inline" style="margin: 10px 50px 0px 50px;">
                                                   <!-- <div class="col-sm-6"> -->
                                                   <div class="row">
                                                     &nbsp;&nbsp;<label class="mb-2 mr-sm-2" for="modal-input-priceservice" id="fontslabel"><b>PO :</b></label>
-                                                    <input type="text" class="form-controller" id="search" name="search"></input>
+                                                    <input type="text" class="form-control mb-2 mr-sm-2"  id="search" name="search" required></input>
                                                     <button type="button" class="btn btn-primary" data-toggle="modal" onclick="serchpo()">
                                                       <i class="fas fa-search">
                                                         <fonts id="fontscontent">ค้นหา
                                                       </i>
                                                     </button>
                                                     <br>
-                                                    <label class="mb-2 mr-sm-2" id="fontslabel" for=""><b>Lot :</b></label>
+                                                    &nbsp;&nbsp;<label class="mb-2 mr-sm-2" id="fontslabel" for=""><b>Lot :</b></label>
                                                     <input type="text" class="form-control mb-2 mr-sm-2" name="lotnumber"required>
                                                     <br>
 
                                                   </div>
+
+
                                                   <!-- </div> -->
                                                 </div>
                                                 <br>
+                                                <div class="row">
+                                                  &nbsp;&nbsp;
+                                                  <label class="mb-2 mr-sm-2" for="modal-input-priceservice" id="fontslabel"><b>ชื่อ Supplier:</b></label>
+                                                  <br>
+                                                </div>
+                                                <br>
+                                                <div class="row">
+                                                  <label class="mb-2 mr-sm-2" id="fontslabel" for=""><b>ที่อยู่ :</b></label>
+                                                  <br>
+                                                </div>
+                                                <br>
+                                                <div class="row">
+                                                  &nbsp;&nbsp;
+                                                  <label class="mb-2 mr-sm-2" for="modal-input-priceservice" id="fontslabel"><b>เบอร์:</b></label>
+                                                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+                                                  <br>
+                                                </div>
+
+                                                <br>
+
                                                 <table class="table table-bordered table-hover">
                                                   <thead>
                                                   <tr>
@@ -136,10 +161,10 @@ swal({!!Session::pull('sweetalert.json')!!});
                                       <!-- Modal footer -->
 
                                       <div class="modal-footer">
-                                        <a href="{{route('paycredit')}}">
+
                                       {!! Form::submit('บันทึก', ['class' => 'btn btn-success', 'style' => 'dispaly: inline']) !!}
                                         <button type="button" class="btn btn-warning" data-dismiss="modal">ยกเลิก</button>
-                                        </a>
+
                                       </div>
 
 
