@@ -29,7 +29,7 @@ swal({!!Session::pull('sweetalert.json')!!});
                                 <h1 class="float-left">Account - FSCT</h1>
                                 <ol class="breadcrumb float-right">
                                   <li class="breadcrumb-item">ทรัพย์สินและค่าเสื่อม</li>
-                                  <li class="breadcrumb-item active">ต้นทุนแบบเหล็ก(ซื้อสำเร็จรูป)</li>
+                                  <li class="breadcrumb-item active">ใบ POวัตถุดิบ (ซื้อมาผลิต)</li>
                                 </ol>
                                 <div class="clearfix"></div>
                             </div>
@@ -41,7 +41,7 @@ swal({!!Session::pull('sweetalert.json')!!});
                       <div class="card mb-3">
                         <div class="card-header">
                           <h3><i class="fas fa-edit"></i>
-                            <fonts id="fontsheader">ต้นทุนแบบเหล็ก(ซื้อสำเร็จรูป)</fonts>
+                            <fonts id="fontsheader">ใบ POวัตถุดิบ (ซื้อมาผลิต)</fonts>
                           </h3>
                         </div>
                         </div><!-- end card-->
@@ -72,12 +72,12 @@ swal({!!Session::pull('sweetalert.json')!!});
                                 <br>
                                 <!-- The Modal -->
                                 <div class="modal fade" id="myModal">
-                                  <div class="modal-dialog modal-xl">
+                                  <div class="modal-dialog modal-xl" style="max-width: 80%;" role="document">
                                     <div class="modal-content">
 
                                       <!-- Modal Header -->
                                       <div class="modal-header">
-                                        <h4 class="modal-title" id="fontscontent2"><b>ต้นทุนแบบเหล็ก(ซื้อสำเร็จรูป)</b></h4>
+                                        <h4 class="modal-title" id="fontscontent2"><b>ใบ POวัตถุดิบ (ซื้อมาผลิต)</b></h4>
                                         <button type="button" class="close" data-dismiss="modal">&times;</button>
                                       </div>
 
@@ -94,9 +94,6 @@ swal({!!Session::pull('sweetalert.json')!!});
                                         </div>
                                         @endif
                                         <!-- //สิ้นสุด ทำการ validate ช่องข้อมูล แสดง error -->
-
-
-
                                                 <div class="was-validated form-inline" style="margin: 10px 50px 0px 50px;">
                                                   <!-- <div class="col-sm-6"> -->
                                                   <div class="row">
@@ -108,6 +105,11 @@ swal({!!Session::pull('sweetalert.json')!!});
 
                                                     &nbsp;&nbsp;<label class="mb-2 mr-sm-2" for="modal-input-priceservice" id="fontslabel"><b>PO :</b></label>
                                                     <input type="text" class="form-controller" id="search" name="search"></input>
+                                                    <button type="button" class="btn btn-primary" data-toggle="modal" onclick="serchpo()">
+                                                      <i class="fas fa-search">
+                                                        <fonts id="fontscontent">ค้นหา
+                                                      </i>
+                                                    </button>
                                                     <br>
 
                                                   </div>
@@ -116,8 +118,15 @@ swal({!!Session::pull('sweetalert.json')!!});
                                                 <table class="table table-bordered table-hover">
                                                   <thead>
                                                   <tr>
-                                                  <th>เลขที่ PO</th>
-                                                  <th>จำนวนเงิน</th>
+                                                    <th>ลำดับ</th>
+                                                    <th>รหัสบัญชี</th>
+                                                    <th>รายการ</th>
+                                                    <th>ปริมาณ</th>
+                                                    <th>ราคาต่อหน่วย</th>
+                                                    <th>รวม</th>
+                                                    <th>ส่วนลด</th>
+                                                    <th>ราคาหลังหักส่วนลด</th>
+                                                    <th>ราคาสุทธิต่อหน่วย</th>
                                                   </tr>
                                                   </thead>
                                                   <tbody>
@@ -153,61 +162,21 @@ swal({!!Session::pull('sweetalert.json')!!});
 
   <!-- MODAL edit -->
 
-  <div class="modal fade" id="modaledit">
-      <div class="modal-dialog modal-lg">
-          <div class="modal-content">
 
-              <!-- Modal Header -->
-              <div class="modal-header">
-                <h4 class="modal-title" id="fontscontent2"><b>รายการทรัพย์สิน</b></h4>
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-              </div>
-
-                <!-- Modal body -->
-                <div class="modal-body">
-
-                    {{ csrf_field() }}
-
-
-              </div>
-              <!-- Modal footer -->
-              <div class="modal-footer">
-                  <a href="{{route('asset_list')}}">
-                      <input type="submit" class="btn btn-success" style="display: inline" id="button-submit-edit" value="บันทึก">
-                      <button type="button" class="btn btn-warning" data-dismiss="modal">ยกเลิก</button>
-                  </a>
-              </div>
-
-
-          </div>
-      </div>
-  </div>
 
   <!-- end iditmodal -->
 
 
   <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script> -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
-  <script type="text/javascript" src = 'js/accountjs/buysteel.js'></script>
+  <script type="text/javascript" src = 'js/accountjs/settingpotool.js'></script>
   <script>
       $(document).ready(function() {
       $('#example').DataTable();
       } );
   </script>
 
-  <script type="text/javascript">
-  $('#search').on('keyup',function(){
-  $value=$(this).val();
-  $.ajax({
-  type : 'get',
-  url : '{{URL::to('search')}}',
-  data:{'search':$value},
-  success:function(data){
-  $('tbody').html(data);
-  }
-  });
-  })
-  </script>
+
 
   <script type="text/javascript">
   $.ajaxSetup({ headers: { 'csrftoken' : '{{ csrf_token() }}' } });

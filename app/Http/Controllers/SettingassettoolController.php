@@ -21,11 +21,14 @@ class SettingassettoolController extends Controller
 {
 
 
-    public function settingtool()
-    {
+    public function settingtool(){
 
       return view('setting.settingtool');
     }
 
+    public function settingpotool(){
+
+      return view('setting.settingpotool');
+    }
 
 }

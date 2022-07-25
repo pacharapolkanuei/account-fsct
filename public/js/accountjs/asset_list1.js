@@ -1,5 +1,21 @@
+var typeassetval = '';
+var typeassetrefacc = '';
+var inset = '';
+var selectlot = '';
+
+
 $( document ).ready(function() {
-    console.log( "ready!" )
+    //console.log( "ready!" )
+    $.get('getlisttypeasset', function(res) {
+        //console.log(res);
+        typeassetval = res;
+     });
+
+     $.get('getlisttypeassetrefaccnumber', function(res) {
+         //console.log(res);
+         typeassetrefacc = res;
+      });
+
 $('.select2').select2();
 
 $('.delete-confirm').on('click', function (event) {
@@ -22,6 +38,14 @@ $('.delete-confirm').on('click', function (event) {
 function cleardata()
 {
   document.getElementById("myForm").reset();
+    $('#groups_acc_new').empty();
+      var optiontypeassetrefacc = '<option value="" selected>เลือกกลุ่มบัญชี</option>';
+      $('#groups_acc_new').append(optiontypeassetrefacc);
+      $('.material_serch').hide();
+      $('#material_id').empty();
+      $('#lot').val('');
+      $('#price_buyz').val('');
+      selectlot = '';
 }
 
 $(function() {
@@ -278,4 +302,171 @@ function getdataedit(val){
         $('#get_primary_depreciation').val(res[0].primary_depreciation);
 
     });
+  }
+
+
+  //--------------------------------------------- select type assset -------------------------------//
+  function selectassetlist(){
+
+      var typeasset = document.getElementById("assetlist_different").value;
+      inset = typeasset;
+      //  console.log(typeassetval);
+
+        cleardata();
+
+        $('#assetlist_different').val(inset);
+        $('#groups_new').empty();
+
+          // option asset type
+        var typeassetypeoption = '<option value="" selected>เลือกหมวด</option>';
+        var inputserachpayinid = document.getElementById('serachpayinid');
+        var inputmaterial_id = document.getElementById('material_id');
+
+
+
+
+
+          if(typeasset==1){
+
+            document.getElementById('name_thai').readOnly = false;
+            document.getElementById('name_eng').readOnly = false;
+            document.getElementById('no_asset').readOnly = false;
+            document.getElementById('name_eng').readOnly = false;
+            document.getElementById('date_startuses').readOnly = false;
+            document.getElementById('date_buy').readOnly = false;
+            document.getElementById('depreciation_buyz').readOnly = false;
+            document.getElementById('primary_depreciation').readOnly = false;
+            document.getElementById('price_buyz').readOnly = false;
+            inputserachpayinid.removeAttribute('required');
+            inputmaterial_id.removeAttribute('required');
+
+
+
+                $.each(typeassetval, function( key, value ) {
+                     if(value.typeasset==1){
+                        typeassetypeoption += '<option value='+value.id+' >'+value.name_typeasset+'</option>';//console.log(value.name_typeasset);
+                     }
+                });
+
+              $('#groups_new').append(typeassetypeoption);
+              //console.log(typeassetypeoption);
+
+          }else{
+            document.getElementById('name_thai').readOnly = true;
+            document.getElementById('name_eng').readOnly = true;
+            document.getElementById('no_asset').readOnly = true;
+            document.getElementById('date_startuses').readOnly = true;
+            document.getElementById('date_buy').readOnly = true;
+            document.getElementById('depreciation_buyz').readOnly = true;
+            document.getElementById('primary_depreciation').readOnly = true;
+            document.getElementById('price_buyz').readOnly = true;
+            inputserachpayinid.setAttribute('required', '');
+            inputmaterial_id.setAttribute('required', '');
+
+                $.each(typeassetval, function( key, value ) {
+                     if(value.typeasset==2){
+                        typeassetypeoption += '<option value='+value.id+' >'+value.name_typeasset+'</option>';//console.log(value.name_typeasset);
+                     }
+                });
+              $('#groups_new').append(typeassetypeoption);
+              $('.material_serch').show();
+            //  console.log(typeassetypeoption);
+          }
+
+  }
+
+
+
+  //////////////////////////// select option groups_new ////////////////////////
+
+  function selectgroup(){
+      var groups_new = document.getElementById("groups_new").value;
+      //console.log(groups_new);
+      /// select accnum
+      $('#groups_acc_new').empty();
+      var optiontypeassetrefacc = '<option value="" selected>เลือกกลุ่มบัญชี</option>';
+
+       $.each(typeassetrefacc, function( k, v ) {
+            if(groups_new==v.typeasset_id){
+               optiontypeassetrefacc += '<option value='+v.numberaccount+' >'+v.numberaccount+'-'+v.accounttypefull+'</option>';
+
+             }
+          });
+       $('#groups_acc_new').append(optiontypeassetrefacc);
+
+
+      $('#life_for_usez').val('');
+      $('#end_price_sellpercentz').val('');
+        $.each(typeassetval, function( key, value ) {
+             if(value.id==groups_new){
+                   ///   cal %
+                  $('#life_for_usez').val(value.percent_depreciation_expense);
+                    if(value.percent_depreciation_expense!=0){
+                        $('#end_price_sellpercentz').val(100/value.percent_depreciation_expense);
+                    }else{
+                        $('#end_price_sellpercentz').val(0);
+                    }
+             }
+        });
+  }
+
+  function serachpayin() {
+        var idrecp = $('#serachpayinid').val();
+        $('#material_id').empty();
+        var material_id = '<option value="" selected>เลือกสินค้า</option>';
+
+          $.get('serchassetrefmaterial?id='+idrecp, function(res) {
+                  //console.log(isNaN(res));
+              if(isNaN(res)==true){
+                  selectlot = res;
+                    $.each(res, function( key, value ) {
+                        material_id += '<option value="'+value.receiptasset_detail_id+'" >'+value.materialname+'</option>';
+                    });
+                  $('#material_id').append(material_id);
+              }else{
+                  alert('กรอกรหัสบิลไม่ถูกต้อง');
+              }
+           });
+  }
+
+  function selectserchlot(){
+      var material_id = $('#material_id').val();
+      var groups_new = $('#groups_new').val();
+      var typenameasset = '';
+
+      console.log(typeassetval);
+      $.each(typeassetval, function( k, v ) {
+           if(groups_new==v.id){
+               typenameasset = v.name_typeasset
+
+            }
+         });
+      $('#lot').val('');
+      $('#price_buyz').val('');
+      $('#date_startuses').val('');
+      $('#date_buy').val('');
+      $('#name_thai').val('');
+      $('#name_eng').val('');
+      $('#no_asset').val('');
+      $('#depreciation_buyz').val('');
+      $('#primary_depreciation').val('');
+
+      var timethis = $('#timethis').val();
+        //console.log(material_id);
+          $.each(selectlot, function( key, value ) {
+                if(value.receiptasset_detail_id==material_id){
+                    $('#lot').val(value.lot);
+                    $('#price_buyz').val(value.cost);
+                    $('#date_startuses').val(value.dateuse);
+                    $('#date_buy').val(value.datein);
+                    $('#name_thai').val(typenameasset+' '+value.materialname+' lot:'+value.lot);
+                    $('#name_eng').val(typenameasset+' '+value.materialname+' lot:'+value.lot);
+                    $('#no_asset').val(timethis+''+groups_new+''+material_id+''+value.id)
+                    $('#depreciation_buyz').val(value.beginningbalance);
+                    $('#primary_depreciation').val(value.depreciation_first);
+
+                }
+          });
+
+
   }

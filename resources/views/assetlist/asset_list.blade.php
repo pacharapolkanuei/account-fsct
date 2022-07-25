@@ -1,3 +1,6 @@
+<?php
+use App\Api\Connectdb;
+?>
 @extends('index')
 @section('content')
 <script type="text/javascript" src="https://unpkg.com/sweetalert2@7.0.6/dist/sweetalert2.all.js"></script>
@@ -5,6 +8,8 @@
 @if (Session::has('sweetalert.json'))
 <script>
 swal({!!Session::pull('sweetalert.json')!!});
+
+
 </script>
 @endif
 
@@ -84,6 +89,7 @@ swal({!!Session::pull('sweetalert.json')!!});
                                     </i>
                                   </button>
                                 </div> -->
+                                <input type="hidden" id="timethis" name="timethis" value="<?php echo date('Ymd')?>">
                                 {!! Form::open(['route' => 'asset_list_filter', 'method' => 'post']) !!}
                                 <div class="row" class="fontslabel">
                                     <div class="col-sm-3">
@@ -180,34 +186,12 @@ swal({!!Session::pull('sweetalert.json')!!});
                                               {!! Form::open(['route' => 'asset_list.store', 'method' => 'post' , 'id' => 'myForm' ,  'files' => true ]) !!}
                                                 {{ csrf_field() }}
 
-                                              <div class="form-inline">
-                                                <label id="fontslabel"><b>รหัสรายการทรัพย์สิน :</b></label>
-                                                <div class="col-sm">
-                                                  <input style="width: 100%;max-width: 1200px;" type="text" name="no_asset" class="form-control">
-                                                </div>
-                                              </div>
-
-                                              <br>
-
-                                              <div class="form-inline">
-                                                <label id="fontslabel"><b>ชื่อรายการทรัพย์สิน (ภาษาไทย) :</b></label>
-                                                <div class="col-sm">
-                                                  <input style="width: 100%;max-width: 1200px;" type="text" name="name_thai" class="form-control">
-                                                </div>
-
-                                                <label id="fontslabel"><b>ชื่อรายการทรัพย์สิน (ภาษาอังกฤษ) :</b></label>
-                                                <div class="col-sm">
-                                                  <input style="width: 100%;max-width: 1200px;" type="text" name="name_eng" class="form-control">
-                                                </div>
-                                              </div>
-
-                                              <br>
 
                                               <div class="form-inline">
                                                 <label id="fontslabel"><b>เลือกประเภทสินทรัพย์ : </b></label>
                                                 <div class="col-sm">
-                                                  <select style="width: 365px;" class="form-control" name="assetlist_different" required>
-                                                    <option disabled selected>โปรดเลือกประเภทสินทรัพย์</option>
+                                                  <select style="width: 365px;" class="form-control" name="assetlist_different" id="assetlist_different" onchange="selectassetlist()" required>
+                                                    <option value="" selected>โปรดเลือกประเภทสินทรัพย์</option>
                                                     <option value="1">สำนักงาน</option>
                                                     <option value="2">สินค้าให้เช่า</option>
                                                     </option>
@@ -230,21 +214,25 @@ swal({!!Session::pull('sweetalert.json')!!});
                                                  <div class="form-inline">
                                                    <label id="fontslabel"><b>หมวด :</b></label>
                                                    <div class="col-sm">
-                                                     <select style="width: 450px;" class="form-control select2" name="groups">
-                                                       <option disabled selected>เลือกหมวด</option>
+                                                     <select style="width: 450px;" class="form-control select2" name="groups" id="groups_new" onchange="selectgroup()" required>
+                                                       <option value="" selected>เลือกหมวด</option>
+                                                       <!--
                                                        @foreach ($accounttypes as $key => $accounttype)
                                                        <option value="{{$accounttype->id}}">{{$accounttype->accounttypeno}} - {{$accounttype->accounttypefull}}</option>
                                                        @endforeach
+                                                       -->
                                                      </select>
                                                    </div>
 
                                                    <label id="fontslabel"><b>กลุ่มบัญชี :</b></label>
                                                    <div class="col-sm">
-                                                     <select style="width: 450px;" class="form-control select2" name="groups_acc">
-                                                       <option disabled selected>เลือกกลุ่มบัญชี</option>
+                                                     <select style="width: 450px;" class="form-control select2" name="groups_acc" id="groups_acc_new" required>
+                                                       <option value="" selected>เลือกกลุ่มบัญชี</option>
+                                                       <!--
                                                        @foreach ($group_propertys as $key => $group_property)
                                                        <option value="{{ $group_property->id }}">{{$group_property->number_property}} - {{$group_property->descritption_thai}}</option>
                                                        @endforeach
+                                                       -->
                                                      </select>
                                                    </div>
                                                  </div>
@@ -254,18 +242,15 @@ swal({!!Session::pull('sweetalert.json')!!});
                                                  <div class="form-inline">
                                                    <label id="fontslabel"><b>เลขทะเบียน :</b></label>
                                                    <div class="col-sm">
-                                                     <input style="width: 100%;max-width: 400px;" type="text" name="no_register" class="form-control">
+                                                     <input style="width: 100%;max-width: 400px;" type="text" name="no_register" class="form-control" required>
                                                    </div>
 
-                                                   <label id="fontslabel"><b>แผนก :</b></label>
-                                                   <div class="col-sm">
-                                                     <input style="width: 100%;max-width: 400px;" type="text" name="department" class="form-control">
-                                                   </div>
+
 
                                                    <label id="fontslabel"><b>สาขา :</b></label>
                                                    <div class="col-sm">
-                                                     <select style="width: 100%;max-width: 400px;" class="form-control select2" name="ins_branch">
-                                                       <option disabled selected>เลือกสาขา</option>
+                                                     <select style="width: 100%;max-width: 400px;" class="form-control select2" name="ins_branch" required>
+                                                       <option value="" selected>เลือกสาขา</option>
                                                        @foreach ($branchs as $key => $branch)
                                                        <option value="{{$branch->code_branch}}">{{$branch->name_branch}}</option>
                                                        @endforeach
@@ -274,6 +259,47 @@ swal({!!Session::pull('sweetalert.json')!!});
                                                  </div>
 
                                                  <br>
+
+
+                                                 <div class="form-inline material_serch" style="display:none;" >
+                                                   <label id="fontslabel"><b>ค้นหาใบรับสินค้า :</b></label>
+                                                   <div class="col-sm">
+                                                     <input style="width: 100%;max-width: 400px;" type="text" name="serachpayinid" id="serachpayinid" class="form-control" required value="">
+                                                   </div>
+                                                   <div class="col-sm">
+                                                     <button type="button" class="btn btn-primary" onclick="serachpayin()">ค้นหา</button>
+                                                   </div>
+                                                 </div>
+
+
+
+                                                 <br>
+                                                 <div class="form-inline material_serch" style="display:none;">
+                                                   <label id="fontslabel"><b>สินค้า :</b></label>
+                                                   <div class="col-sm">
+                                                     <?php
+                                                           $connect1 = Connectdb::Databaseall();
+
+                                                           $baseMan = $connect1['fsctmain'];
+                                                     ?>
+                                                     <select style="width: 450px;" class="form-control select2" name="material_id" id="material_id" onchange="selectserchlot()" >
+                                                       <option value="0" selected>เลือกสินค้า</option>
+
+                                                       <!--
+                                                       @foreach ($accounttypes as $key => $accounttype)
+                                                       <option value="{{$accounttype->id}}">{{$accounttype->accounttypeno}} - {{$accounttype->accounttypefull}}</option>
+                                                       @endforeach
+                                                       -->
+                                                     </select>
+                                                   </div>
+
+                                                   <label id="fontslabel"><b>lot :</b></label>
+                                                   <div class="col-sm">
+                                                       <input style="width: 100%;max-width: 400px;" type="text" name="lot" id="lot" readonly class="form-control">
+                                                   </div>
+                                                 </div>
+                                                 <br>
+
 
                                                  <!-- <div class="form-inline">
                                                    <label class="col-form-label"  id="fontslabel"><b>วันที่ซื้อ :</b></label>
@@ -299,29 +325,32 @@ swal({!!Session::pull('sweetalert.json')!!});
 
                                                    <table border="0">
                                                      <thead>
+
+                                                       <tr>
+
+                                                         <th>&nbsp;&nbsp;<label class="col-form-label" id="fontslabel"><b>วันที่ซื้อ&nbsp;</b></label></th>
+                                                         <th><input type="date" autocomplete="off" class="form-control" readonly name="date_startuse" id="date_startuses"></th>
+                                                         <th><label class="col-form-label" id="fontslabel"><b>วันที่เริ่มใช้งาน&nbsp;</b></label></th>
+                                                         <th><input type="date" autocomplete="off" class="form-control" readonly name="date_buy" id="date_buy" onchange="get_date()"></th>
+                                                       </tr>
                                                        <tr>
                                                          <th><label class="col-form-label" id="fontslabel"><b>ราคาทุน&nbsp;</b></label></th>
-                                                         <th><input type="text" name="price_buy" class="form-control" id="price_buyz" onchange="calculate_depreciation()"></th>
+                                                         <th><input type="text" name="price_buy" class="form-control" id="price_buyz" onchange="calculate_depreciation()" required readonly></th>
                                                          <th>&nbsp;&nbsp;<label class="col-form-label" id="fontslabel"><b>อายุการใช้งาน&nbsp;</b></label></th>
-                                                         <th><input type="text" name="life_for_use" class="form-control" maxlength="1" id="life_for_usez" onchange="calculate_depreciation()"></th>
-                                                         <th><input type='date' size="2" name="date_cal_starts" class="form-control" onchange="calculate_depreciation()" id="date_cal_start" autocomplete="off" /></th>
-                                                         <th><input type='date' size="2" name="date_cal_ends" class="form-control" onchange="calculate_depreciation()" id="date_cal_end" autocomplete="off" /></th>
+                                                         <th><input type="text" name="life_for_use" class="form-control" maxlength="1" id="life_for_usez" onchange="calculate_depreciation()" readonly></th>
+                                                         <th><input type='hidden' size="2" name="date_cal_starts" class="form-control" onchange="calculate_depreciation()" id="date_cal_start" readonly autocomplete="off" /></th>
+                                                         <th><input type='hidden' size="2" name="date_cal_ends" class="form-control" onchange="calculate_depreciation()" id="date_cal_end" readonly autocomplete="off" /></th>
                                                        </tr>
                                                        <tr>
 
                                                        </tr>
                                                        <tr>
                                                          <th><label class="col-form-label" id="fontslabel"><b>ราคาซาก&nbsp;</b></label></th>
-                                                         <th><input type="text" name="end_price_sell" class="form-control" id="end_price_sellz" onchange="calculate_depreciation()"></th>
+                                                         <th><input type="text" name="end_price_sell" class="form-control" id="end_price_sellz"  readonly value="1"></th>
                                                          <th>&nbsp;&nbsp;<label class="col-form-label" id="fontslabel"><b>อัตรา(%)&nbsp;</b></label></th>
                                                          <th><input type="text" name="end_price_sellpercent" class="form-control" id="end_price_sellpercentz" onchange="calculate_depreciation()" readonly></th>
                                                        </tr>
-                                                       <tr>
-                                                         <th><label class="col-form-label" id="fontslabel"><b>วันที่เริ่มใช้งาน&nbsp;</b></label></th>
-                                                         <th><input type="date" autocomplete="off" class="form-control" name="date_buy" id="get_date_buyz" onchange="get_date()"></th>
-                                                         <th>&nbsp;&nbsp;<label class="col-form-label" id="fontslabel"><b>วันที่ซื้อ&nbsp;</b></label></th>
-                                                         <th><input type="date" autocomplete="off" class="form-control" name="date_startuse"></th>
-                                                       </tr>
+
                                                        <!-- <tr>
                                                          <th><label class="col-form-label" id="fontslabel"><b>คำนวณเองถึง&nbsp;</b></label></th>
                                                          <th><input type="date" autocomplete="off" class="form-control" name="cal_date" id="get_date_calselfz" onchange="get_date()"></th>
@@ -343,7 +372,31 @@ swal({!!Session::pull('sweetalert.json')!!});
 
                                                  </center>
                                               </fieldset>
+                                              <br>
 
+                                              <fieldset class="border p-2">
+                                              <legend id="fontscontent2" class="w-auto">&nbsp; รายละเอียดรหัสรายการทรัพย์สิน &nbsp;</legend>
+                                              <div class="form-inline">
+                                                <label id="fontslabel"><b>รหัสรายการทรัพย์สิน :</b></label>
+                                                <div class="col-sm">
+                                                  <input style="width: 100%;max-width: 1200px;" type="text" name="no_asset" id="no_asset" class="form-control"  readonly>
+                                                </div>
+                                              </div>
+
+                                              <br>
+
+                                              <div class="form-inline">
+                                                <label id="fontslabel"><b>ชื่อรายการทรัพย์สิน (ภาษาไทย) :</b></label>
+                                                <div class="col-sm">
+                                                  <input style="width: 100%;max-width: 1200px;" type="text" name="name_thai" id="name_thai" class="form-control" readonly>
+                                                </div>
+
+                                                <label id="fontslabel"><b>ชื่อรายการทรัพย์สิน (ภาษาอังกฤษ) :</b></label>
+                                                <div class="col-sm">
+                                                  <input style="width: 100%;max-width: 1200px;" type="text" name="name_eng" id="name_eng" class="form-control" readonly>
+                                                </div>
+                                              </div>
+                                              </fieldset>
                                               <br>
 
                                               <fieldset class="border p-2">
@@ -354,9 +407,9 @@ swal({!!Session::pull('sweetalert.json')!!});
                                                      <thead>
                                                        <tr>
                                                          <th><label class="col-form-label" id="fontslabel"><b>ค่าเสื่อมสะสมยกมา&nbsp;</b></label></th>
-                                                         <th><input type="text" class="form-control" id="depreciation_buyz" onchange="depreciation()"></th>
-                                                         <th>&nbsp;&nbsp;<label class="col-form-label" id="fontslabel"><b>ค่าเสื่อมเบื้องต้น&nbsp;</b></label></th>
-                                                         <th><input type="text" name="primary_depreciation" class="form-control"></th>
+                                                         <th><input type="text" class="form-control" id="depreciation_buyz" name="depreciation_buyz" readonly onchange="depreciation()"></th>
+                                                         <th>&nbsp;&nbsp;<label class="col-form-label" id="fontslabel" ><b>ค่าเสื่อมเบื้องต้น&nbsp;</b></label></th>
+                                                         <th><input type="text" name="primary_depreciation"  id="primary_depreciation" readonly class="form-control"></th>
                                                        </tr>
                                                        <tr class="container10">
                                                          <!-- <th style="text-align: right;"><label class="col-form-label" id="fontslabel"><font color="red"><b>ค่าเสื่อมสะสมยกมาสุทธิ&nbsp;</b></font></label></th>
@@ -382,7 +435,7 @@ swal({!!Session::pull('sweetalert.json')!!});
                                               </fieldset>
 
                                               <br>
-
+                                              <!--
                                               <fieldset class="border p-2">
                                                 <legend id="fontscontent2" class="w-auto">&nbsp; กำไร / ขาดทุน &nbsp;</legend>
                                                  <center>
@@ -390,8 +443,8 @@ swal({!!Session::pull('sweetalert.json')!!});
                                                    <table border="0">
                                                      <thead>
                                                        <tr>
-                                                         <!-- <th><label class="col-form-label" id="fontslabel"><b>คำนวณเองถึงวันที่&nbsp;</b></label></th>
-                                                         <th><input type="date" autocomplete="off" class="form-control" name="cal_date" id="get_date_calselfz" onchange="get_date()"></th> -->
+                                                          <th><label class="col-form-label" id="fontslabel"><b>คำนวณเองถึงวันที่&nbsp;</b></label></th>
+                                                         <th><input type="date" autocomplete="off" class="form-control" name="cal_date" id="get_date_calselfz" onchange="get_date()"></th>
                                                          <th><label class="col-form-label" id="fontslabel"><b>ราคาขาย&nbsp;</b></label></th>
                                                          <th><input type="text" name="depreciation_sell" class="form-control"></th>
                                                          <th>&nbsp;&nbsp;<label class="col-form-label" id="fontslabel"><b>กำไร/ขาดทุน&nbsp;</b></label></th>
@@ -404,6 +457,7 @@ swal({!!Session::pull('sweetalert.json')!!});
 
                                                  </center>
                                               </fieldset>
+                                              -->
 
                                             </div>
 
@@ -683,7 +737,7 @@ swal({!!Session::pull('sweetalert.json')!!});
                             <div class="form-inline">
                               <label id="fontslabel"><b>เลือกประเภทสินทรัพย์ : </b></label>
                               <div class="col-sm">
-                                <select style="width: 365px;" class="form-control" name="assetlist_differents" id="get_assetlist_dif">
+                                <select style="width: 365px;" class="form-control" name="assetlist_differents" >
                                   <option value="1">สำนักงาน</option>
                                   <option value="2">สินค้าให้เช่า</option>
                                   </option>
@@ -724,10 +778,7 @@ swal({!!Session::pull('sweetalert.json')!!});
                                    <input style="width: 100%;max-width: 400px;" type="text" name="no_register" class="form-control" id="get_no_register">
                                  </div>
 
-                                 <label id="fontslabel"><b>แผนก :</b></label>
-                                 <div class="col-sm">
-                                   <input style="width: 100%;max-width: 400px;" type="text" name="department" class="form-control" id="get_department">
-                                 </div>
+
 
                                  <label id="fontslabel"><b>สาขา :</b></label>
                                  <div class="col-sm">
@@ -754,10 +805,10 @@ swal({!!Session::pull('sweetalert.json')!!});
                                      </tr>
                                      <tr>
                                        <!-- สลับวันที่เริ่มใช้งาน กับ วันที่ซื้อ -->
-                                       <th><label class="col-form-label" id="fontslabel"><b>วันที่เริ่มใช้งาน&nbsp;</b></label></th>
-                                       <th><input type="date" name="date_buy" autocomplete="off" class="form-control" id="get_date_buy"></th>
                                        <th>&nbsp;&nbsp;<label class="col-form-label" id="fontslabel"><b>วันที่ซื้อ&nbsp;</b></label></th>
                                        <th><input type="date" name="date_startuse" autocomplete="off" class="form-control" id="get_date_startuse"></th>
+                                       <th><label class="col-form-label" id="fontslabel"><b>วันที่เริ่มใช้งาน&nbsp;</b></label></th>
+                                       <th><input type="date" name="date_buy" autocomplete="off" class="form-control" id="get_date_buy"></th>
                                      </tr>
                                      <tr>
                                        <th><label class="col-form-label" id="fontslabel"><b>คำนวณเองถึง&nbsp;</b></label></th>
@@ -798,6 +849,7 @@ swal({!!Session::pull('sweetalert.json')!!});
                                </center>
                             </fieldset>
 
+                          <!--
                             <fieldset class="border p-2">
                               <legend id="fontscontent2" class="w-auto">&nbsp; กำไร / ขาดทุน &nbsp;</legend>
                                <center>
@@ -815,6 +867,7 @@ swal({!!Session::pull('sweetalert.json')!!});
                                  </table>
                                </center>
                             </fieldset>
+                          -->
 
                 </div>
                 <!-- Modal footer -->
