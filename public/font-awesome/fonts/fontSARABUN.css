@@ -1,0 +1,52 @@
+
+@font-face {
+    font-family: 'TH SarabunPSK';
+    src: url('THSarabun.ttf');
+}
+.fontstype{
+    font-family: 'TH SarabunPSK';
+    font-size: 150%
+}
+
+#fontsmenu{
+  font-family: 'TH SarabunPSK';
+  font-size: 160%
+}
+#fontsmenu2{
+  font-family: 'TH SarabunPSK';
+  font-size: 130%
+}
+
+#fontsheader{
+  font-family: 'TH SarabunPSK';
+  font-size: 150%
+}
+
+#fontscontent{
+  font-family: 'TH SarabunPSK';
+  font-size: 160%
+}
+
+#fontscontent2{
+  font-family: 'TH SarabunPSK';
+  font-size: 180%
+}
+#fontslabel{
+  font-family: 'TH SarabunPSK';
+  font-size: 170%
+}
+
+#fontstable{
+  font-family: 'TH SarabunPSK';
+  font-size: 140%
+}
+
+.fontslabel{
+  font-family: 'TH SarabunPSK';
+  font-size: 130%
+
+}
+#fontsjournal{
+  font-family: 'TH SarabunPSK';
+  font-size: 120%
+}

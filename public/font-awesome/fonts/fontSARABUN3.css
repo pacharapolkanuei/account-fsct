@@ -1,0 +1,16 @@
+@font-face {
+    font-family: 'TH SarabunPSK';
+    src: url('THSarabun.ttf');
+}
+p{
+    font-family: 'TH SarabunPSK';
+    font-size: 180%;
+}
+h1{
+    font-family: 'TH SarabunPSK';
+    font-size: 320%;
+}
+h2{
+    font-family: 'TH SarabunPSK';
+    font-size: 280%;
+}

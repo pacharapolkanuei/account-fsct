@@ -1,0 +1,20 @@
+/* table{
+    text-align: center;
+    font-size: 100%;
+  }
+
+  .center_text{
+    text-align: center;
+
+
+  } */
+
+.nav-tabs .nav-link.active, .nav-tabs .nav-item.show .nav-link {
+    color: #495057;
+    /* background-color: #9cc8f3 !important; */
+    border-color: #dee2e6 #dee2e6 #fff;
+    border-top: 10px solid #4fc28b !important;
+    /* border-left: 10px solid #4fc28b !important; */
+    /* border-right: 10px solid #4fc28b !important; */
+
+}
