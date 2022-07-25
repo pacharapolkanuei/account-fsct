@@ -641,7 +641,7 @@ Route::get('/getlisttypeasset', 'Asset_listController@getlisttypeasset');
 Route::get('/getlisttypeassetrefaccnumber', 'Asset_listController@getlisttypeassetrefaccnumber');
 Route::get('/serchassetrefmaterial', 'Asset_listController@serchassetrefmaterial');
 
-
+Route::get('/buysteel', 'BuysteelController@index')->name('buysteel');
 //-----------------------------------------------
 
 //--------Percent_maincost--------------
