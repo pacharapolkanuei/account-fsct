@@ -662,6 +662,14 @@ Route::get('/serchsettingpotool', 'SettingassettoolController@serchsettingpotool
 Route::post('/savesettingpotool','SettingassettoolController@savesettingpotool');
 Route::get('/settingdmtool', 'SettingassettoolController@settingdmtool');
 Route::get('/settingsalaryemptool', 'SettingassettoolController@settingsalaryemptool');
+Route::get('/printsettingpotooldetail', function () { //กระดาษทำการ 10 ช่อง (ทั้งหมด)
+    $data = Input::all();
+	// print_r($data);
+
+	$pdf = PDF::loadView('printsettingpotooldetail', $data);
+    return @$pdf->stream();
+});
+Route::get('/approvedpotoolassetstatus', 'SettingassettoolController@approvedpotoolassetstatus');
 
 
 

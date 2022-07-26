@@ -1,3 +1,4 @@
+<?php use App\Api\Connectdb;?>
 @extends('index')
 @section('content')
 <script type="text/javascript" src="https://unpkg.com/sweetalert2@7.0.6/dist/sweetalert2.all.js"></script>
@@ -46,16 +47,76 @@ swal({!!Session::pull('sweetalert.json')!!});
                         </div>
                         </div><!-- end card-->
 
-                                <!-- Button to Open the Modal -->
-                                <div>
-                                  <button type="button" class="btn btn-primary" data-toggle="modal" style="float: right;margin: 0px 12px 10px 10px;" data-target="#myModal">
-                                    <i class="fas fa-plus">
-                                      <fonts id="fontscontent">เพิ่มข้อมูล
-                                    </i>
-                                  </button>
-                                </div>
+                        <!-- Button to Open the Modal -->
+                        <div>
+                          <button type="button" class="btn btn-primary" data-toggle="modal" style="float: right;margin: 0px 12px 10px 10px;" data-target="#myModal">
+                            <i class="fas fa-plus">
+                              <fonts id="fontscontent">เพิ่มข้อมูล
+                            </i>
+                          </button>
+                        </div>
+                        <!-- แสดงตาราง -->
+                        <?php
+                        $connect1 = Connectdb::Databaseall();
 
-                                <br>
+                        $baseAc1 = $connect1['fsctaccount'];
+                        $baseMan = $connect1['fsctmain'];
+
+                        $sql1 = "SELECT $baseAc1.po_head.*,
+                                        $baseAc1.po_to_asset.*,
+                                        $baseAc1.po_to_asset.id as idasset
+                                FROM $baseAc1.po_to_asset
+                                INNER JOIN $baseAc1.po_head
+                                ON $baseAc1.po_head.po_number = $baseAc1.po_to_asset.po_number";
+                        $getdatas = DB::select($sql1);
+                        //print_r($getdatas);
+                        ?>
+                        <div class="table-responsive">
+                          <table id="example" class="table table-striped table-bordered fontslabel" style="width:100%">
+                            <thead>
+                              <tr>
+                                <th>ลำดับ</th>
+                                <th>รหัส PO</th>
+                                <th>วันที่ บันทึก</th>
+                                <th>lot</th>
+                                <th>มูลค่าสุทธิ</th>
+                                <th>สถานะ</th>
+                                <th>พิมพ์</th>
+                              </tr>
+                            </thead>
+
+                            <tbody>
+                              <?php
+                              if(!empty($getdatas)){
+                                 $i=1;foreach ($getdatas as $key => $value) {    ?>
+                                  <tr>
+                                    <th><?php echo $i;?></th>
+                                    <th><?php echo $value->po_number;?><input type="hidden" id="poshowappoved<?php echo $value->idasset?>" value="<?php echo $value->po_number;?>"></th>
+                                    <th><?php echo $value->datetimestamp;?></th>
+                                    <th><?php echo $value->lotnumber;?></th>
+                                    <th><?php echo $value->totolsumreal;?></th>
+                                    <th>
+                                        <?php  if($value->status==0){
+                                                    echo '<p style="color:blue"><a href="#"  data-toggle="modal" data-target="#exampleModal" onclick="confirmappove('.$value->idasset.')">รอการอนุมัติ</a></p>';
+                                                }else if($value->status==1){
+                                                    echo '<p style="color:green">อนุมัติแล้ว</p>';
+                                                }else{
+                                                    echo '<p style="color:red">ยกเลิก</p>';
+                                                };
+                                        ?>
+                                    </th>
+                                    <th><a href=""><img src="images/global/printall.png"></a></th>
+                                  </tr>
+                                <?php $i++;}
+                              }?>
+                            </tbody>
+                          </table><br>
+                        </div>
+
+
+
+
+                        <br>
 
                                 <!-- แสดง error กรอกข้อมูลไม่ครบ -->
                                 @if ($errors->any())
@@ -70,6 +131,8 @@ swal({!!Session::pull('sweetalert.json')!!});
                                 <!-- แสดง error -->
 
                                 <br>
+
+
                                 <!-- The Modal -->
                                 <div class="modal fade" id="myModal">
                                   <div class="modal-dialog modal-xl" style="max-width: 80%;" role="document">
@@ -185,6 +248,27 @@ swal({!!Session::pull('sweetalert.json')!!});
       </div><!-- end card-->
   </div>
 
+  <!-- Modal confrime-->
+  <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          ยืนยันการอนุมัติ <b id="poappove"></b>
+          <input type="hidden" id="idpoappoved" value="">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" onclick="saveapprovedpostatus();">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- MODAL edit -->
 

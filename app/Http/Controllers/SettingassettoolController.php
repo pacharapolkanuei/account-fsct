@@ -65,11 +65,34 @@ class SettingassettoolController extends Controller
 
     public function savesettingpotool(){
         $data = Input::all();
-        $db = Connectdb::Databaseall();
-        $pohead = $data[''];
-        print_r($data);
+        $connect1 = Connectdb::Databaseall();
+        $pohead = $data['search'];
+        $lotnumber = $data['lotnumber'];
+        $baseAc1 = $connect1['fsctaccount'];
+        $baseMan = $connect1['fsctmain'];
 
+        $sql1 = "SELECT $baseAc1.po_to_asset.*
+                FROM $baseAc1.po_to_asset
+                WHERE $baseAc1.po_to_asset.status != '99'
+                AND $baseAc1.po_to_asset.po_number = '$pohead'";
+          $getdatas = DB::select($sql1);
+        if(!empty($getdatas)){
+              //echo "dont save";
+        SWAL::message('ผิดพลาด', 'รายการซ้ำ!', 'danger', ['timer' => 6000]);
+        return redirect()->back();
 
+        }else{
+              // echo "  save";
+              $arrInert = [ 'id'=>'',
+                      'po_number'=>$pohead,
+                      'lotnumber'=>$lotnumber,
+                      'status'=>'0'];
+
+              DB::table($connect1['fsctaccount'].'.po_to_asset')->insert($arrInert);
+          SWAL::message('สำเร็จ', 'บันทึกรายการ', 'success', ['timer' => 6000]);
+          return redirect()->back();
+
+        }
     }
 
 }

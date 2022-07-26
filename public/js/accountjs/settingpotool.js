@@ -50,6 +50,14 @@ $(document).ready(function() {
                   tableend += '<td>0</td>';
                   tableend += '<td>'+totalthis.toFixed(2)+'</td>';
                   tableend += '</tr>';
+                  tableend += '<tr>';
+                  tableend += '<td colspan="7" align="center">ภาษีมูลค่าเพิ่ม 7%</td>';
+                  tableend += '<td>'+(totalthis*0.07).toFixed(2)+'</td>';
+                  tableend += '</tr>';
+                  tableend += '<tr>';
+                  tableend += '<td colspan="7" align="center">รวมสุทธิ</td>';
+                  tableend += '<td>'+(totalthis*1.07).toFixed(2)+'</td>';
+                  tableend += '</tr>';
             $('#datatable').append(tableend);
 
 
@@ -59,3 +67,21 @@ $(document).ready(function() {
            }
         });
  }
+
+function confirmappove(po){
+      $('#poappove').empty();
+      $('#idpoappoved').val('');
+      var showpo = $('#poshowappoved'+po).val();
+      //console.log(showpo);
+      $('#idpoappoved').val(po);
+      $('#poappove').append(showpo);
+
+}
+
+function saveapprovedpostatus(){
+    var idpoassettool = $('#idpoappoved').val();
+    //console.log(idpoassettool);
+        $.get('approvedpotoolassetstatus?id='+idpoassettool, function(res) {
+              console.log(res);
+        });
+}
