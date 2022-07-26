@@ -119,20 +119,23 @@ swal({!!Session::pull('sweetalert.json')!!});
                                                 <br>
                                                 <div class="row">
                                                   &nbsp;&nbsp;
-                                                  <label class="mb-2 mr-sm-2" for="modal-input-priceservice" id="fontslabel"><b>ชื่อ Supplier:</b></label>
+                                                  <label class="mb-2 mr-sm-2" for="modal-input-priceservice" id="fontslabel"><b>ชื่อ Supplier:&nbsp;&nbsp;</b>
+                                                    <b id="namesupplier"></b>
+                                                  </label>
                                                   <br>
                                                 </div>
                                                 <br>
                                                 <div class="row">
-                                                  <label class="mb-2 mr-sm-2" id="fontslabel" for=""><b>ที่อยู่ :</b></label>
+                                                  <label class="mb-2 mr-sm-2" id="fontslabel" for=""><b>ที่อยู่ :</b>
+                                                    <b id="address_send"></b>
+                                                  </label>
                                                   <br>
                                                 </div>
                                                 <br>
                                                 <div class="row">
-                                                  &nbsp;&nbsp;
-                                                  <label class="mb-2 mr-sm-2" for="modal-input-priceservice" id="fontslabel"><b>เบอร์:</b></label>
-                                                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-
+                                                  <label class="mb-2 mr-sm-2" for="modal-input-priceservice" id="fontslabel"><b>เบอร์:</b>
+                                                    <b id="phone"></b>
+                                                  </label>
                                                   <br>
                                                 </div>
 
@@ -152,7 +155,7 @@ swal({!!Session::pull('sweetalert.json')!!});
                                                     <th>ราคาสุทธิต่อหน่วย</th>
                                                   </tr>
                                                   </thead>
-                                                  <tbody>
+                                                  <tbody id="datatable">
                                                   </tbody>
                                                 </table>
 

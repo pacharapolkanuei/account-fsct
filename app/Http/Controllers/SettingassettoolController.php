@@ -42,12 +42,19 @@ class SettingassettoolController extends Controller
       $sql1 = "SELECT $baseAc1.po_head.*,
                       $baseAc1.po_detail.*,
                       $baseAc1.supplier.pre,
-                      $baseAc1.supplier.name_supplier
+                      $baseAc1.supplier.name_supplier,
+                      $baseAc1.supplier.phone,
+                      $baseAc1.supplier.mobile,
+                      $baseAc1.accounttype.accounttypeno
               FROM $baseAc1.po_head
               INNER JOIN $baseAc1.po_detail
               ON $baseAc1.po_head.id = $baseAc1.po_detail.po_headid
               INNER JOIN $baseAc1.supplier
               ON $baseAc1.supplier.id = $baseAc1.po_head.supplier_id
+              INNER JOIN $baseAc1.good
+              ON $baseAc1.good.id = $baseAc1.po_detail.materialid
+              INNER JOIN $baseAc1.accounttype
+              ON $baseAc1.accounttype.id = $baseAc1.good.accounttype
               WHERE $baseAc1.po_head.status_head != '99'
               AND $baseAc1.po_head.po_number = '$idserch'";
         $getdatas = DB::select($sql1);
