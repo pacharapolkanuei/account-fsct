@@ -94,8 +94,8 @@ swal({!!Session::pull('sweetalert.json')!!});
                                         </div>
                                         @endif
                                         <!-- //สิ้นสุด ทำการ validate ช่องข้อมูล แสดง error -->
-                                        {!! Form::open(['route' => 'asset_list.store', 'method' => 'post' , 'id' => 'myForm' ,  'files' => true ]) !!}
-                                          {{ csrf_field() }}
+                                      <form action="savesettingpotool" method="post" id="myForm" files='true' >
+                                      <input type="hidden" name="_token" value="{{ csrf_token() }}">
                                                 <div class="was-validated form-inline" style="margin: 10px 50px 0px 50px;">
                                                   <!-- <div class="col-sm-6"> -->
                                                   <div class="row">
@@ -169,7 +169,7 @@ swal({!!Session::pull('sweetalert.json')!!});
                                         <button type="button" class="btn btn-warning" data-dismiss="modal">ยกเลิก</button>
 
                                       </div>
-
+                                    </form>
 
                                     </div>
                                   </div>

@@ -63,4 +63,13 @@ class SettingassettoolController extends Controller
 
     }
 
+    public function savesettingpotool(){
+        $data = Input::all();
+        $db = Connectdb::Databaseall();
+        $pohead = $data[''];
+        print_r($data);
+
+
+    }
+
 }
