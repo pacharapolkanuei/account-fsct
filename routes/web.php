@@ -643,6 +643,7 @@ Route::get('/serchassetrefmaterial', 'Asset_listController@serchassetrefmaterial
 
 Route::get('/buysteel', 'BuysteelController@index')->name('buysteel');
 Route::get('/search','BuysteelController@search');
+Route::get('getmaterial', 'BuysteelController@getmaterial');
 //-----------------------------------------------
 
 //--------Percent_maincost--------------

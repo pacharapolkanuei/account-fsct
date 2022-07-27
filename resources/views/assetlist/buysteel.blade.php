@@ -112,17 +112,43 @@ swal({!!Session::pull('sweetalert.json')!!});
 
                                                   </div>
                                                   <!-- </div> -->
+
+                                                  <div id="show_po">
+                                                  </div>
                                                 </div>
-                                                <table class="table table-bordered table-hover">
-                                                  <thead>
-                                                  <tr>
-                                                  <th>เลขที่ PO</th>
-                                                  <th>จำนวนเงิน</th>
-                                                  </tr>
-                                                  </thead>
-                                                  <tbody>
-                                                  </tbody>
-                                                </table>
+
+                                                <div style="padding: 10px 0px 0px 0px;">
+                                                  <div class="table-responsive">
+                                                    <table class="table">
+                                                      <thead class="thead-light" id="fontstable">
+                                                          <th width="23%" style="text-align: center;">รายการ</th>
+                                                          <th width="13%" style="text-align: center;">ผลิตได้(ชิ้น)</th>
+                                                          <th width="13%" style="text-align: center;">ราคาทุนวัตถุดิบ</th>
+                                                          <th width="13%" style="text-align: center;">เงินเดือน/ค่าแรง</th>
+                                                          <th width="13%" style="text-align: center;">รวมต้นทุนการผลิต</th>
+                                                          <th width="15%" style="text-align: center;">ต้นทุนการผลิตต่อหน่วย</th>
+                                                          <th width="10%" style="text-align: center;"><button class="btn-primary add_form_field" type="button">เพิ่มข้อมูล</button></th>
+                                                      </thead>
+
+                                                      <tbody class="container11">
+
+                                                      </tbody>
+
+                                                      <tfoot>
+                                                        <tr>
+                                                          <th style="text-align: right;" id="fontstable">รวม</th>
+                                                          <th style="text-align: right;"><input type="text" name="totaldebit" id="totaldebit" class="form-control" readonly></th>
+                                                          <th style="text-align: right;"><input type="text" name="totalcredit" id="totalcredit" class="form-control" readonly></th>
+                                                          <th></th>
+                                                          <th></th>
+                                                          <th></th>
+                                                          <th></th>
+                                                        </tr>
+                                                      </tfoot>
+                                                    </table>
+                                                  </div>
+                                                </div>
+
 
                                       </div>
 
@@ -197,15 +223,23 @@ swal({!!Session::pull('sweetalert.json')!!});
 
   <script type="text/javascript">
   $('#search').on('keyup',function(){
-  $value=$(this).val();
-  $.ajax({
-  type : 'get',
-  url : '{{URL::to('search')}}',
-  data:{'search':$value},
-  success:function(data){
-  $('tbody').html(data);
+  $value = $(this).val();
+  var e = window.event || e;
+  var key = e.keyCode;
+  if ($value && key != 32) {
+    $.ajax({
+    type : 'get',
+    url : '{{URL::to('search')}}',
+    data:{'search':$value},
+    success:function(data){
+    $('#show_po').html(data);
+    }
+    });
   }
-  });
+  else {
+    alert('กรุณากรอก PO!');
+  }
+
   })
   </script>
 

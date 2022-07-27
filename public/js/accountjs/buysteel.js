@@ -1,12 +1,12 @@
 $(document).ready(function() {
   console.log( "ready!" );
 
-    $.get('getaccountname', function(res) {
+    $.get('getmaterial', function(res) {
         // console.log(res);
-      var option = '<option disabled selected>โปรดเลือก Accounttype</option>';
+      var option = '<option disabled selected>โปรดเลือกรายการ</option>';
           $.each(res, function(index,value ) { //วนลูป
 
-        option += '<option value="'+value.id+'">'+value.accounttypeno+' '+value.accounttypefull+'</option>';
+        option += '<option value="'+value.id+'">'+value.name+'</option>';
       });
 
 
