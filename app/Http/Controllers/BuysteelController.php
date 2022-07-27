@@ -80,7 +80,7 @@ class BuysteelController extends Controller
           ->where('status',1)
           ->get();
 
-      return $materials
+      return $materials;
     }
 
 

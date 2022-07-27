@@ -121,12 +121,13 @@ swal({!!Session::pull('sweetalert.json')!!});
                                                   <div class="table-responsive">
                                                     <table class="table">
                                                       <thead class="thead-light" id="fontstable">
-                                                          <th width="23%" style="text-align: center;">รายการ</th>
-                                                          <th width="13%" style="text-align: center;">ผลิตได้(ชิ้น)</th>
-                                                          <th width="13%" style="text-align: center;">ราคาทุนวัตถุดิบ</th>
-                                                          <th width="13%" style="text-align: center;">เงินเดือน/ค่าแรง</th>
-                                                          <th width="13%" style="text-align: center;">รวมต้นทุนการผลิต</th>
-                                                          <th width="15%" style="text-align: center;">ต้นทุนการผลิตต่อหน่วย</th>
+                                                          <th width="20%" style="text-align: center;">รายการ</th>
+                                                          <th width="11.6%" style="text-align: center;">ผลิตได้(ชิ้น)</th>
+                                                          <th width="11.6%" style="text-align: center;">ราคาทุนวัตถุดิบ(ต่อชิ้น)</th>
+                                                          <th width="11.6%" style="text-align: center;">ต้นทุนวัตถุดิบที่ใช้(รวม)</th>
+                                                          <th width="11.6%" style="text-align: center;">เงินเดือน/ค่าแรงในการผลิต</th>
+                                                          <th width="11.6%" style="text-align: center;">รวมต้นทุนการผลิต</th>
+                                                          <th width="11.6%" style="text-align: center;">ต้นทุนการผลิตต่อหน่วย</th>
                                                           <th width="10%" style="text-align: center;"><button class="btn-primary add_form_field" type="button">เพิ่มข้อมูล</button></th>
                                                       </thead>
 
