@@ -667,7 +667,7 @@ Route::get('/printsettingpotooldetail', function () { //กระดาษทำ
     $data = Input::all();
 	// print_r($data);
 
-	$pdf = PDF::loadView('printsettingpotooldetail', $data);
+	$pdf = PDF::loadView('setting.printsettingpotooldetail', $data);
     return @$pdf->stream();
 });
 Route::get('/approvedpotoolassetstatus', 'SettingassettoolController@approvedpotoolassetstatus');

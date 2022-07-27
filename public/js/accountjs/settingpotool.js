@@ -82,6 +82,11 @@ function saveapprovedpostatus(){
     var idpoassettool = $('#idpoappoved').val();
     //console.log(idpoassettool);
         $.get('approvedpotoolassetstatus?id='+idpoassettool, function(res) {
+            if(res==1){
+              location.reload();
+            }else{
               console.log(res);
+            }
+
         });
 }

@@ -64,7 +64,8 @@ swal({!!Session::pull('sweetalert.json')!!});
 
                         $sql1 = "SELECT $baseAc1.po_head.*,
                                         $baseAc1.po_to_asset.*,
-                                        $baseAc1.po_to_asset.id as idasset
+                                        $baseAc1.po_to_asset.id as idasset,
+                                        $baseAc1.po_head.id as po_id
                                 FROM $baseAc1.po_to_asset
                                 INNER JOIN $baseAc1.po_head
                                 ON $baseAc1.po_head.po_number = $baseAc1.po_to_asset.po_number";
@@ -105,7 +106,11 @@ swal({!!Session::pull('sweetalert.json')!!});
                                                 };
                                         ?>
                                     </th>
-                                    <th><a href=""><img src="images/global/printall.png"></a></th>
+                                    <th>
+                                      <?php  if($value->status==1){ ?>
+                                              <a href="printsettingpotooldetail?id=<?php echo $value->po_id ?>" target="_blank"><img src="images/global/printall.png"></a>
+                                        <?php };   ?>
+                                    </th>
                                   </tr>
                                 <?php $i++;}
                               }?>
