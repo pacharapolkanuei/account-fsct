@@ -504,10 +504,22 @@ class SettingassettoolController extends Controller
             $data = Input::all();
             $connect1 = Connectdb::Databaseall();
             //print_r($data);
-            $remonth = explode("-",$data);
+            $remonth = explode("-",$data['monthselect']);
+
             $newsetmonth = $remonth[1].'-'.$remonth[0];
             $baseHr = $connect1['hr_base'];
-            echo $sql1 = "SELECT $baseHr.WAGE_HISTORY.*,
+            $sql = "SELECT $baseHr.WAGE_HISTORY.*,
+                            $baseHr.emp_data.code_emp_old,
+                            $baseHr.emp_data.prefixth,
+                            $baseHr.emp_data.nameth,
+                            $baseHr.emp_data.surnameth
+                    FROM $baseHr.WAGE_HISTORY
+                    INNER JOIN $baseHr.emp_data
+                    ON $baseHr.emp_data.idcard_no = $baseHr.WAGE_HISTORY.WAGE_EMP_ID
+                    WHERE $baseHr.WAGE_HISTORY.WAGE_PAY_DATE = '$newsetmonth' ";
+            $getdatahead = DB::select($sql);
+
+            $sql1 = "SELECT $baseHr.WAGE_HISTORY.*,
                             $baseHr.ADD_DEDUCT_HISTORY.*,
                             $baseHr.emp_data.code_emp_old,
                             $baseHr.emp_data.prefixth,
@@ -518,10 +530,17 @@ class SettingassettoolController extends Controller
                     ON $baseHr.WAGE_HISTORY.WAGE_EMP_ID = $baseHr.ADD_DEDUCT_HISTORY.ADD_DEDUCT_THIS_MONTH_EMP_ID
                     INNER JOIN $baseHr.emp_data
                     ON $baseHr.emp_data.idcard_no = $baseHr.WAGE_HISTORY.WAGE_EMP_ID
-                    WHERE $baseHr.WAGE_HISTORY.WAGE_PAY_DATE = '$remonth'
-                    AND $baseHr.ADD_DEDUCT_HISTORY.ADD_DEDUCT_THIS_MONTH_PAY_DATE = '$remonth' ";
-            $getdatas = DB::select($sql1);
+                    WHERE $baseHr.WAGE_HISTORY.WAGE_PAY_DATE = '$newsetmonth'
+                    AND $baseHr.ADD_DEDUCT_HISTORY.ADD_DEDUCT_THIS_MONTH_PAY_DATE = '$newsetmonth' ";
+            $getdatadetail = DB::select($sql1);
 
+            return ['getdatahead'=>$getdatahead,'getdatadetail'=>$getdatadetail];
+
+    }
+
+    public function saveempdateproductthislot(){
+          $data = Input::all();
+          $connect1 = Connectdb::Databaseall();
     }
 
 }

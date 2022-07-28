@@ -16,7 +16,9 @@ $( document ).ready(function() {
          typeassetrefacc = res;
       });
 
-$('.select2').select2();
+$('.select2').select2({
+      dropdownAutoWidth: true
+ });
 
 $('.delete-confirm').on('click', function (event) {
     event.preventDefault();

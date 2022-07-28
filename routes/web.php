@@ -681,10 +681,10 @@ Route::get('/printsettingdmtooldetail', function () { //กระดาษทำ
 	$pdf = PDF::loadView('setting.printsettingdmtooldetail', $data);
     return @$pdf->stream();
 });
-Route::get('/approveddmtoolassetstatus', 'SettingassettoolController@approveddmtoolassetstatus'); 
+Route::get('/approveddmtoolassetstatus', 'SettingassettoolController@approveddmtoolassetstatus');
 Route::get('/getempwageselectmonthproduct', 'SettingassettoolController@getempwageselectmonthproduct');
 Route::get('/getempwageloadproductthislot', 'SettingassettoolController@getempwageloadproductthislot');
-Route::get('/saveempdateproductthislot', 'SettingassettoolController@saveempdateproductthislot');
+Route::post('/saveempdateproductthislot', 'SettingassettoolController@saveempdateproductthislot');
 
 
 ?>

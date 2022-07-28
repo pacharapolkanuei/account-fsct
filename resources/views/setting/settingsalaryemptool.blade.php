@@ -9,15 +9,7 @@ swal({!!Session::pull('sweetalert.json')!!});
 </script>
 @endif
 
-<style media="screen">
-.select2-container .select2-selection--single{
-  height:40px !important;
-}
-.select2-container--default .select2-selection--single{
-  border: 1px solid #ccc !important;
-  border-radius: 0px !important;
-}
-</style>
+
 
   <div class="content-page">
     <!-- Start content -->
@@ -157,7 +149,7 @@ swal({!!Session::pull('sweetalert.json')!!});
                                         </div>
                                         @endif
                                         <!-- //สิ้นสุด ทำการ validate ช่องข้อมูล แสดง error -->
-                                      <form action="savesettingdmtool" method="post" id="myForm" files='true' >
+                                      <form action="saveempdateproductthislot" method="post" id="myForm" files='true' >
                                       <input type="hidden" name="_token" value="{{ csrf_token() }}">
                                       <input type="hidden" name="id_poasset" id="id_poasset" value="0">
                                                 <div class="was-validated form-inline" style="margin: 10px 50px 0px 50px;">
@@ -197,7 +189,7 @@ swal({!!Session::pull('sweetalert.json')!!});
                                                   &nbsp;&nbsp;
                                                   <label id="fontslabel"><b>เลือกพนักงานผลิต :</b></label>
                                                   <div class="col-sm">
-                                                    <select  class="form-control select2" name="empproduct" id="empproduct" onchange="selectgroup()" required>
+                                                    <select  class="form-control select2" name="empproduct" id="empproduct"  required>
                                                       <option value="" selected>เลือกพนักงานผลิต</option>
 
                                                     </select>
@@ -205,7 +197,7 @@ swal({!!Session::pull('sweetalert.json')!!});
 
 
                                                   </div>
-                                                  <button type="button" class="btn btn-primary" data-toggle="modal" onclick="addrowempdate()" data-target="#myModal">
+                                                  <button type="button" class="btn btn-primary"  onclick="addrowempdate()" >
                                                     <i class="fas fa-plus">
                                                       <fonts id="fontscontent">เพิ่มพนักงาน
                                                     </i>
@@ -218,22 +210,47 @@ swal({!!Session::pull('sweetalert.json')!!});
                                                 <table class="table table-bordered table-hover">
                                                   <thead>
                                                   <tr>
-                                                    <th>ลำดับ</th>
-                                                    <th>ชื่อพนักงาน</th>
-                                                    <th>ตำแหน่ง</th>
-                                                    <th>รายได้</th>
-                                                    <th>รายจ่าย</th>
-                                                    <th>จ่ายสุทธิ</th>
-                                                    <th>เงินเดือน/ค่าแรงในการผลิตนี้</th>
+
+                                                    <th rowspan="2">ชื่อพนักงาน</th>
+                                                    <th rowspan="2">ตำแหน่ง</th>
+                                                    <th colspan="4" ><b align="center">รายได้</b></th>
+                                                    <th colspan="4" ><b align="center">รายจ่าย</b></th>
+                                                    <th rowspan="2">จ่ายสุทธิ</th>
+                                                    <th rowspan="2">เงินเดือน/ค่าแรงในการผลิตนี้</th>
+                                                  </tr>
+                                                  <tr>
+                                                    <th>เงินเดือน</th>
+                                                    <th>OT</th>
+                                                    <th>รายรับอื่นๆ</th>
+                                                    <th>รวมรายรับ</th>
+                                                    <th>ประกันสังคม</th>
+                                                    <th>ขาด/ลา</th>
+                                                    <th>หักอื่นๆ</th>
+                                                    <th>รวมรายหัก</th>
+                                                    <th>ลบ</th>
                                                   </tr>
                                                   </thead>
                                                   <tbody id="datatable">
                                                   </tbody>
+                                                </tr>
+                                                <!-- <tr id="callast" style="dispaly:none;">
+                                                  <th colspan="2">รวม</th>
+                                                  <th><b id="grandsalary" class="del"></b></th>
+                                                  <th><b id="grandot" class="del"></b></th>
+                                                  <th><b id="grandincomeetc" class="del"></b></th>
+                                                  <th><b id="grandtotalincome" class="del"></b></th>
+                                                  <th><b id="grandsocial" class="del"></b></th>
+                                                  <th><b id="grandleave" class="del"></b></th>
+                                                  <th><b id="grandpayetc" class="del"></b></th>
+                                                  <th><b id="grandtotalpay" class="del"></b></th>
+                                                  <th><b id="grandnet" class="del"></b></th>
+                                                  <th><b id="grandproductpay" class="del"></b></th>
+                                                  <th></th>
+                                                </tr> -->
                                                 </table>
 
                                       </div>
 
-                                      <!-- Modal footer -->
 
                                       <div class="modal-footer">
 
