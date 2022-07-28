@@ -6,7 +6,7 @@ $(document).ready(function() {
 
 function getdataemptodm(id){
     var lot = $('#lot'+id).val();
-    console.log(lot);
+    // console.log(lot);
     $('#lotthis1').empty();
     $('#lotthis1').append(lot);
 
@@ -15,17 +15,22 @@ function getdataemptodm(id){
 }
 
 function loaddateemp(id){
-     console.log(id);
+     // console.log(id);
       //////   empdata  ///////
 
 }
 
 function changemonth(){
     var monthselect = $('#month').val();
-    console.log(monthselect);
-    loaddateempinput(monthselect);
+      $.get('getempwageselectmonthproduct?monthselect='+monthselect, function(res) {
+          console.log(res);
+
+      });
 }
 
-function loaddateempinput(monthselect){
+
+
+function addrowempdate(){
+
 
 }

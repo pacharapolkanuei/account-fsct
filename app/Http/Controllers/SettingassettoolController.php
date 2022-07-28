@@ -500,4 +500,28 @@ class SettingassettoolController extends Controller
         return view('setting.settingsalaryemptool');
     }
 
+    public function getempwageselectmonthproduct(){
+            $data = Input::all();
+            $connect1 = Connectdb::Databaseall();
+            //print_r($data);
+            $remonth = explode("-",$data);
+            $newsetmonth = $remonth[1].'-'.$remonth[0];
+            $baseHr = $connect1['hr_base'];
+            echo $sql1 = "SELECT $baseHr.WAGE_HISTORY.*,
+                            $baseHr.ADD_DEDUCT_HISTORY.*,
+                            $baseHr.emp_data.code_emp_old,
+                            $baseHr.emp_data.prefixth,
+                            $baseHr.emp_data.nameth,
+                              $baseHr.emp_data.surnameth
+                    FROM $baseHr.WAGE_HISTORY
+                    INNER JOIN $baseHr.ADD_DEDUCT_HISTORY
+                    ON $baseHr.WAGE_HISTORY.WAGE_EMP_ID = $baseHr.ADD_DEDUCT_HISTORY.ADD_DEDUCT_THIS_MONTH_EMP_ID
+                    INNER JOIN $baseHr.emp_data
+                    ON $baseHr.emp_data.idcard_no = $baseHr.WAGE_HISTORY.WAGE_EMP_ID
+                    WHERE $baseHr.WAGE_HISTORY.WAGE_PAY_DATE = '$remonth'
+                    AND $baseHr.ADD_DEDUCT_HISTORY.ADD_DEDUCT_THIS_MONTH_PAY_DATE = '$remonth' ";
+            $getdatas = DB::select($sql1);
+
+    }
+
 }

@@ -179,13 +179,15 @@ swal({!!Session::pull('sweetalert.json')!!});
 
                                                 <br>
                                                 <div class="row">
-                                                  <div class="">
+
                                                       <div class="input-group-prepend">
                                                             &nbsp;&nbsp;<label id="fontslabel"><b>เลือกเดือน : &nbsp;</b></label>
                                                       </div>
-                                                    &nbsp;&nbsp <input type="month" class="form-control "  id="month" name="month" required onchange="changemonth()"></input>
+                                                      <div class="input-group-prepend">
+                                                            &nbsp;&nbsp <input type="month" class="form-control "  id="month" name="month" required onchange="changemonth()"></input>
+                                                      </div>
 
-                                                  </div>
+
 
                                                 </div>
 
@@ -195,12 +197,19 @@ swal({!!Session::pull('sweetalert.json')!!});
                                                   &nbsp;&nbsp;
                                                   <label id="fontslabel"><b>เลือกพนักงานผลิต :</b></label>
                                                   <div class="col-sm">
-                                                    <select style="width: 450px;" class="form-control select2" name="empproduct" id="empproduct" onchange="selectgroup()" required>
+                                                    <select  class="form-control select2" name="empproduct" id="empproduct" onchange="selectgroup()" required>
                                                       <option value="" selected>เลือกพนักงานผลิต</option>
 
                                                     </select>
+
+
+
                                                   </div>
-                                                  <br>
+                                                  <button type="button" class="btn btn-primary" data-toggle="modal" onclick="addrowempdate()" data-target="#myModal">
+                                                    <i class="fas fa-plus">
+                                                      <fonts id="fontscontent">เพิ่มพนักงาน
+                                                    </i>
+                                                  </button>
                                                 </div>
                                                 <br>
 
