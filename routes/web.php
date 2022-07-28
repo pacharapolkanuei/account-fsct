@@ -685,6 +685,12 @@ Route::get('/approveddmtoolassetstatus', 'SettingassettoolController@approveddmt
 Route::get('/getempwageselectmonthproduct', 'SettingassettoolController@getempwageselectmonthproduct');
 Route::get('/getempwageloadproductthislot', 'SettingassettoolController@getempwageloadproductthislot');
 Route::post('/saveempdateproductthislot', 'SettingassettoolController@saveempdateproductthislot');
+Route::get('/printsettingswdetail', function () { //กระดาษทำการ 10 ช่อง (ทั้งหมด)
+    $data = Input::all();
+	// print_r($data);
 
+	$pdf = PDF::loadView('setting.printsettingswdetail', $data);
+    return @$pdf->stream();
+});
 
 ?>
