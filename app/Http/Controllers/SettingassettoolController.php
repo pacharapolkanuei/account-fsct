@@ -541,6 +541,236 @@ class SettingassettoolController extends Controller
     public function saveempdateproductthislot(){
           $data = Input::all();
           $connect1 = Connectdb::Databaseall();
+          $baseHr = $connect1['hr_base'];
+          $emp_code = Session::get('emp_code');
+          $br = Session::get('brcode');
+          print_r($data);
+          $remonth = explode("-",$data['month']);
+
+          $newsetmonth = $remonth[1].'-'.$remonth[0];
+          $totallg = 0;
+            foreach ($data['idwage'] as $key => $value) {
+                  $sql = "SELECT $baseHr.WAGE_HISTORY.*,
+                                    $baseHr.emp_data.code_emp_old,
+                                    $baseHr.emp_data.prefixth,
+                                    $baseHr.emp_data.nameth,
+                                    $baseHr.emp_data.surnameth,
+                                    $baseHr.emp_data.branch_id
+                            FROM $baseHr.WAGE_HISTORY
+                            INNER JOIN $baseHr.emp_data
+                            ON $baseHr.emp_data.idcard_no = $baseHr.WAGE_HISTORY.WAGE_EMP_ID
+                            WHERE $baseHr.WAGE_HISTORY.WAGE_ID = '$value'
+                            AND $baseHr.WAGE_HISTORY.WAGE_PAY_DATE = '$newsetmonth'";
+                    $getdatahead = DB::select($sql);
+
+                    ///////// OT
+                    $sql1 = "SELECT $baseHr.ADD_DEDUCT_HISTORY.ADD_DEDUCT_THIS_MONTH_AMOUNT
+                            FROM $baseHr.WAGE_HISTORY
+                            INNER JOIN $baseHr.ADD_DEDUCT_HISTORY
+                            ON $baseHr.WAGE_HISTORY.WAGE_EMP_ID = $baseHr.ADD_DEDUCT_HISTORY.ADD_DEDUCT_THIS_MONTH_EMP_ID
+                            INNER JOIN $baseHr.emp_data
+                            ON $baseHr.emp_data.idcard_no = $baseHr.WAGE_HISTORY.WAGE_EMP_ID
+                            WHERE $baseHr.WAGE_HISTORY.WAGE_ID = '$value'
+                            AND $baseHr.ADD_DEDUCT_HISTORY.ADD_DEDUCT_THIS_MONTH_TMP_ID = '8'
+                            AND $baseHr.ADD_DEDUCT_HISTORY.ADD_DEDUCT_THIS_MONTH_PAY_DATE = '$newsetmonth'";
+                    $getdatadetailot = DB::select($sql1);
+                    $otthis = 0 ;
+                    if(!empty($getdatadetailot)){
+                        $otthis = $getdatadetailot[0]->ADD_DEDUCT_THIS_MONTH_AMOUNT;
+                    }
+
+                    /////////////// income Etc
+
+                    $sql1 = "SELECT SUM($baseHr.ADD_DEDUCT_HISTORY.ADD_DEDUCT_THIS_MONTH_AMOUNT) as ADD_DEDUCT_THIS_MONTH_AMOUNT
+                            FROM $baseHr.WAGE_HISTORY
+                            INNER JOIN $baseHr.ADD_DEDUCT_HISTORY
+                            ON $baseHr.WAGE_HISTORY.WAGE_EMP_ID = $baseHr.ADD_DEDUCT_HISTORY.ADD_DEDUCT_THIS_MONTH_EMP_ID
+                            INNER JOIN $baseHr.emp_data
+                            ON $baseHr.emp_data.idcard_no = $baseHr.WAGE_HISTORY.WAGE_EMP_ID
+                            WHERE $baseHr.WAGE_HISTORY.WAGE_ID = '$value'
+                            AND $baseHr.ADD_DEDUCT_HISTORY.ADD_DEDUCT_THIS_MONTH_TMP_ID != '8'
+                            AND $baseHr.ADD_DEDUCT_HISTORY.ADD_DEDUCT_THIS_MONTH_TYPE  = '1'
+                            AND $baseHr.ADD_DEDUCT_HISTORY.ADD_DEDUCT_THIS_MONTH_PAY_DATE = '$newsetmonth' ";
+                    $getdatadetailincometc = DB::select($sql1);
+                    $incomeetcthis = 0 ;
+                    if(!empty($getdatadetailincometc)){
+                        $incomeetcthis = $getdatadetailincometc[0]->ADD_DEDUCT_THIS_MONTH_AMOUNT;
+                    }
+
+                    /////////////// socail
+
+                    $sql1 = "SELECT SUM($baseHr.ADD_DEDUCT_HISTORY.ADD_DEDUCT_THIS_MONTH_AMOUNT) as ADD_DEDUCT_THIS_MONTH_AMOUNT
+                            FROM $baseHr.WAGE_HISTORY
+                            INNER JOIN $baseHr.ADD_DEDUCT_HISTORY
+                            ON $baseHr.WAGE_HISTORY.WAGE_EMP_ID = $baseHr.ADD_DEDUCT_HISTORY.ADD_DEDUCT_THIS_MONTH_EMP_ID
+                            INNER JOIN $baseHr.emp_data
+                            ON $baseHr.emp_data.idcard_no = $baseHr.WAGE_HISTORY.WAGE_EMP_ID
+                            WHERE $baseHr.WAGE_HISTORY.WAGE_ID = '$value'
+                            AND $baseHr.ADD_DEDUCT_HISTORY.ADD_DEDUCT_THIS_MONTH_TMP_ID = '38'
+                            AND $baseHr.ADD_DEDUCT_HISTORY.ADD_DEDUCT_THIS_MONTH_PAY_DATE = '$newsetmonth'";
+                    $getdatadetailso= DB::select($sql1);
+                    $sothis = 0 ;
+                    if(!empty($getdatadetailso)){
+                        $sothis = $getdatadetailso[0]->ADD_DEDUCT_THIS_MONTH_AMOUNT;
+                    }
+
+                    /////////////// leave
+
+                    $sql1 = "SELECT SUM($baseHr.ADD_DEDUCT_HISTORY.ADD_DEDUCT_THIS_MONTH_AMOUNT) as ADD_DEDUCT_THIS_MONTH_AMOUNT
+                            FROM $baseHr.WAGE_HISTORY
+                            INNER JOIN $baseHr.ADD_DEDUCT_HISTORY
+                            ON $baseHr.WAGE_HISTORY.WAGE_EMP_ID = $baseHr.ADD_DEDUCT_HISTORY.ADD_DEDUCT_THIS_MONTH_EMP_ID
+                            INNER JOIN $baseHr.emp_data
+                            ON $baseHr.emp_data.idcard_no = $baseHr.WAGE_HISTORY.WAGE_EMP_ID
+                            WHERE $baseHr.WAGE_HISTORY.WAGE_ID = '$value'
+                            AND $baseHr.ADD_DEDUCT_HISTORY.ADD_DEDUCT_THIS_MONTH_TMP_ID = '21'
+                            AND $baseHr.ADD_DEDUCT_HISTORY.ADD_DEDUCT_THIS_MONTH_PAY_DATE = '$newsetmonth'";
+                    $getdatadetailleave= DB::select($sql1);
+                    $leavethis = 0 ;
+                    if(!empty($getdatadetailleave)){
+                        $leavethis = $getdatadetailleave[0]->ADD_DEDUCT_THIS_MONTH_AMOUNT;
+                    }
+
+                    /////////////// leave
+
+                    $sql1 = "SELECT SUM($baseHr.ADD_DEDUCT_HISTORY.ADD_DEDUCT_THIS_MONTH_AMOUNT) as ADD_DEDUCT_THIS_MONTH_AMOUNT
+                            FROM $baseHr.WAGE_HISTORY
+                            INNER JOIN $baseHr.ADD_DEDUCT_HISTORY
+                            ON $baseHr.WAGE_HISTORY.WAGE_EMP_ID = $baseHr.ADD_DEDUCT_HISTORY.ADD_DEDUCT_THIS_MONTH_EMP_ID
+                            INNER JOIN $baseHr.emp_data
+                            ON $baseHr.emp_data.idcard_no = $baseHr.WAGE_HISTORY.WAGE_EMP_ID
+                            WHERE $baseHr.WAGE_HISTORY.WAGE_ID = '$value'
+                            AND $baseHr.ADD_DEDUCT_HISTORY.ADD_DEDUCT_THIS_MONTH_TMP_ID != '21'
+                            AND $baseHr.ADD_DEDUCT_HISTORY.ADD_DEDUCT_THIS_MONTH_TMP_ID != '38'
+                            AND $baseHr.ADD_DEDUCT_HISTORY.ADD_DEDUCT_THIS_MONTH_TYPE  = '2'
+                            AND $baseHr.ADD_DEDUCT_HISTORY.ADD_DEDUCT_THIS_MONTH_PAY_DATE = '$newsetmonth'";
+                    $getdatadetailpayetc= DB::select($sql1);
+                    $payetc = 0 ;
+                    if(!empty($getdatadetailpayetc)){
+                        $payetc = $getdatadetailpayetc[0]->ADD_DEDUCT_THIS_MONTH_AMOUNT;
+                    }
+                    $incomeetcthis = $incomeetcthis+ $otthis + $getdatahead[0]->WAGE_SALARY ;
+                    $arrInert = [ 'id'=>'',
+                                  'bill_of_lading_head_id'=>$data['idbillhead'],
+                                  'idcard'=>$getdatahead[0]->WAGE_EMP_ID,
+                                  'empdata'=>$emp_code,
+                                  'salary'=>$getdatahead[0]->WAGE_SALARY,
+                                  'ot'=>$otthis,
+                                  'incomeetc'=>$incomeetcthis,
+                                  'socialpay'=>$sothis,
+                                  'leavepay'=>$leavethis,
+                                  'payetc'=>$payetc,
+                                  'payreal'=>$getdatahead[0]->WAGE_NET_SALARY,
+                                  'paythisproduct'=>$incomeetcthis,
+                                  'status'=>'1',
+                                  'wage_his_pk'=>$value,
+                                  'date'=>date('Y-m-d H:m:s')
+                                ];
+
+                    // print_r($arrInert);
+                   DB::table($connect1['fsctaccount'].'.emp_data_producttion')->insert($arrInert);
+
+                    $totallg = $totallg + $incomeetcthis + $otthis + $getdatahead[0]->WAGE_SALARY ;
+
+
+
+
+                  }
+                  //////////////////// นอก loop
+
+
+
+                 ///////////////////    บันทึก GL
+               $arrInert = [ 'id'=>'',
+                             'type_module'=>'5',
+                             'number_bill_journal'=>'IDrefBillOfHead'.$data['idbillhead'],
+                             'code_branch'=>$br,
+                             'datebill'=>date('Y-m-d'),
+                             'balance_forward_status'=>0,
+                             'accept'=>1,
+                             'status'=>1,
+                             'totalsum'=>$totallg];
+
+               $lastid = DB::table($connect1['fsctaccount'].'.journal_5')->insertGetId($arrInert);
+
+
+
+                 // dr บันทึกบัญชี  งานระหว่างทำ-นั่งร้าน 266  115301//
+               $totaldr = $totallg;
+
+                 $accmake = '266';
+                 $arrInert = [ 'id'=>'',
+                               'id_journalgeneral_head'=>$lastid,
+                               'accounttype'=>$accmake,
+                               'list'=>'งานระหว่างทำ-นั่งร้าน',
+                               'name_suplier'=>'',
+                               'status'=>1,
+                               'debit'=>$totaldr,
+                               'credit'=>0];
+                 DB::table($connect1['fsctaccount'].'.journalgeneral_detail')->insert($arrInert);
+
+                 $arrInert = [ 'id'=>'',
+                         'dr'=>$totaldr,
+                         'cr'=>0.00,
+                         'acc_code'=>'115301',
+                         'branch'=>$br,
+                         'status'=> 1,
+                         'number_bill'=>'IDrefBillOfHead'.$data['idbillhead'],
+                         'customer_vendor'=>$data['idbillhead'],
+                         'timestamp'=>date('Y-m-d'),
+                         //'code_emp'=>$emp_outs,
+                         'subtotal'=> 0,
+                         'discount'=> 0,
+                         'vat'=> 0,
+                         'vatmoney'=> 0,
+                         // 'wht'=> $withholds,
+                         'whtmoney'=> 0,
+                         'grandtotal'=> $totaldr,
+                         'type_journal' => 5,
+                         'id_type_ref_journal'=>$lastid,
+                         'timereal'=>date('Y-m-d'),
+                         'list'=> 'ค่าแรง งานระหว่างทำ-นั่งร้าน :'.'IDrefBillOfHead'.$data['idbillhead']];
+                 DB::table($connect1['fsctaccount'].'.ledger')->insert($arrInert);
+
+                 // cr บันทึกบัญชี  ค่าใช้จ่ายในการบริหาร-เงินเดือนพนักงาน 168  621101//
+               $totalcr = $totallg;
+
+                 $accsl = '168';
+                 $arrInert = [ 'id'=>'',
+                               'id_journalgeneral_head'=>$lastid,
+                               'accounttype'=>$accsl,
+                               'list'=>'ค่าใช้จ่ายในการบริหาร-เงินเดือนพนักงาน',
+                               'name_suplier'=>'',
+                               'status'=>1,
+                               'debit'=>0,
+                               'credit'=>$totalcr];
+                 DB::table($connect1['fsctaccount'].'.journalgeneral_detail')->insert($arrInert);
+
+                 $arrInert = [ 'id'=>'',
+                         'dr'=>0.00,
+                         'cr'=>$totalcr,
+                         'acc_code'=>'621101',
+                         'branch'=>$br,
+                         'status'=> 1,
+                         'number_bill'=>'IDrefBillOfHead'.$data['idbillhead'],
+                         'customer_vendor'=>$data['idbillhead'],
+                         'timestamp'=>date('Y-m-d'),
+                         //'code_emp'=>$emp_outs,
+                         'subtotal'=> 0,
+                         'discount'=> 0,
+                         'vat'=> 0,
+                         'vatmoney'=> 0,
+                         // 'wht'=> $withholds,
+                         'whtmoney'=> 0,
+                         'grandtotal'=> $totaldr,
+                         'type_journal' => 5,
+                         'id_type_ref_journal'=>$lastid,
+                         'timereal'=>date('Y-m-d'),
+                         'list'=> 'ค่าใช้จ่ายในการบริหาร-เงินเดือนพนักงาน ของ :'.'IDrefBillOfHead'.$data['idbillhead']];
+                 DB::table($connect1['fsctaccount'].'.ledger')->insert($arrInert);
+
+          SWAL::message('สำเร็จ', 'บันทึกรายการ', 'success', ['timer' => 6000]);
+          return redirect()->back();
     }
 
 }

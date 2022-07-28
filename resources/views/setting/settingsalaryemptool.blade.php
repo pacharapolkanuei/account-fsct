@@ -151,7 +151,7 @@ swal({!!Session::pull('sweetalert.json')!!});
                                         <!-- //สิ้นสุด ทำการ validate ช่องข้อมูล แสดง error -->
                                       <form action="saveempdateproductthislot" method="post" id="myForm" files='true' >
                                       <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                                      <input type="hidden" name="id_poasset" id="id_poasset" value="0">
+                                      <input type="hidden" name="idbillhead" id="idbillhead" value="0">
                                                 <div class="was-validated form-inline" style="margin: 10px 50px 0px 50px;">
                                                   <!-- <div class="col-sm-6"> -->
                                                   <div class="row">

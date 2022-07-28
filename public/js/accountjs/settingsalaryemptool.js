@@ -21,7 +21,8 @@ function getdataemptodm(id){
     // console.log(lot);
     $('#lotthis1').empty();
     $('#lotthis1').append(lot);
-
+    $('#idbillhead').val(0);
+    $('#idbillhead').val(id);
     loaddateemp(id)
 
 }
@@ -178,7 +179,7 @@ function addrowempdate(){
 function deleteMe(me) {
 
 
-  
+
     var tr = $(me).closest("tr");
     tr.remove();
     // console.log(me);
