@@ -673,7 +673,13 @@ Route::get('/printsettingpotooldetail', function () { //กระดาษทำ
 Route::get('/approvedpotoolassetstatus', 'SettingassettoolController@approvedpotoolassetstatus');
 Route::get('/getdatedmtool', 'SettingassettoolController@getdatedmtool');
 Route::post('/savesettingdmtool','SettingassettoolController@savesettingdmtool');
+Route::get('/printsettingdmtooldetail', function () { //กระดาษทำการ 10 ช่อง (ทั้งหมด)
+    $data = Input::all();
+	// print_r($data);
 
+	$pdf = PDF::loadView('setting.printsettingdmtooldetail', $data);
+    return @$pdf->stream();
+});
 
 
 
