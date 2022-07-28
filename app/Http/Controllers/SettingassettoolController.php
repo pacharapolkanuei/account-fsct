@@ -16,6 +16,7 @@ use App\Api\Connectdb;
 use Illuminate\Support\Facades\Input;
 use Softon\SweetAlert\Facades\SWAL;
 use App\Api\Datetime;
+use Session;
 
 class SettingassettoolController extends Controller
 {
@@ -256,6 +257,86 @@ class SettingassettoolController extends Controller
 
         SWAL::message('สำเร็จ', 'บันทึกรายการ', 'success', ['timer' => 6000]);
         return 1;
+
+    }
+
+
+    public function settingdmtool(){
+          return view('setting.settingdmtool');
+    }
+
+    public function getdatedmtool(){
+            $data = Input::all();
+            $connect1 = Connectdb::Databaseall();
+            $baseAc1 = $connect1['fsctaccount'];
+            // print_r($data);
+            $id = $data['id'];
+            $sql1 = "SELECT $baseAc1.po_to_asset.*,
+                            $baseAc1.po_head.branch_id,
+                            $baseAc1.po_head.totolsumall as total,
+                            $baseAc1.po_detail.*,
+                            $baseAc1.po_detail.materialid
+                    FROM $baseAc1.po_to_asset
+                    INNER JOIN $baseAc1.po_head
+                    ON $baseAc1.po_head.po_number = $baseAc1.po_to_asset.po_number
+                    INNER JOIN $baseAc1.po_detail
+                    ON $baseAc1.po_head.id = $baseAc1.po_detail.po_headid
+                    WHERE $baseAc1.po_to_asset.status != '99'
+                    AND $baseAc1.po_to_asset.id = '$id'";
+          $getdatas = DB::select($sql1);
+
+          return $getdatas;
+
+    }
+
+    public function savesettingdmtool(){
+        $data = Input::all();
+        $connect1 = Connectdb::Databaseall();
+        $baseAc1 = $connect1['fsctaccount'];
+        $id = $data['id_poasset'];
+        $emp_code = Session::get('emp_code');
+        $sql1 = "SELECT $baseAc1.po_to_asset.*,
+                        $baseAc1.po_head.branch_id,
+                        $baseAc1.po_head.totolsumall as total,
+                        $baseAc1.po_detail.*
+                FROM $baseAc1.po_to_asset
+                INNER JOIN $baseAc1.po_head
+                ON $baseAc1.po_head.po_number = $baseAc1.po_to_asset.po_number
+                INNER JOIN $baseAc1.po_detail
+                ON $baseAc1.po_head.id = $baseAc1.po_detail.po_headid
+                WHERE $baseAc1.po_to_asset.status != '99'
+                AND $baseAc1.po_to_asset.id = '$id'";
+      $getdatas = DB::select($sql1);
+
+      $arrInert = [ 'id'=>'',
+                    'number_bill'=>'BOL'.$getdatas[0]->po_number,
+                    'emp_code'=>$emp_code,
+                    'status'=>'2',
+                    'lot'=>$getdatas[0]->lotnumber,
+                    'po_to_asset_id'=>$id];
+
+      $lastid = DB::table($connect1['fsctaccount'].'.bill_of_lading_head')->insertGetId($arrInert);
+
+
+      foreach ($data['materialid'] as $key => $value) {
+        $ckstatushead = $data['income'][$key]-$data['payout'][$key];
+          if($ckstatushead>0){
+            $sqlUpdate = ' UPDATE '.$baseAc1.'.bill_of_lading_head
+                      SET status = "3"
+                      WHERE '.$baseAc1.'.bill_of_lading_head.id = "'.$lastid.'" ';
+            $lgUpdateResulte = DB::connection('mysql')->select($sqlUpdate);
+          }
+            $arrInert = [ 'id'=>'',
+                          'materialid'=>$value,
+                          'bill_of_lading_head'=>$lastid,
+                          'income'=>$data['income'][$key],
+                          'payout'=>$data['payout'][$key]
+                        ];
+          DB::table($connect1['fsctaccount'].'.bill_of_lading_detail')->insert($arrInert);
+      }
+
+      SWAL::message('สำเร็จ', 'บันทึกรายการ', 'success', ['timer' => 6000]);
+      return redirect()->back();
 
     }
 

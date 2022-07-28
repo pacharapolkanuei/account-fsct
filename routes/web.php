@@ -671,6 +671,8 @@ Route::get('/printsettingpotooldetail', function () { //กระดาษทำ
     return @$pdf->stream();
 });
 Route::get('/approvedpotoolassetstatus', 'SettingassettoolController@approvedpotoolassetstatus');
+Route::get('/getdatedmtool', 'SettingassettoolController@getdatedmtool');
+Route::post('/savesettingdmtool','SettingassettoolController@savesettingdmtool');
 
 
 
