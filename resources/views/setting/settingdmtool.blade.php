@@ -93,9 +93,28 @@ swal({!!Session::pull('sweetalert.json')!!});
                                     <th><?php echo $value->lotnumber;?></th>
                                     <th><?php echo $value->totolsumreal;?></th>
                                     <th>
-                                        <?php  if($value->status==0){
-                                                    echo '<p style="color:blue"><a href="#"  data-toggle="modal" data-target="#exampleModal" onclick="confirmappove('.$value->idasset.')">รอการอนุมัติ</a></p>';
-                                                }else if($value->status==1){
+                                        <?php  if($value->status==0){?>
+                                              <?php
+                                                        $sql2 = "SELECT $baseAc1.bill_of_lading_head.*,
+                                                                        $baseAc1.bill_of_lading_detail.*
+                                                                        $baseAc1.bill_of_lading_head.id as billheadid
+                                                                FROM $baseAc1.bill_of_lading_head
+                                                                INNER JOIN $baseAc1.bill_of_lading_detail
+                                                                ON $baseAc1.bill_of_lading_head.id = $baseAc1.bill_of_lading_detail.bill_of_lading_head
+                                                                WHERE $baseAc1.bill_of_lading_head.status != '99'
+                                                                AND $baseAc1.bill_of_lading_head.po_to_asset_id = '$value->idasset'";
+                                                        $bill_of_lading_head = DB::select($sql2);
+                                                        if(!empty($bill_of_lading_head)){
+                                                            //print_r($bill_of_lading_head);
+                                                            if($bill_of_lading_head[0]->status==2){
+                                                                echo '<p style="color:blue"><a href="#"  data-toggle="modal" data-target="#exampleModal" onclick="confirmappove('.$bill_of_lading_head[0]->billheadid.')">รอการอนุมัติ</a></p>';
+                                                            }elseif($bill_of_lading_head[0]->status==3){
+                                                                echo '<p style="color:orange">ยังมีของค้างในคลัง</p>';
+                                                            }
+                                                        }
+                                              ?>
+
+                                            <?php }else if($value->status==1){
                                                     echo '<p style="color:green">อนุมัติแล้ว</p>';
                                                 }else{
                                                     echo '<p style="color:red">ยกเลิก</p>';
@@ -129,7 +148,8 @@ swal({!!Session::pull('sweetalert.json')!!});
                                     <th>
                                       <?php
                                                 $sql2 = "SELECT $baseAc1.bill_of_lading_head.*,
-                                                                $baseAc1.bill_of_lading_detail.*
+                                                                $baseAc1.bill_of_lading_detail.*,
+                                                                $baseAc1.bill_of_lading_head.id as headid
                                                         FROM $baseAc1.bill_of_lading_head
                                                         INNER JOIN $baseAc1.bill_of_lading_detail
                                                         ON $baseAc1.bill_of_lading_head.id = $baseAc1.bill_of_lading_detail.bill_of_lading_head
@@ -139,7 +159,7 @@ swal({!!Session::pull('sweetalert.json')!!});
                                                 if(!empty($bill_of_lading_head)){
                                                     //print_r($bill_of_lading_head);
                                                     if($bill_of_lading_head[0]->status==2){
-                                                        echo '<p style="color:blue"><a href="#"  data-toggle="modal" data-target="#exampleModal" onclick="confirmappove('.$bill_of_lading_head[0]->id.')">รอการอนุมัติขอ '.$bill_of_lading_head[0]->number_bill.' </a></p>';
+                                                        echo '<p style="color:blue"><a href="#"  data-toggle="modal" data-target="#exampleModal" onclick="confirmappove('.$bill_of_lading_head[0]->headid.')">รอการอนุมัติขอ '.$bill_of_lading_head[0]->number_bill.' </a></p>';
                                                     }elseif($bill_of_lading_head[0]->status==3){?>
                                                         <button type="button" class="btn btn-primary" data-toggle="modal" onclick="getdatadmtool(<?php echo $value->idasset; ?>)" data-target="#myModal">
                                                           <i class="fas fa-plus">
@@ -161,9 +181,9 @@ swal({!!Session::pull('sweetalert.json')!!});
                                               if(!empty($bill_of_lading_head)){
                                                   //print_r($bill_of_lading_head);
                                                   if($bill_of_lading_head[0]->status==2){?>
-                                                        <a href="printsettingpotooldetail?id=<?php echo $value->po_id ?>" target="_blank"><?php echo $bill_of_lading_head[0]->number_bill;?> </a>
+                                                        <a href="printsettingdmtooldetail?id=<?php echo $bill_of_lading_head[0]->headid ?>" target="_blank"><?php echo $bill_of_lading_head[0]->number_bill;?> </a>
                                                   <?php }elseif($bill_of_lading_head[0]->status==3){?>
-                                                        <a href="printsettingpotooldetail?id=<?php echo $value->po_id ?>" target="_blank"><?php echo $bill_of_lading_head[0]->number_bill;?> </a>
+                                                        <a href="printsettingdmtooldetail?id=<?php echo $bill_of_lading_head[0]->headid ?>" target="_blank"><?php echo $bill_of_lading_head[0]->number_bill;?> </a>
                                                   <?php } ?>
                                          <?php } ?>
                                     </th>

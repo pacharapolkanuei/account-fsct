@@ -13,7 +13,7 @@ $(document).ready(function() {
       var i = 1;
 
       $.get('getdatedmtool?id='+id, function(res) {
-              console.log(res);
+            //  console.log(res);
               $('#lotthis').append(res[0].lotnumber);
               $.each(res, function( key, value ) {
                     tableshow += '<tr>';
@@ -59,5 +59,11 @@ $(document).ready(function() {
  }
 
  function confirmappove(idpk){
-
+        console.log(idpk);
+        var urlref = '<a href="printsettingdmtooldetail?id='+idpk+'" target="_blank"> ใบเบิกพิมพ์ :<img src="images/global/printall.png"> </a>';
+        $('#poappove').empty();
+        $('#poappove').append(urlref);
+        $.get('getdatedmtool?id='+id, function(res) {
+                console.log(res);
+        });
  }

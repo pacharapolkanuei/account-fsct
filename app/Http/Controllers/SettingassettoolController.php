@@ -340,4 +340,8 @@ class SettingassettoolController extends Controller
 
     }
 
+    public function approveddmtoolassetstatus(){
+      
+    }
+
 }

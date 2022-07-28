@@ -74,9 +74,30 @@ use Illuminate\Support\Facades\Input;
     <?php
         $db = Connectdb::Databaseall();
         $data = Input::all();
-
         $id = $data['id'];
-        $sql = "SELECT * FROM $db[fsctaccount].po_head  WHERE id ='$id' ";
+        $connect1 = Connectdb::Databaseall();
+        $baseAc1 = $connect1['fsctaccount'];
+        $sql2 = "SELECT $baseAc1.bill_of_lading_head.*,
+                        $baseAc1.bill_of_lading_detail.*,
+                        $baseAc1.po_to_asset.po_number,
+                        $baseAc1.po_head.id as idpo
+                FROM $baseAc1.bill_of_lading_head
+                INNER JOIN $baseAc1.bill_of_lading_detail
+                ON $baseAc1.bill_of_lading_head.id = $baseAc1.bill_of_lading_detail.bill_of_lading_head
+                INNER JOIN $baseAc1.po_to_asset
+                ON $baseAc1.po_to_asset.id = $baseAc1.bill_of_lading_head.po_to_asset_id
+                INNER JOIN $baseAc1.po_head
+                ON $baseAc1.po_head.po_number = $baseAc1.po_to_asset.po_number
+                WHERE $baseAc1.bill_of_lading_head.status != '99'
+                AND $baseAc1.bill_of_lading_head.id = '$id'";
+        $datamain = DB::connection('mysql')->select($sql2);
+
+
+
+
+
+        $idpo = $datamain[0]->idpo;
+        $sql = "SELECT * FROM $db[fsctaccount].po_head  WHERE id ='$idpo' ";
         $datahead = DB::connection('mysql')->select($sql);
         $branch = $datahead[0]->branch_id;
 
@@ -158,7 +179,7 @@ use Illuminate\Support\Facades\Input;
         </tr>
     </table>
 
-    <center><h3>ใบสั่งซื้อ/Purchase Order </h3></center>
+    <center><h3>ใบเบิกสินค้า/ Bill Of Lading</h3></center>
     <?php
     // print_r($datahead[0]->pr_id);
     // exit;
@@ -173,28 +194,15 @@ use Illuminate\Support\Facades\Input;
     ?>
     <table width="100%" border="0">
         <tr>
-            <td width="50%" colspan="2"><font style="font-weight: bold">Date/วันที่  :{{$datahead[0]->date}}</font></td>
-            <td width="50%" colspan="2" align="right"><font style="font-weight: bold">PO NO./เลขที่ใบขออนุมัติซื้อ  :</font>{{$datahead[0]->po_number}}</td>
+            <td width="50%" colspan="2"><font style="font-weight: bold">Date/วันที่  :{{$datamain[0]->datetime}}</font></td>
+            <td width="50%" colspan="2" align="right"><font style="font-weight: bold">NO./เลขที่ใบขออนุมัติซื้อ  :</font>{{$datamain[0]->number_bill}}</td>
         </tr>
         <tr>
-            <td width="50%" colspan="2"><font style="font-weight: bold">Seller/ผู้ขาย  :
-                   <?php
-                    $data = Vendorcenter::getdatavendorcenter($datahead[0]->supplier_id);
-                    print_r($data[0]->pre.'  '.$data[0]->name_supplier);
-
-                   ?>
-                </font></td>
+            <td width="50%" colspan="2"><font style="font-weight: bold">LOT  : {{$datamain[0]->lot}}</font></td>
             <td width="50%" colspan="2" align="right"><font style="font-weight: bold"></td>
         </tr>
         <tr>
-            <td width="100%" colspan="4"><font style="font-weight: bold">Address/ที่อยู่ :
-                <?php
-                    print_r($data[0]->address .'  ตำบล  '.$data[0]->district.'  อำเภอ  '.$data[0]->amphur.'  จังหวัด  '.$data[0]->province);
-
-                    print_r('รหัสไปรษณีย์  '.$data[0]->zipcode .' โทรศัพท์ '.$data[0]->phone);
-
-                ?>
-                </font>
+            <td width="100%" colspan="4"><font style="font-weight: bold">รหัสพนักงาน {{$datamain[0]->emp_code}}</font>
             </td>
         </tr>
     </table>
@@ -203,16 +211,18 @@ use Illuminate\Support\Facades\Input;
     $datadetail = Vendorcenter::getdatapodetail($datahead[0]->id);
     $i = 0;
 
-     $arrwhd = [];
-     $arrTotal = [];
+      $totalincome = 0;
+      $totaldiff = 0;
+      $totalpayout = 0;
      ?>
     <table width="100%" border="1"  cellspacing="0" cellpadding="0">
         <tr valign="top">
             <td width="3%" align="center" bgcolor="#dcdcdc">#</td>
             <td width="25%" align="center"  bgcolor="#dcdcdc">รายการ</td>
             <td width="12%" align="center"  bgcolor="#dcdcdc">ราคาต่อหน่วย</td>
-            <td width="10%" align="center"  bgcolor="#dcdcdc">จำนวน</td>
-            <td width="10%" align="center"  bgcolor="#dcdcdc">รวม</td>
+            <td width="10%" align="center"  bgcolor="#dcdcdc">รับเข้า</td>
+            <td width="10%" align="center"  bgcolor="#dcdcdc">เบิกใข้</td>
+            <td width="10%" align="center"  bgcolor="#dcdcdc">คงเหลือ</td>
 
         </tr>
         <?php foreach ($datadetail as $key => $value){?>
@@ -220,59 +230,41 @@ use Illuminate\Support\Facades\Input;
           <td align="center">  <?php echo $i+1; ?></td>
           <td>&nbsp;&nbsp;<?php echo $value->list.'&nbsp;&nbsp;&nbsp;'.$value->type_amount;?></td>
           <td align="center"><?php echo number_format($value->price,2);?></td>
-          <td align="center"><?php echo $value->amount;?></td>
-          <td align="center"><?php
-          $arrTotal[] = $value->total;
-          echo number_format($value->total,2);?>
+          <td align="center"><?php echo $value->amount; $totalincome= $totalincome+$value->amount; ?></td>
+          <td align="center">
+                <?php
+                        foreach ($datamain as $k => $v) {
+                              if($v->materialid==$value->materialid){
+                                  echo $v->payout;
+                                  $totalpayout = $totalpayout + $v->payout;
+                              }
+                        }
+                ?>
+          </td>
+          <td align="center">
+                <?php
+                        foreach ($datamain as $k => $v) {
+                              if($v->materialid==$value->materialid){
+                                  echo $value->amount-$v->payout;
+                                  $totaldiff = $totaldiff + $value->amount-$v->payout;
+                              }
+                        }
+                ?>
           </td>
 
         </tr>
       <?php $i++; } ?>
         <tr>
-          <td colspan="2" class="no-border-bottom-and-top"></td>
-          <td align="center" colspan="2" bgcolor="#dcdcdc">รวม ภาษีหัก ณ ที่จ่าย</td>
-          <td align="center"><?php $totalwdh = (array_sum($arrTotal)*($datahead[0]->whd/100));
-                    echo number_format($totalwdh,2);
-            ?>
-          </td>
+          <td align="center" colspan="3" bgcolor="#dcdcdc">รวม</td>
+          <td align="center"><?php echo number_format($totalincome,2);?></td>
+          <td align="center"><?php echo number_format($totalpayout,2);?></td>
+          <td align="center"><?php echo number_format($totaldiff,2);?></td>
         </tr>
-        <tr>
-          <td colspan="2" class="no-border-bottom-and-top"></td>
-          <td align="center" colspan="2" bgcolor="#dcdcdc"> ภาษี <?php print_r($datahead[0]->vat) ?> % (บาท)</td>
-          <td align="center"><?php
-                $totalvat = (array_sum($arrTotal)*($datahead[0]->vat/100));
-            echo number_format($totalvat,2);?>
-          </td>
-        </tr>
-        <tr>
-          <td colspan="2" class="no-top" align="center">
-            <?php
-                $totalbeforecal = (float)array_sum($arrTotal) + (float)$totalvat - (float)$totalwdh;
 
-              echo "<b>( ".(Accountcenter::converttobath(number_format($totalbeforecal,2)))." )</b>";
-             ?>
-          </td>
-          <td align="center" colspan="2" bgcolor="#dcdcdc"> รวม สุทธิ (บาท)</td>
-          <td align="center"><?php
-              echo number_format($totalbeforecal,2);
-          ?></td>
-        </tr>
     </table>
     <br>
     <br>
 
-    <table width="100%" border="0">
-        <tr>
-            <td width="10%" valign="top"><b>หมายเหตุ</b></td>
-            <td width="90%">Price are included VAT / ราคาที่สั่งซื้อ เป็นราคาที่ได้รวมภาษีมูลค่าเพิ่มไว้แล้ว <br>
-                Please refer the Purchase Order No. at each Delivery Note/Invoice. กรุณาระบุหมายเลขใบสั่งซื้อทุกครั้งในใบส่งสินค้า/ใบแจ้งหนี้<br>
-                Please issue the receipt in the name of <b><?php print_r($datacompany[0]->name_eng)?></b><br>
-                กรุณาออกใบเสร็จรับเงินในนาม <b><?php print_r($datacompany[0]->name)?></b>
-
-
-            </td>
-        </tr>
-    </table>
 
     <br>
     <br>
@@ -288,24 +280,12 @@ use Illuminate\Support\Facades\Input;
         <tr>
             <td width="50%" align="center">
 
-                (<?php
-
-                $dataemp = Maincenter::getdatacompemp($datahead[0]->emp_code_po);
-                // print_r($dataemp);
-                // exit;
-                print_r($dataemp[0]->nameth.'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'.$dataemp[0]->surnameth);
-                ?>)
+                (....................................................................................)
             </td>
             <td width="50%" align="center">
-              <?php  if(!empty($datahead[0]->code_emp_approve)){?>
-                (
-                <?php
-                $dataempapproved = Maincenter::getdatacompemp($datahead[0]->code_emp_approve);
-                //print_r($datahead[0]->code_emp_approve);
-                print_r($dataempapproved[0]->nameth.'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'.$dataempapproved[0]->surnameth);
-                ?>
-                )
-                <?php } ?>
+
+                (....................................................................................)
+
             </td>
         </tr>
         <tr>

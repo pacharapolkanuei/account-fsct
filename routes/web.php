@@ -680,7 +680,7 @@ Route::get('/printsettingdmtooldetail', function () { //กระดาษทำ
 	$pdf = PDF::loadView('setting.printsettingdmtooldetail', $data);
     return @$pdf->stream();
 });
-
+Route::get('/approveddmtoolassetstatus', 'SettingassettoolController@approveddmtoolassetstatus');
 
 
 
