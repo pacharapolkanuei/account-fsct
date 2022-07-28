@@ -29,8 +29,8 @@ swal({!!Session::pull('sweetalert.json')!!});
                             <div class="breadcrumb-holder" id="fontscontent">
                                 <h1 class="float-left">Account - FSCT</h1>
                                 <ol class="breadcrumb float-right">
-                                  <li class="breadcrumb-item">ทรัพย์สินและค่าเสื่อม</li>
-                                  <li class="breadcrumb-item active">ใบเบิกวัตถุดิบ (ซื้อมาผลิต)</li>
+                                  <li class="breadcrumb-item">ค่าแรงพนักงานผลิต (ซื้อมาผลิต)</li>
+                                  <li class="breadcrumb-item active">ค่าแรงพนักงานผลิต (ซื้อมาผลิต)</li>
                                 </ol>
                                 <div class="clearfix"></div>
                             </div>
@@ -42,7 +42,7 @@ swal({!!Session::pull('sweetalert.json')!!});
                       <div class="card mb-3">
                         <div class="card-header">
                           <h3><i class="fas fa-edit"></i>
-                            <fonts id="fontsheader">ใบเบิกวัตถุดิบ (ซื้อมาผลิต)</fonts>
+                            <fonts id="fontsheader">ค่าแรงพนักงานผลิต (ซื้อมาผลิต)</fonts>
                           </h3>
                         </div>
                         </div><!-- end card-->
@@ -55,15 +55,11 @@ swal({!!Session::pull('sweetalert.json')!!});
                         $baseAc1 = $connect1['fsctaccount'];
                         $baseMan = $connect1['fsctmain'];
 
-                        $sql1 = "SELECT $baseAc1.po_head.*,
-                                        $baseAc1.po_to_asset.*,
-                                        $baseAc1.po_to_asset.id as idasset,
-                                        $baseAc1.po_head.id as po_id
-                                FROM $baseAc1.po_to_asset
-                                INNER JOIN $baseAc1.po_head
-                                ON $baseAc1.po_head.po_number = $baseAc1.po_to_asset.po_number
-                                WHERE $baseAc1.po_to_asset.status = '1'";
-                        $getdatas = DB::select($sql1);
+                        $sql2 = "SELECT $baseAc1.bill_of_lading_head.*
+                                FROM $baseAc1.bill_of_lading_head
+                                WHERE $baseAc1.bill_of_lading_head.status != '99' ";
+
+                        $getdatas = DB::select($sql2);
                         //print_r($getdatas);
                         ?>
                         <div class="table-responsive">
@@ -71,14 +67,12 @@ swal({!!Session::pull('sweetalert.json')!!});
                             <thead>
                               <tr>
                                 <th>ลำดับ</th>
-                                <th>รหัส PO</th>
-                                <th>วันที่ บันทึก</th>
+                                <th>รหัส ใบเบิก</th>
+                                <th>วันที่ เบิก</th>
                                 <th>lot</th>
-                                <th>มูลค่าสุทธิ</th>
-                                <th>สถานะใบPOวัตถุดิบ</th>
                                 <th>สถานะใบเบิก</th>
-                                <th>เบิกวัตถุดิบ</th>
-                                <th>พิมพ์ใบเบิก</th>
+                                <th>เพิ่มพนักงานผลิต</th>
+                                <th>รายละเอียด</th>
                               </tr>
                             </thead>
 
@@ -88,107 +82,30 @@ swal({!!Session::pull('sweetalert.json')!!});
                                  $i=1;foreach ($getdatas as $key => $value) {    ?>
                                   <tr>
                                     <th><?php echo $i;?></th>
-                                    <th><?php echo $value->po_number;?><input type="hidden" id="poshowappoved<?php echo $value->idasset?>" value="<?php echo $value->po_number;?>"></th>
-                                    <th><?php echo $value->datetimestamp;?></th>
-                                    <th><?php echo $value->lotnumber;?></th>
-                                    <th><?php echo $value->totolsumreal;?></th>
+                                    <th><?php echo $value->number_bill;?><input type="hidden" id="poshowappoved<?php echo $value->id?>" value="<?php echo $value->id;?>"></th>
+                                    <th><?php echo $value->datetime;?></th>
+                                    <th><?php echo $value->lot;?><input type="hidden" id="lot<?php echo $value->id?>" value="<?php echo $value->lot?>"></th>
                                     <th>
-                                        <?php  if($value->status==0){?>
-                                              <?php
-                                                        $sql2 = "SELECT $baseAc1.bill_of_lading_head.*,
-                                                                        $baseAc1.bill_of_lading_detail.*
-                                                                        $baseAc1.bill_of_lading_head.id as billheadid
-                                                                FROM $baseAc1.bill_of_lading_head
-                                                                INNER JOIN $baseAc1.bill_of_lading_detail
-                                                                ON $baseAc1.bill_of_lading_head.id = $baseAc1.bill_of_lading_detail.bill_of_lading_head
-                                                                WHERE $baseAc1.bill_of_lading_head.status != '99'
-                                                                AND $baseAc1.bill_of_lading_head.po_to_asset_id = '$value->idasset'";
-                                                        $bill_of_lading_head = DB::select($sql2);
-                                                        if(!empty($bill_of_lading_head)){
-                                                            //print_r($bill_of_lading_head);
-                                                            if($bill_of_lading_head[0]->status==2){
-                                                                echo '<p style="color:blue"><a href="#"  data-toggle="modal" data-target="#exampleModal" onclick="confirmappove('.$bill_of_lading_head[0]->billheadid.')">รอการอนุมัติ</a></p>';
-                                                            }elseif($bill_of_lading_head[0]->status==3){
-                                                                echo '<p style="color:orange">ยังมีของค้างในคลัง</p>';
-                                                            }
-                                                        }
-                                              ?>
-
-                                            <?php }else if($value->status==1){
-                                                    echo '<p style="color:green">อนุมัติแล้ว</p>';
-                                                }else{
-                                                    echo '<p style="color:red">ยกเลิก</p>';
-                                                };
+                                        <?php
+                                              if($value->status==2){
+                                                  echo '<p style="color:blue">เบิกของครบแล้วรออนุมัติ</p>';
+                                              }elseif($value->status==3){
+                                                  echo '<p style="color:orange">ยังมีของค้างในคลัง</p>';
+                                              }elseif($value->status==1){
+                                                  echo '<p style="color:green">อนุมัติเรียบร้อย</p>';
+                                              }else{
+                                                  echo '<p style="color:blue">ยังไม่ได้เบิก</p>';
+                                              }
                                         ?>
                                     </th>
                                     <th>
-                                        <?php
-                                                  $sql2 = "SELECT $baseAc1.bill_of_lading_head.*,
-                                                                  $baseAc1.bill_of_lading_detail.*
-                                                          FROM $baseAc1.bill_of_lading_head
-                                                          INNER JOIN $baseAc1.bill_of_lading_detail
-                                                          ON $baseAc1.bill_of_lading_head.id = $baseAc1.bill_of_lading_detail.bill_of_lading_head
-                                                          WHERE $baseAc1.bill_of_lading_head.status != '99'
-                                                          AND $baseAc1.bill_of_lading_head.po_to_asset_id = '$value->idasset'";
-                                                  $bill_of_lading_head = DB::select($sql2);
-                                                  if(!empty($bill_of_lading_head)){
-                                                      //print_r($bill_of_lading_head);
-                                                      if($bill_of_lading_head[0]->status==2){
-                                                          echo '<p style="color:blue">เบิกของครบแล้วรออนุมัติ</p>';
-                                                      }elseif($bill_of_lading_head[0]->status==3){
-                                                          echo '<p style="color:orange">ยังมีของค้างในคลัง</p>';
-                                                      }
-                                                  }else{
-                                                    echo '<p style="color:blue">ยังไม่ได้เบิก</p>';
-                                                  }
-
-                                        ?>
+                                      <button type="button" class="btn btn-primary" data-toggle="modal" onclick="getdataemptodm(<?php echo $value->id; ?>)" data-target="#myModal">
+                                        <i class="fas fa-plus">
+                                          <fonts id="fontscontent">เพิ่มพนักงานผลิต
+                                        </i>
+                                      </button>
                                     </th>
-
-                                    <th>
-                                      <?php
-                                                $sql2 = "SELECT $baseAc1.bill_of_lading_head.*,
-                                                                $baseAc1.bill_of_lading_detail.*,
-                                                                $baseAc1.bill_of_lading_head.id as headid
-                                                        FROM $baseAc1.bill_of_lading_head
-                                                        INNER JOIN $baseAc1.bill_of_lading_detail
-                                                        ON $baseAc1.bill_of_lading_head.id = $baseAc1.bill_of_lading_detail.bill_of_lading_head
-                                                        WHERE $baseAc1.bill_of_lading_head.status != '99'
-                                                        AND $baseAc1.bill_of_lading_head.po_to_asset_id = '$value->idasset'";
-                                                $bill_of_lading_head = DB::select($sql2);
-                                                if(!empty($bill_of_lading_head)){
-                                                    //print_r($bill_of_lading_head);
-                                                    if($bill_of_lading_head[0]->status==2){
-                                                        echo '<p style="color:blue"><a href="#"  data-toggle="modal" data-target="#exampleModal" onclick="confirmappove('.$bill_of_lading_head[0]->headid.')">รอการอนุมัติขอ '.$bill_of_lading_head[0]->number_bill.' </a></p>';
-                                                    }elseif($bill_of_lading_head[0]->status==3){?>
-                                                        <button type="button" class="btn btn-primary" data-toggle="modal" onclick="getdatadmtool(<?php echo $value->idasset; ?>)" data-target="#myModal">
-                                                          <i class="fas fa-plus">
-                                                            <fonts id="fontscontent">เบิกวัตถุดิบ
-                                                          </i>
-                                                        </button>
-                                                      <?php }
-                                                }else{ ?>
-                                                  <button type="button" class="btn btn-primary" data-toggle="modal" onclick="getdatadmtool(<?php echo $value->idasset; ?>)" data-target="#myModal">
-                                                    <i class="fas fa-plus">
-                                                      <fonts id="fontscontent">เบิกวัตถุดิบ
-                                                    </i>
-                                                  </button>
-                                          <?php } ?>
-
-                                    </th>
-                                    <th>
-                                        <?php
-                                              if(!empty($bill_of_lading_head)){
-                                                  //print_r($bill_of_lading_head);
-                                                  if($bill_of_lading_head[0]->status==2){?>
-                                                        <a href="printsettingdmtooldetail?id=<?php echo $bill_of_lading_head[0]->headid ?>" target="_blank"><?php echo $bill_of_lading_head[0]->number_bill;?> </a>
-                                                  <?php }elseif($bill_of_lading_head[0]->status==3){ ?>
-                                                        <a href="printsettingdmtooldetail?id=<?php echo $bill_of_lading_head[0]->headid ?>" target="_blank"><?php echo $bill_of_lading_head[0]->number_bill;?> </a>
-                                                  <?php }elseif($bill_of_lading_head[0]->status==1){ ?>
-                                                        <a href="printsettingdmtooldetail?id=<?php echo $bill_of_lading_head[0]->headid ?>" target="_blank"><?php echo $bill_of_lading_head[0]->number_bill;?> </a>
-                                               <?php } ?>
-                                            <?php } ?>
-                                    </th>
+                                    <th><!--รายละเอียด--></th>
                                   </tr>
                                 <?php $i++;}
                               }?>
@@ -223,7 +140,7 @@ swal({!!Session::pull('sweetalert.json')!!});
 
                                       <!-- Modal Header -->
                                       <div class="modal-header">
-                                        <h4 class="modal-title" id="fontscontent2"><b>ใบเบิกวัตถุดิบ (ซื้อมาผลิต)</b></h4>
+                                        <h4 class="modal-title" id="fontscontent2"><b>ค่าแรงพนักงานผลิต (ซื้อมาผลิต)</b></h4>
                                         <button type="button" class="close" data-dismiss="modal">&times;</button>
                                       </div>
 
@@ -246,7 +163,7 @@ swal({!!Session::pull('sweetalert.json')!!});
                                                 <div class="was-validated form-inline" style="margin: 10px 50px 0px 50px;">
                                                   <!-- <div class="col-sm-6"> -->
                                                   <div class="row">
-                                                    &nbsp;&nbsp;<label class="mb-2 mr-sm-2" id="fontslabel" for=""><b>Lot :   <b id="lotthis"></b></b></label>
+                                                    &nbsp;&nbsp;<label class="mb-2 mr-sm-2" id="fontslabel" for=""><b>Lot :   <b id="lotthis1"></b></b></label>
                                                     <br>
                                                   </div>
                                                   <!-- </div> -->
@@ -259,25 +176,46 @@ swal({!!Session::pull('sweetalert.json')!!});
                                                   </label>
                                                   <br>
                                                 </div>
+
                                                 <br>
                                                 <div class="row">
-                                                  <label class="mb-2 mr-sm-2" id="fontslabel" for=""><b>รหัสพนักงาน : <?php   echo $fullname= Session::get('fullname');?></b>
-                                                  </label>
+                                                  <div class="">
+                                                      <div class="input-group-prepend">
+                                                            &nbsp;&nbsp;<label id="fontslabel"><b>เลือกเดือน : &nbsp;</b></label>
+                                                      </div>
+                                                    &nbsp;&nbsp <input type="month" class="form-control "  id="month" name="month" required onchange="changemonth()"></input>
+
+                                                  </div>
+
+                                                </div>
+
+                                                <br>
+
+                                                <div class="row">
+                                                  &nbsp;&nbsp;
+                                                  <label id="fontslabel"><b>เลือกพนักงานผลิต :</b></label>
+                                                  <div class="col-sm">
+                                                    <select style="width: 450px;" class="form-control select2" name="empproduct" id="empproduct" onchange="selectgroup()" required>
+                                                      <option value="" selected>เลือกพนักงานผลิต</option>
+
+                                                    </select>
+                                                  </div>
                                                   <br>
                                                 </div>
                                                 <br>
+
 
 
                                                 <table class="table table-bordered table-hover">
                                                   <thead>
                                                   <tr>
                                                     <th>ลำดับ</th>
-                                                    <th>รายการ</th>
-                                                    <th>ปริมาณ</th>
-                                                    <th>ราคาต่อหน่วย</th>
-                                                    <th>รับเข้า</th>
-                                                    <th>เบิกใช้</th>
-                                                    <th>คงเหลือ</th>
+                                                    <th>ชื่อพนักงาน</th>
+                                                    <th>ตำแหน่ง</th>
+                                                    <th>รายได้</th>
+                                                    <th>รายจ่าย</th>
+                                                    <th>จ่ายสุทธิ</th>
+                                                    <th>เงินเดือน/ค่าแรงในการผลิตนี้</th>
                                                   </tr>
                                                   </thead>
                                                   <tbody id="datatable">
@@ -341,7 +279,7 @@ swal({!!Session::pull('sweetalert.json')!!});
 
   <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script> -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
-  <script type="text/javascript" src = 'js/accountjs/settingdmtool.js'></script>
+  <script type="text/javascript" src = 'js/accountjs/settingsalaryemptool.js'></script>
   <script>
       $(document).ready(function() {
       $('#example').DataTable();

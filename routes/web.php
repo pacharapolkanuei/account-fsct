@@ -681,7 +681,8 @@ Route::get('/printsettingdmtooldetail', function () { //กระดาษทำ
     return @$pdf->stream();
 });
 Route::get('/approveddmtoolassetstatus', 'SettingassettoolController@approveddmtoolassetstatus');
-
-
+Route::get('/getempwageselectmonthproduct', 'SettingassettoolController@getempwageselectmonthproduct');
+Route::get('/getempwageloadproductthislot', 'SettingassettoolController@getempwageloadproductthislot');
+Route::get('/saveempdateproductthislot', 'SettingassettoolController@saveempdateproductthislot');
 
 ?>
