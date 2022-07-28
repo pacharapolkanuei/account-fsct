@@ -853,7 +853,6 @@ class SettingassettoolController extends Controller
 
     }
 
-
     public function getmaterialall(){
             $data = Input::all();
             $connect1 = Connectdb::Databaseall();
@@ -863,5 +862,73 @@ class SettingassettoolController extends Controller
                       WHERE $baseMan.material.status != '99' ";
               $getdatas = DB::select($sql2);
           return $getdatas;
+    }
+
+    public function selectmmapping(){
+          $data = Input::all();
+          $connect1 = Connectdb::Databaseall();
+
+          $baseMan = $connect1['fsctmain'];
+          $bill = $data['bill'];
+          $mId =  $data['mId'];
+          //  หาว่าได้ตั้ง ใบเบิกใช้วัสตุตัวไหน
+          $baseAc1 = $connect1['fsctaccount'];
+          $sql2 = "SELECT $baseAc1.bill_of_lading_head.*,
+                          $baseAc1.bill_of_lading_detail.*
+                  FROM $baseAc1.bill_of_lading_head
+                  INNER JOIN $baseAc1.bill_of_lading_detail
+                  ON $baseAc1.bill_of_lading_head.id = $baseAc1.bill_of_lading_detail.bill_of_lading_head
+                  WHERE $baseAc1.bill_of_lading_head.status  = '1'
+                  AND $baseAc1.bill_of_lading_head.number_bill = '$bill' ";
+          $getdatas = DB::select($sql2);
+
+          $arrInGoods  = [];
+            foreach ($getdatas as $a => $b) {
+                $arrInGoods[] = $b->materialid;
+            }
+          $goodIn =  implode(",",$arrInGoods);
+
+          //  ได้วัสดุแล้วมา mapping ว่ามีก่อ goods_to_material_head_id ต้องมี 100%
+             $sql2 = "SELECT $baseMan.goods_to_material_head.*,
+                            $baseMan.goods_to_material_detail.*
+                    FROM $baseMan.goods_to_material_head
+                    INNER JOIN $baseMan.goods_to_material_detail
+                    ON $baseMan.goods_to_material_head.id = $baseMan.goods_to_material_detail.goods_to_material_head_id
+                    WHERE $baseMan.goods_to_material_head.status  = '1'
+                    AND $baseMan.goods_to_material_detail.goodsid IN ($goodIn)
+                    AND $baseMan.goods_to_material_head.material_id = '$mId' ";
+            $getdatamain = DB::select($sql2);
+          if(!empty($getdatamain)){
+            $idSet = $getdatamain[0]->goods_to_material_head_id;
+            $sql2 = "SELECT count($baseMan.goods_to_material_detail.id) as countgoods_to_material_detail
+                    FROM $baseMan.goods_to_material_head
+                    INNER JOIN $baseMan.goods_to_material_detail
+                    ON $baseMan.goods_to_material_head.id = $baseMan.goods_to_material_detail.goods_to_material_head_id
+                    WHERE $baseMan.goods_to_material_head.status  = '1'
+                    AND $baseMan.goods_to_material_detail.goods_to_material_head_id = '$idSet' ";
+            $getdatacksize = DB::select($sql2);
+
+              // print_r($getdatacksize);
+              $sizeSetgood = sizeof($arrInGoods);
+                    if($sizeSetgood==$getdatacksize[0]->countgoods_to_material_detail){
+                          $sql2 = "SELECT $baseMan.goods_to_material_head.amountmain,
+                                        SUM($baseMan.goods_to_material_detail.totalthis) as sumtotalthis
+                                 FROM $baseMan.goods_to_material_head
+                                 INNER JOIN $baseMan.goods_to_material_detail
+                                 ON $baseMan.goods_to_material_head.id = $baseMan.goods_to_material_detail.goods_to_material_head_id
+                                 WHERE $baseMan.goods_to_material_head.status  = '1'
+                                 AND $baseMan.goods_to_material_detail.goodsid IN ($goodIn)
+                                 AND $baseMan.goods_to_material_head.material_id = '$mId' ";
+                         $getdatause = DB::select($sql2);
+                        return $getdatause;
+                    }else{
+                        return 0;
+                    }
+          }else{
+              return 0;
+          }
+
+
+            //
     }
 }

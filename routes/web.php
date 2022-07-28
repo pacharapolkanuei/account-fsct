@@ -707,4 +707,6 @@ Route::get('/printasset_product_tool', function () {
 	$pdf = PDF::loadView('setting.printasset_product_tool', $data);
     return @$pdf->stream();
 });
+Route::post('/saveproductgoodtoproduct', 'SettingassettoolController@saveproductgoodtoproduct');
+
 ?>

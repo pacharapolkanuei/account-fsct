@@ -231,7 +231,7 @@ swal({!!Session::pull('sweetalert.json')!!});
                                                   <th>เงินเดือน/่ค่าแรงพนักงานผลิต</th>
                                                   <th>รวมต้นทุนผลิต</th>
                                                   <th>ต้นทุนผลิตต่อหน่วย</th>
-                                                  <th>ลบ</th>
+
                                                   </tr>
                                                   </thead>
                                                   <tbody id="addrowtb">
@@ -254,13 +254,13 @@ swal({!!Session::pull('sweetalert.json')!!});
 
                                                           </select>
                                                     </td>
-                                                    <td><input type="text" class="form-control mb-2 mr-sm-2" name="produce[]" id="produce0"   readonly></td>
-                                                    <td><input type="text" class="form-control mb-2 mr-sm-2" name="cost[]" id="cost0"   readonly></td>
-                                                    <td><input type="text" class="form-control mb-2 mr-sm-2" name="total_cost[]" id="total_cost0"   readonly></td>
+                                                    <td><input type="text" class="form-control mb-2 mr-sm-2 pd" name="produce[]" id="produce0"   readonly></td>
+                                                    <td><input type="text" class="form-control mb-2 mr-sm-2 ct" name="cost[]" id="cost0"   readonly></td>
+                                                    <td><input type="text" class="form-control mb-2 mr-sm-2 tc" name="total_cost[]" id="total_cost0"   readonly></td>
                                                     <td><input type="text" class="form-control mb-2 mr-sm-2" name="saraly[]" id="saraly0"   readonly></td>
-                                                    <td><input type="text" class="form-control mb-2 mr-sm-2" name="total_cost_produce[]" id="total_cost_produce0"   readonly></td>
-                                                    <td><input type="text" class="form-control mb-2 mr-sm-2" name="cost_produce_unit[]" id="cost_produce_unit0"   readonly></td>
-                                                    <td></td>
+                                                    <td><input type="text" class="form-control mb-2 mr-sm-2 tpc" name="total_cost_produce[]" id="total_cost_produce0"   readonly></td>
+                                                    <td><input type="text" class="form-control mb-2 mr-sm-2 cpu" name="cost_produce_unit[]" id="cost_produce_unit0"   readonly></td>
+                                                  
                                                     </tr>
 
                                                   </tbody>
