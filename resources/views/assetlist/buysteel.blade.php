@@ -97,7 +97,12 @@ swal({!!Session::pull('sweetalert.json')!!});
 
                                                 {!! Form::open(['route' => 'buysteel.store', 'method' => 'post' ]) !!}
                                                   {{ csrf_field() }}
-
+                                                <?php
+                                                  $level_id = Session::get('emp_code');
+                                                  // echo $level_id;
+                                                ?>
+                                                <input type="hidden" name="get_emp" value="{{ $level_id }}">
+                                                
                                                 <div class="was-validated form-inline" style="margin: 10px 50px 0px 50px;">
                                                   <!-- <div class="col-sm-6"> -->
                                                   <div class="row">

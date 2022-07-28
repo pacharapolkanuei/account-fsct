@@ -123,7 +123,7 @@ class BuysteelController extends Controller
           }
 
       SWAL::message('สำเร็จ', 'บันทึกสมุดรายวันทั่วไปแล้ว!', 'success', ['timer' => 6000]);
-      return redirect()->route('journal.general');
+      return redirect()->route('assetlist.buysteel');
     }else {
       SWAL::message('บันทึกล้มเหลว', 'session หมดอายุให้กลับไป Log In !', 'warning', ['timer' => 6000]);
       return redirect()->route('fsctonline.com/fscthr/auth/default/index');

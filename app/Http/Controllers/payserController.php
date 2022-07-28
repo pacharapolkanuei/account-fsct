@@ -338,7 +338,7 @@ class payserController extends Controller
     $connect1 = Connectdb::Databaseall();
     $baseAc1 = $connect1['fsctaccount'];
     $baseHr1 = $connect1['hr_base'];
-    
+
     $get_id_po = $request->get('get_id');
     $array = array($get_id_po);
     $comma_separated = implode(',', $array);
