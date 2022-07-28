@@ -544,7 +544,7 @@ class SettingassettoolController extends Controller
           $baseHr = $connect1['hr_base'];
           $emp_code = Session::get('emp_code');
           $br = Session::get('brcode');
-          print_r($data);
+
           $remonth = explode("-",$data['month']);
 
           $newsetmonth = $remonth[1].'-'.$remonth[0];
@@ -771,6 +771,47 @@ class SettingassettoolController extends Controller
 
           SWAL::message('สำเร็จ', 'บันทึกรายการ', 'success', ['timer' => 6000]);
           return redirect()->back();
+    }
+
+    public function getgoodformaterial(){
+          $connect1 = Connectdb::Databaseall();
+          $baseAc1 = $connect1['fsctaccount'];
+          $sql2 = "SELECT $baseAc1.good.*
+                  FROM $baseAc1.good
+                  WHERE $baseAc1.good.status != '99'
+                  AND $baseAc1.good.status_toolasset = '1' ";
+          $getdatas = DB::select($sql2);
+
+          return $getdatas;
+    }
+
+    public function saveconfiggoodtomaterial(){
+        $data = Input::all();
+        $connect1 = Connectdb::Databaseall();
+        $emp_code = Session::get('emp_code');
+
+
+        $arrInert = [ 'id'=>'',
+                'material_id'=>$data['mproduct'],
+                'status'=>'1',
+                'emp_add'=>$emp_code,
+                'datetime'=>date('Y-m-d H:m:s')
+                ];
+      $lastid = DB::table($connect1['fsctmain'].'.goods_to_material_head')->insertGetId($arrInert);
+
+      foreach ($data['idgood'] as $key => $value) {
+              $arrInert = [ 'id'=>'',
+                      'goods_to_material_head_id'=>$lastid,
+                      'goodsid'=>$value,
+                      'amountpermeet'=>$data['amountpermeet'][$key],
+                      'pricepermeet'=>$data['pricepermeet'][$key],
+                      'totalthis'=>$data['totalthis'][$key]
+                      ];
+            DB::table($connect1['fsctmain'].'.goods_to_material_detail')->insert($arrInert);
+      }
+
+        SWAL::message('สำเร็จ', 'บันทึกรายการ', 'success', ['timer' => 6000]);
+        return redirect()->back();
     }
 
 }

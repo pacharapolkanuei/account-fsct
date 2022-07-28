@@ -179,7 +179,7 @@ use Illuminate\Support\Facades\Input;
         </tr>
     </table>
 
-    <center><h3>ใบเบิกสินค้า/ Bill Of Lading</h3></center>
+    <center><h3>ตารางการจ่ายเงินเดือนและค่าแรง</h3></center>
     <?php
     // print_r($datahead[0]->pr_id);
     // exit;
@@ -268,34 +268,6 @@ use Illuminate\Support\Facades\Input;
 
     <br>
     <br>
-    <table width="100%" border="0">
-        <tr>
-            <td width="50%" align="center">
-                ....................................................................................
-            </td>
-            <td width="50%" align="center">
-                ....................................................................................
-            </td>
-        </tr>
-        <tr>
-            <td width="50%" align="center">
 
-                (....................................................................................)
-            </td>
-            <td width="50%" align="center">
-
-                (....................................................................................)
-
-            </td>
-        </tr>
-        <tr>
-            <td width="50%" align="center">
-                ผู้สั่งซื้อ
-            </td>
-            <td width="50%" align="center">
-                ผู้อนุมัติการสั่งซื้อ
-            </td>
-        </tr>
-    </table>
 </body>
 </html>

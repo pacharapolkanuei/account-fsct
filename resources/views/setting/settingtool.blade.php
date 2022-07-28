@@ -1,3 +1,4 @@
+<?php use App\Api\Connectdb;?>
 @extends('index')
 @section('content')
 <script type="text/javascript" src="https://unpkg.com/sweetalert2@7.0.6/dist/sweetalert2.all.js"></script>
@@ -29,7 +30,7 @@ swal({!!Session::pull('sweetalert.json')!!});
                                 <h1 class="float-left">Account - FSCT</h1>
                                 <ol class="breadcrumb float-right">
                                   <li class="breadcrumb-item">ทรัพย์สินและค่าเสื่อม</li>
-                                  <li class="breadcrumb-item active">ต้นทุนแบบเหล็ก(ซื้อสำเร็จรูป)</li>
+                                  <li class="breadcrumb-item active">การจัดการชิ้นส่วนสินค่าให้เช่า(ซื้อมาผลิต)</li>
                                 </ol>
                                 <div class="clearfix"></div>
                             </div>
@@ -41,7 +42,7 @@ swal({!!Session::pull('sweetalert.json')!!});
                       <div class="card mb-3">
                         <div class="card-header">
                           <h3><i class="fas fa-edit"></i>
-                            <fonts id="fontsheader">ต้นทุนแบบเหล็ก(ซื้อสำเร็จรูป)</fonts>
+                            <fonts id="fontsheader">การจัดการชิ้นส่วนสินค่าให้เช่า(ซื้อมาผลิต)</fonts>
                           </h3>
                         </div>
                         </div><!-- end card-->
@@ -56,6 +57,86 @@ swal({!!Session::pull('sweetalert.json')!!});
                                 </div>
 
                                 <br>
+                                <?php
+                                $connect1 = Connectdb::Databaseall();
+
+                                $baseAc1 = $connect1['fsctaccount'];
+                                $baseMan = $connect1['fsctmain'];
+
+                                $sql1 = "SELECT $baseMan.goods_to_material_head.*,
+                                                $baseMan.material.name
+                                        FROM $baseMan.goods_to_material_head
+                                        INNER JOIN $baseMan.material
+                                        ON $baseMan.material.id = $baseMan.goods_to_material_head.material_id
+                                        WHERE $baseMan.goods_to_material_head.status = '1' ";
+                                $gethead = DB::select($sql1);
+                                //print_r($getdatas);
+                                ?>
+                                <div class="table-responsive">
+                                  <table id="example" class="table table-striped table-bordered fontslabel" style="width:100%">
+                                    <thead>
+                                      <tr>
+                                        <th>Material </th>
+                                        <th>วัตถุดิบ</th>
+                                      </tr>
+                                    </thead>
+
+
+                                    <tbody>
+                                    <?php if(!empty($gethead)){?>
+                                      <?php foreach ($gethead as $key => $value) {?>
+                                        <tr>
+                                          <th><?php echo $value->name;?> </th>
+                                          <th>
+                                            <table class="table table-bordered table-hover">
+                                              <thead>
+                                              <tr>
+                                                <th style="width: 25%;">ชื่อวัตถุดิบ</th>
+                                                <th>กี่เมตร</th>
+                                                <th>ราคาต่อเมตร</th>
+                                                <th>รวมต้นทุน/ชิ้น</th>
+                                              </tr>
+                                                <tbody>
+                                                    <?php
+                                                        $a = 0;
+                                                        $b = 0 ;
+                                                        $c = 0;
+                                                        $sql1 = "SELECT $baseMan.goods_to_material_detail.*,
+                                                                      $baseAc1.good.name
+                                                              FROM $baseMan.goods_to_material_detail
+                                                              INNER JOIN $baseAc1.good
+                                                              ON $baseMan.goods_to_material_detail.goodsid = $baseAc1.good.id
+                                                              WHERE $baseMan.goods_to_material_detail.goods_to_material_head_id = '$value->id' ";
+                                                      $getheaddetail = DB::select($sql1);
+                                                    ?>
+                                                    <?php foreach ($getheaddetail as $k => $v):
+                                                        $a = $a + $v->amountpermeet;
+                                                        $b = $b + $v->pricepermeet;
+                                                        $c = $c + $v->totalthis;
+                                                      ?>
+                                                    <tr>
+                                                      <td style="width: 25%;"><?php echo $v->name;?></td>
+                                                      <td><?php echo $v->amountpermeet;?></td>
+                                                      <td><?php echo $v->pricepermeet;?></td>
+                                                      <td><?php echo $v->totalthis;?></td>
+                                                    </tr>
+                                                    <?php endforeach; ?>
+                                                    <tr>
+                                                      <th style="width: 25%;">รวม</th>
+                                                      <th><?php echo $a;?></th>
+                                                      <th><?php echo $b;?></th>
+                                                      <th><?php echo $c;?></th>
+                                                    </tr>
+                                                </tbody>
+                                              </thead>
+                                            </table>
+                                          </th>
+                                        </tr>
+                                      <?php } ?>
+                                    <?php } ?>
+                                    </tbody>
+                                  </table><br>
+                                </div>
 
                                 <!-- แสดง error กรอกข้อมูลไม่ครบ -->
                                 @if ($errors->any())
@@ -72,12 +153,12 @@ swal({!!Session::pull('sweetalert.json')!!});
                                 <br>
                                 <!-- The Modal -->
                                 <div class="modal fade" id="myModal">
-                                  <div class="modal-dialog modal-xl">
+                                  <div class="modal-dialog modal-xl" style="max-width: 80%;">
                                     <div class="modal-content">
 
                                       <!-- Modal Header -->
                                       <div class="modal-header">
-                                        <h4 class="modal-title" id="fontscontent2"><b>ต้นทุนแบบเหล็ก(ซื้อสำเร็จรูป)</b></h4>
+                                        <h4 class="modal-title" id="fontscontent2"><b>การจัดการชิ้นส่วนสินค่าให้เช่า(ซื้อมาผลิต)</b></h4>
                                         <button type="button" class="close" data-dismiss="modal">&times;</button>
                                       </div>
 
@@ -95,32 +176,55 @@ swal({!!Session::pull('sweetalert.json')!!});
                                         @endif
                                         <!-- //สิ้นสุด ทำการ validate ช่องข้อมูล แสดง error -->
 
+                                          <form action="saveconfiggoodtomaterial" method="post" id="myForm" files='true' >
+                                          <input type="hidden" name="_token" value="{{ csrf_token() }}">
 
-
-                                                <div class="was-validated form-inline" style="margin: 10px 50px 0px 50px;">
+                                                <div class="row" >
                                                   <!-- <div class="col-sm-6"> -->
-                                                  <div class="row">
-                                                    <label class="mb-2 mr-sm-2" id="fontslabel" for=""><b>Lot :</b></label>
-                                                    <input type="text" class="form-control mb-2 mr-sm-2" name="lotnumber"required>
+                                                  <div class="col-sm-6">
+                                                    <label class="mb-2 mr-sm-2" id="fontslabel" for=""><b>Material :</b></label>
+                                                  </div>
+                                                  <div class="col-sm-6">
+                                                    <?php
+                                                    $connect1 = Connectdb::Databaseall();
+                                                    $baseAc1 = $connect1['fsctaccount'];
+                                                    $baseMan = $connect1['fsctmain'];
+                                                      $sql2 = "SELECT $baseMan.material.*
+                                                              FROM $baseMan.material
+                                                              WHERE $baseMan.material.status != '99' ";
+                                                      $getdatas = DB::select($sql2);
+                                                    ?>
+                                                    <select  class="form-control select2" name="mproduct" id="mproduct"  required>
+                                                      <option value="" selected >เลือกสินค้า</option>
+                                                      <?php foreach ($getdatas as $key => $value) {  ?>
+                                                          <option value="<?php echo $value->id?>"  ><?php echo  $value->name;?></option>
+                                                      <?php } ?>
 
-                                                    &nbsp;&nbsp;<label class="mb-2 mr-sm-2" id="fontslabel" for=""><b>วันที่ผลิตเสร็จ :</b></label>
-                                                    <input type="date" autocomplete="off" class="form-control mb-2 mr-sm-2" name="datenow" required>
-
-                                                    &nbsp;&nbsp;<label class="mb-2 mr-sm-2" for="modal-input-priceservice" id="fontslabel"><b>PO :</b></label>
-                                                    <input type="text" class="form-controller" id="search" name="search"></input>
-                                                    <br>
-
+                                                    </select>
                                                   </div>
                                                   <!-- </div> -->
+                                                </div>
+                                                <br>
+                                                <br>
+                                                <!-- Button to Open the Modal -->
+                                                <div>
+                                                  <button type="button" class="btn btn-primary" onclick="addrow()"   style="float: right;margin: 0px 12px 10px 10px;" >
+                                                    <i class="fas fa-plus">
+                                                      <fonts id="fontscontent">เพิ่มข้อมูลวัตถุดิบ
+                                                    </i>
+                                                  </button>
                                                 </div>
                                                 <table class="table table-bordered table-hover">
                                                   <thead>
                                                   <tr>
-                                                  <th>เลขที่ PO</th>
-                                                  <th>จำนวนเงิน</th>
+                                                  <th style="width: 25%;">ชื่อวัตถุดิบ</th>
+                                                  <th>กี่เมตร</th>
+                                                  <th>ราคาต่อเมตร</th>
+                                                  <th>รวมต้นทุน/ชิ้น</th>
+                                                  <th>ลบ</th>
                                                   </tr>
                                                   </thead>
-                                                  <tbody>
+                                                  <tbody id="addrowtb">
                                                   </tbody>
                                                 </table>
 
@@ -188,7 +292,7 @@ swal({!!Session::pull('sweetalert.json')!!});
 
   <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script> -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
-  <script type="text/javascript" src = 'js/accountjs/buysteel.js'></script>
+  <script type="text/javascript" src = 'js/accountjs/settingtool.js'></script>
   <script>
       $(document).ready(function() {
       $('#example').DataTable();

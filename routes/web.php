@@ -692,5 +692,10 @@ Route::get('/printsettingswdetail', function () { //กระดาษทำก�
 	$pdf = PDF::loadView('setting.printsettingswdetail', $data);
     return @$pdf->stream();
 });
+Route::get('/getgoodformaterial', 'SettingassettoolController@getgoodformaterial');
+Route::post('/saveconfiggoodtomaterial', 'SettingassettoolController@saveconfiggoodtomaterial');
+
+asset_product_tool
+
 
 ?>

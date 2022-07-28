@@ -97,7 +97,17 @@ swal({!!Session::pull('sweetalert.json')!!});
                                         </i>
                                       </button>
                                     </th>
-                                    <th><!--รายละเอียด--></th>
+                                    <th>
+                                      <?PHP
+                                      $sql2 = "SELECT $baseAc1.emp_data_producttion.*
+                                              FROM $baseAc1.emp_data_producttion
+                                              WHERE $baseAc1.emp_data_producttion.id != '$value->id' ";
+
+                                      $getdatasdetail = DB::select($sql2);
+                                      if(!empty($getdatasdetail)){ ?>
+                                            <a href="printsettingswdetail?id=<?php echo $value->id ?>" target="_blank"><img src="images/global/printall.png"></a>
+                                      <?php }  ?>
+                                    </th>
                                   </tr>
                                 <?php $i++;}
                               }?>
