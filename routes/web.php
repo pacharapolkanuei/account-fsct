@@ -685,7 +685,7 @@ Route::get('/approveddmtoolassetstatus', 'SettingassettoolController@approveddmt
 Route::get('/getempwageselectmonthproduct', 'SettingassettoolController@getempwageselectmonthproduct');
 Route::get('/getempwageloadproductthislot', 'SettingassettoolController@getempwageloadproductthislot');
 Route::post('/saveempdateproductthislot', 'SettingassettoolController@saveempdateproductthislot');
-Route::get('/printsettingswdetail', function () { //กระดาษทำการ 10 ช่อง (ทั้งหมด)
+Route::get('/printsettingswdetail', function () {
     $data = Input::all();
 	// print_r($data);
 
@@ -695,7 +695,16 @@ Route::get('/printsettingswdetail', function () { //กระดาษทำก�
 Route::get('/getgoodformaterial', 'SettingassettoolController@getgoodformaterial');
 Route::post('/saveconfiggoodtomaterial', 'SettingassettoolController@saveconfiggoodtomaterial');
 
-asset_product_tool
+Route::get('/asset_product_tool', 'SettingassettoolController@asset_product_tool');
+Route::get('/seachbillofladinghead', 'SettingassettoolController@seachbillofladinghead');
+Route::get('/getmaterialall', 'SettingassettoolController@getmaterialall');
+Route::get('/selectmmappingg', 'SettingassettoolController@selectmmappingg');
+Route::get('/approveasset_product_tool', 'SettingassettoolController@approveasset_product_tool');
+Route::get('/printasset_product_tool', function () {
+    $data = Input::all();
+	// print_r($data);
 
-
+	$pdf = PDF::loadView('setting.printasset_product_tool', $data);
+    return @$pdf->stream();
+});
 ?>

@@ -795,7 +795,8 @@ class SettingassettoolController extends Controller
                 'material_id'=>$data['mproduct'],
                 'status'=>'1',
                 'emp_add'=>$emp_code,
-                'datetime'=>date('Y-m-d H:m:s')
+                'datetime'=>date('Y-m-d H:m:s'),
+                'amountmain'=>$data['amountmain']
                 ];
       $lastid = DB::table($connect1['fsctmain'].'.goods_to_material_head')->insertGetId($arrInert);
 
@@ -814,4 +815,53 @@ class SettingassettoolController extends Controller
         return redirect()->back();
     }
 
+    public function asset_product_tool(){
+            return view('setting.asset_product_tool');
+
+    }
+
+    public function seachbillofladinghead(){
+        $data = Input::all();
+        $connect1 = Connectdb::Databaseall();
+
+        $bill = $data['bill'];
+
+        /////// bill_of_lading_head
+        $baseAc1 = $connect1['fsctaccount'];
+        $sql2 = "SELECT $baseAc1.bill_of_lading_head.*
+                FROM $baseAc1.bill_of_lading_head
+                WHERE $baseAc1.bill_of_lading_head.status  = '1'
+                AND $baseAc1.bill_of_lading_head.number_bill = '$bill' ";
+        $getdatas = DB::select($sql2);
+
+        if(!empty($getdatas)){
+          ////// sum sw  emp_data_producttion
+          $idheadbill = $getdatas[0]->id;
+          $sql2 = "SELECT sum($baseAc1.emp_data_producttion.paythisproduct) as sumpaythisproduct
+                  FROM $baseAc1.emp_data_producttion
+                  WHERE $baseAc1.emp_data_producttion.status  = '1'
+                  AND $baseAc1.emp_data_producttion.bill_of_lading_head_id = '$idheadbill' ";
+          $sumpaythisproduct = DB::select($sql2);
+              return ['billhead'=>$getdatas,'sumpaythisproduct'=>$sumpaythisproduct];
+        }else{
+              return 0;
+        }
+
+
+
+
+
+    }
+
+
+    public function getmaterialall(){
+            $data = Input::all();
+            $connect1 = Connectdb::Databaseall();
+            $baseMan = $connect1['fsctmain'];
+              $sql2 = "SELECT $baseMan.material.*
+                      FROM $baseMan.material
+                      WHERE $baseMan.material.status != '99' ";
+              $getdatas = DB::select($sql2);
+          return $getdatas;
+    }
 }

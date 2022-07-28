@@ -30,7 +30,7 @@ swal({!!Session::pull('sweetalert.json')!!});
                                 <h1 class="float-left">Account - FSCT</h1>
                                 <ol class="breadcrumb float-right">
                                   <li class="breadcrumb-item">ทรัพย์สินและค่าเสื่อม</li>
-                                  <li class="breadcrumb-item active">การจัดการชิ้นส่วนสินค่าให้เช่า(ซื้อมาผลิต)</li>
+                                  <li class="breadcrumb-item active">เพิ่มรายการต้นทุนแบบเหล็ก(ซื้อมาผลิต)</li>
                                 </ol>
                                 <div class="clearfix"></div>
                             </div>
@@ -42,7 +42,7 @@ swal({!!Session::pull('sweetalert.json')!!});
                       <div class="card mb-3">
                         <div class="card-header">
                           <h3><i class="fas fa-edit"></i>
-                            <fonts id="fontsheader">การจัดการชิ้นส่วนสินค่าให้เช่า(ซื้อมาผลิต)</fonts>
+                            <fonts id="fontsheader">เพิ่มรายการต้นทุนแบบเหล็ก(ซื้อมาผลิต)</fonts>
                           </h3>
                         </div>
                         </div><!-- end card-->
@@ -86,7 +86,7 @@ swal({!!Session::pull('sweetalert.json')!!});
                                     <?php if(!empty($gethead)){?>
                                       <?php foreach ($gethead as $key => $value) {?>
                                         <tr>
-                                          <th><?php echo $value->name;?> (<?php echo $value->amountmain;?>)ชิ้น </th>
+                                          <th><?php echo $value->name;?> </th>
                                           <th>
                                             <table class="table table-bordered table-hover">
                                               <thead>
@@ -176,42 +176,38 @@ swal({!!Session::pull('sweetalert.json')!!});
                                         @endif
                                         <!-- //สิ้นสุด ทำการ validate ช่องข้อมูล แสดง error -->
 
-                                          <form action="saveconfiggoodtomaterial" method="post" id="myForm" files='true' >
+                                          <form action="saveproductgoodtoproduct" method="post" id="myForm" files='true' >
                                           <input type="hidden" name="_token" value="{{ csrf_token() }}">
 
                                                 <div class="row" >
                                                   <!-- <div class="col-sm-6"> -->
-                                                  <div class="col-sm-6">
-                                                    <label class="mb-2 mr-sm-2" id="fontslabel" for=""><b>Material :</b></label>
+                                                  <div class="col-sm-2">
+                                                    <label class="mb-2 mr-sm-2" id="fontslabel" for=""><b>ใบเบิกวัตถุดิบ :</b></label>
                                                   </div>
-                                                  <div class="col-sm-6">
-                                                    <?php
-                                                    $connect1 = Connectdb::Databaseall();
-                                                    $baseAc1 = $connect1['fsctaccount'];
-                                                    $baseMan = $connect1['fsctmain'];
-                                                      $sql2 = "SELECT $baseMan.material.*
-                                                              FROM $baseMan.material
-                                                              WHERE $baseMan.material.status != '99' ";
-                                                      $getdatas = DB::select($sql2);
-                                                    ?>
-                                                    <select  class="form-control select2" name="mproduct" id="mproduct"  required>
-                                                      <option value="" selected >เลือกสินค้า</option>
-                                                      <?php foreach ($getdatas as $key => $value) {  ?>
-                                                          <option value="<?php echo $value->id?>"  ><?php echo  $value->name;?></option>
-                                                      <?php } ?>
-
-                                                    </select>
+                                                  <div class="col-sm-3">
+                                                    <input type="text" class="form-control mb-2 mr-sm-2" name="bill_of_lading_head" id="bill_of_lading_head" onblur="seachbillhead()" required="">
                                                   </div>
                                                   <!-- </div> -->
                                                 </div>
                                                 <br>
                                                 <div class="row" >
                                                   <!-- <div class="col-sm-6"> -->
-                                                  <div class="col-sm-6">
-                                                    <label class="mb-2 mr-sm-2" id="fontslabel" for=""><b>ผลิตได้ :</b></label>
+                                                  <div class="col-sm-2">
+                                                    <label class="mb-2 mr-sm-2" id="fontslabel" for=""><b>วันที่ผลิตเสร็จ :</b></label>
                                                   </div>
-                                                  <div class="col-sm-6">
-                                                    <input type="text" class="form-control mb-2 mr-sm-2" name="amountmain"  required="">
+                                                  <div class="col-sm-3">
+                                                    <input type="text" class="form-control mb-2 mr-sm-2" name="datein" id="datein"  value="<?php echo date('Y-m-d');?>" readonly>
+                                                  </div>
+                                                  <!-- </div> -->
+                                                </div>
+                                                <br>
+                                                <div class="row" >
+                                                  <!-- <div class="col-sm-6"> -->
+                                                  <div class="col-sm-2">
+                                                    <label class="mb-2 mr-sm-2" id="fontslabel" for=""><b>Lot :</b></label>
+                                                  </div>
+                                                  <div class="col-sm-3">
+                                                    <input type="text" class="form-control mb-2 mr-sm-2" name="LotShow" id="LotShow"   readonly>
                                                   </div>
                                                   <!-- </div> -->
                                                 </div>
@@ -221,22 +217,62 @@ swal({!!Session::pull('sweetalert.json')!!});
                                                 <div>
                                                   <button type="button" class="btn btn-primary" onclick="addrow()"   style="float: right;margin: 0px 12px 10px 10px;" >
                                                     <i class="fas fa-plus">
-                                                      <fonts id="fontscontent">เพิ่มข้อมูลวัตถุดิบ
+                                                      <fonts id="fontscontent">เพิ่มข้อมูลสินค้าผลิต
                                                     </i>
                                                   </button>
                                                 </div>
                                                 <table class="table table-bordered table-hover">
                                                   <thead>
                                                   <tr>
-                                                  <th style="width: 25%;">ชื่อวัตถุดิบ</th>
-                                                  <th>กี่เมตร</th>
-                                                  <th>ราคาต่อเมตร</th>
-                                                  <th>รวมต้นทุน/ชิ้น</th>
+                                                  <th style="width: 25%;">รายการ</th>
+                                                  <th>ผลิตได้</th>
+                                                  <th>ราคาทุนต่อวัตถุดิบ</th>
+                                                  <th>ต้นทุนวัตถุดิบที่ใช้</th>
+                                                  <th>เงินเดือน/่ค่าแรงพนักงานผลิต</th>
+                                                  <th>รวมต้นทุนผลิต</th>
+                                                  <th>ต้นทุนผลิตต่อหน่วย</th>
                                                   <th>ลบ</th>
                                                   </tr>
                                                   </thead>
                                                   <tbody id="addrowtb">
+                                                    <tr>
+                                                    <td style="width: 25%;">
+                                                          <?php
+                                                          $connect1 = Connectdb::Databaseall();
+                                                          $baseAc1 = $connect1['fsctaccount'];
+                                                          $baseMan = $connect1['fsctmain'];
+                                                            $sql2 = "SELECT $baseMan.material.*
+                                                                    FROM $baseMan.material
+                                                                    WHERE $baseMan.material.status != '99' ";
+                                                            $getdatas = DB::select($sql2);
+                                                          ?>
+                                                          <select  class="form-control select2" name="material_id[]" onchange="calmapping(0)" id="mproduct0"  required>
+                                                            <option value="" selected >เลือกสินค้า</option>
+                                                            <?php foreach ($getdatas as $key => $value) {  ?>
+                                                                <option value="<?php echo $value->id?>"  ><?php echo  $value->name;?></option>
+                                                            <?php } ?>
+
+                                                          </select>
+                                                    </td>
+                                                    <td><input type="text" class="form-control mb-2 mr-sm-2" name="produce[]" id="produce0"   readonly></td>
+                                                    <td><input type="text" class="form-control mb-2 mr-sm-2" name="cost[]" id="cost0"   readonly></td>
+                                                    <td><input type="text" class="form-control mb-2 mr-sm-2" name="total_cost[]" id="total_cost0"   readonly></td>
+                                                    <td><input type="text" class="form-control mb-2 mr-sm-2" name="saraly[]" id="saraly0"   readonly></td>
+                                                    <td><input type="text" class="form-control mb-2 mr-sm-2" name="total_cost_produce[]" id="total_cost_produce0"   readonly></td>
+                                                    <td><input type="text" class="form-control mb-2 mr-sm-2" name="cost_produce_unit[]" id="cost_produce_unit0"   readonly></td>
+                                                    <td></td>
+                                                    </tr>
+
                                                   </tbody>
+                                                  <tr>
+                                                  <th style="width: 25%;">รวม</th>
+                                                  <td><input type="text" class="form-control mb-2 mr-sm-2"  id="produceshow" value="0"   readonly></td>
+                                                  <td><input type="text" class="form-control mb-2 mr-sm-2"  id="costshow"  value="0"  readonly></td>
+                                                  <td><input type="text" class="form-control mb-2 mr-sm-2"  id="total_costshow"  value="0"   readonly></td>
+                                                  <td><input type="text" class="form-control mb-2 mr-sm-2"  id="saralyshow"  value="0"   readonly></td>
+                                                  <td><input type="text" class="form-control mb-2 mr-sm-2"  id="total_cost_produceshow"   value="0"  readonly></td>
+                                                  <td><input type="text" class="form-control mb-2 mr-sm-2"  id="cost_produce_unitshow"   value="0"  readonly></td>
+                                                  </tr>
                                                 </table>
 
                                       </div>
@@ -303,7 +339,7 @@ swal({!!Session::pull('sweetalert.json')!!});
 
   <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script> -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
-  <script type="text/javascript" src = 'js/accountjs/settingtool.js'></script>
+  <script type="text/javascript" src = 'js/accountjs/asset_product_tool.js'></script>
   <script>
       $(document).ready(function() {
       $('#example').DataTable();

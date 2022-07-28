@@ -141,7 +141,6 @@ use App\Api\Connectdb;
                     <a href="#" id="fontsmenu2"><span>เพิ่มรายการต้นทุนแบบเหล็ก(ซื้อมาผลิต)</span> <span class="menu-arrow"></span> </a>
                         <ul style="">
                             <li><a href="/account-fsct/public/asset_product_tool" id="fontsmenu2">เพิ่มรายการต้นทุนแบบเหล็ก(ซื้อมาผลิต)</a></li>
-                            <li><a href="/account-fsct/public/asset_approve_product_tool" id="fontsmenu2">อนุมัติรายการต้นทุนแบบเหล็ก(ซื้อมาผลิต)</a></li>
                             <li><a href="/account-fsct/public/settingpotool" id="fontsmenu2">ใบ POวัตถุดิบ (ซื้อมาผลิต)</a></li>
                             <li><a href="/account-fsct/public/settingdmtool" id="fontsmenu2">ใบเบิกวัตถุดิบ (ซื้อมาผลิต)</a></li>
                             <li><a href="/account-fsct/public/settingsalaryemptool" id="fontsmenu2">ค่าแรงพนักงานผลิต (ซื้อมาผลิต)</a></li>
