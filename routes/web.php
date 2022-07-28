@@ -698,7 +698,7 @@ Route::post('/saveconfiggoodtomaterial', 'SettingassettoolController@saveconfigg
 Route::get('/asset_product_tool', 'SettingassettoolController@asset_product_tool');
 Route::get('/seachbillofladinghead', 'SettingassettoolController@seachbillofladinghead');
 Route::get('/getmaterialall', 'SettingassettoolController@getmaterialall');
-Route::get('/selectmmappingg', 'SettingassettoolController@selectmmappingg');
+Route::get('/selectmmapping', 'SettingassettoolController@selectmmapping');
 Route::get('/approveasset_product_tool', 'SettingassettoolController@approveasset_product_tool');
 Route::get('/printasset_product_tool', function () {
     $data = Input::all();
