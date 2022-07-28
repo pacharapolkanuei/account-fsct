@@ -341,7 +341,162 @@ class SettingassettoolController extends Controller
     }
 
     public function approveddmtoolassetstatus(){
-      
+          $data = Input::all();
+
+          $id = $data['id'];
+          $connect1 = Connectdb::Databaseall();
+          $baseAc1 = $connect1['fsctaccount'];
+
+          $sqlUpdate = ' UPDATE '.$baseAc1.'.bill_of_lading_head
+                    SET status = "1"
+                    WHERE '.$baseAc1.'.bill_of_lading_head.id = "'.$id.'" ';
+          $lgUpdateResulte = DB::connection('mysql')->select($sqlUpdate);
+
+
+          $sql2 = "SELECT $baseAc1.bill_of_lading_head.*,
+                          $baseAc1.bill_of_lading_detail.*,
+                          $baseAc1.po_to_asset.po_number,
+                          $baseAc1.po_head.id as idpo
+                  FROM $baseAc1.bill_of_lading_head
+                  INNER JOIN $baseAc1.bill_of_lading_detail
+                  ON $baseAc1.bill_of_lading_head.id = $baseAc1.bill_of_lading_detail.bill_of_lading_head
+                  INNER JOIN $baseAc1.po_to_asset
+                  ON $baseAc1.po_to_asset.id = $baseAc1.bill_of_lading_head.po_to_asset_id
+                  INNER JOIN $baseAc1.po_head
+                  ON $baseAc1.po_head.po_number = $baseAc1.po_to_asset.po_number
+                  WHERE $baseAc1.bill_of_lading_head.status != '99'
+                  AND $baseAc1.bill_of_lading_head.id = '$id'";
+          $datamain = DB::connection('mysql')->select($sql2);
+
+          // print_r($datamain);
+          // exit;
+          $idpo = $datamain[0]->idpo;
+          $sql1 = "SELECT $baseAc1.po_to_asset.*,
+                          $baseAc1.po_head.branch_id,
+                          $baseAc1.po_head.totolsumall as total,
+                          $baseAc1.po_detail.*
+                  FROM $baseAc1.po_to_asset
+                  INNER JOIN $baseAc1.po_head
+                  ON $baseAc1.po_head.po_number = $baseAc1.po_to_asset.po_number
+                  INNER JOIN $baseAc1.po_detail
+                  ON $baseAc1.po_head.id = $baseAc1.po_detail.po_headid
+                  WHERE $baseAc1.po_to_asset.status != '99'
+                  AND $baseAc1.po_head.id = '$idpo'";
+          $getdatas = DB::select($sql1);
+
+            //print_r($getdatas);
+          $totalcr = 0;
+          foreach ($getdatas as $key => $value) {
+                $totalcr = $totalcr + $value->price * $value->amount ;//   ราคา
+          }
+            ///////////////////    บันทึก GL
+          $arrInert = [ 'id'=>'',
+                        'type_module'=>'5',
+                        'number_bill_journal'=>$datamain[0]->number_bill,
+                        'code_branch'=>$getdatas[0]->branch_id,
+                        'datebill'=>date('Y-m-d'),
+                        'balance_forward_status'=>0,
+                        'accept'=>1,
+                        'status'=>1,
+                        'totalsum'=>$totalcr];
+
+          $lastid = DB::table($connect1['fsctaccount'].'.journal_5')->insertGetId($arrInert);
+              // cr บันทึกบัญชี  ซื้อสินค้า 159  512100//
+
+
+          $accbuy = '159';
+          $arrInert = [ 'id'=>'',
+                        'id_journalgeneral_head'=>$lastid,
+                        'accounttype'=>$accbuy,
+                        'list'=>'ซื้อวัตถุดิบผลิต',
+                        'name_suplier'=>'',
+                        'status'=>1,
+                        'debit'=>0,
+                        'credit'=>$totalcr];
+          DB::table($connect1['fsctaccount'].'.journalgeneral_detail')->insert($arrInert);
+
+
+          $arrInert = [ 'id'=>'',
+                  'dr'=>0.00,
+                  'cr'=>$totalcr,
+                  'acc_code'=>'512100',
+                  'branch'=>$getdatas[0]->branch_id,
+                  'status'=> 1,
+                  'number_bill'=>$datamain[0]->number_bill,
+                  'customer_vendor'=>'',
+                  'timestamp'=>date('Y-m-d'),
+                  //'code_emp'=>$emp_outs,
+                  'subtotal'=> 0,
+                  'discount'=> 0,
+                  'vat'=> 0,
+                  'vatmoney'=> 0,
+                  // 'wht'=> $withholds,
+                  'whtmoney'=> 0,
+                  'grandtotal'=> $totalcr,
+                  'type_journal' => 5,
+                  'id_type_ref_journal'=>$lastid,
+                  'timereal'=>date('Y-m-d'),
+                  'list'=> 'ซื้อวัตถุดิบผลิต ใบเบิกของเลขที่'.$datamain[0]->number_bill];
+          DB::table($connect1['fsctaccount'].'.ledger')->insert($arrInert);
+
+
+
+          // dr บันทึกบัญชี  งานระหว่างทำ-นั่งร้าน 266  115301//
+        $totaldr = 0;;
+
+          foreach ($getdatas as $key => $value) {
+              foreach ($datamain as $k => $v) {
+                  if($v->materialid==$value->materialid){
+                      $totaldr = $totaldr + $value->price * $v->payout ;//   ราคา
+                  }
+              }
+
+          }
+
+        
+
+
+          $accmake = '266';
+          $arrInert = [ 'id'=>'',
+                        'id_journalgeneral_head'=>$lastid,
+                        'accounttype'=>$accmake,
+                        'list'=>'งานระหว่างทำ-นั่งร้าน',
+                        'name_suplier'=>'',
+                        'status'=>1,
+                        'debit'=>$totaldr,
+                        'credit'=>0];
+          DB::table($connect1['fsctaccount'].'.journalgeneral_detail')->insert($arrInert);
+
+          $arrInert = [ 'id'=>'',
+                  'dr'=>$totaldr,
+                  'cr'=>0.00,
+                  'acc_code'=>'115301',
+                  'branch'=>$getdatas[0]->branch_id,
+                  'status'=> 1,
+                  'number_bill'=>$datamain[0]->number_bill,
+                  'customer_vendor'=>'',
+                  'timestamp'=>date('Y-m-d'),
+                  //'code_emp'=>$emp_outs,
+                  'subtotal'=> 0,
+                  'discount'=> 0,
+                  'vat'=> 0,
+                  'vatmoney'=> 0,
+                  // 'wht'=> $withholds,
+                  'whtmoney'=> 0,
+                  'grandtotal'=> $totalcr,
+                  'type_journal' => 5,
+                  'id_type_ref_journal'=>$lastid,
+                  'timereal'=>date('Y-m-d'),
+                  'list'=> 'งานระหว่างทำ-นั่งร้าน ใบเบิกของเลขที่'.$datamain[0]->number_bill];
+          DB::table($connect1['fsctaccount'].'.ledger')->insert($arrInert);
+
+
+          SWAL::message('สำเร็จ', 'บันทึกรายการ', 'success', ['timer' => 6000]);
+          return 1;
+
+
+
+
     }
 
 }

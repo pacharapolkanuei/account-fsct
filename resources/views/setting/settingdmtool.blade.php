@@ -182,10 +182,12 @@ swal({!!Session::pull('sweetalert.json')!!});
                                                   //print_r($bill_of_lading_head);
                                                   if($bill_of_lading_head[0]->status==2){?>
                                                         <a href="printsettingdmtooldetail?id=<?php echo $bill_of_lading_head[0]->headid ?>" target="_blank"><?php echo $bill_of_lading_head[0]->number_bill;?> </a>
-                                                  <?php }elseif($bill_of_lading_head[0]->status==3){?>
+                                                  <?php }elseif($bill_of_lading_head[0]->status==3){ ?>
                                                         <a href="printsettingdmtooldetail?id=<?php echo $bill_of_lading_head[0]->headid ?>" target="_blank"><?php echo $bill_of_lading_head[0]->number_bill;?> </a>
-                                                  <?php } ?>
-                                         <?php } ?>
+                                                  <?php }elseif($bill_of_lading_head[0]->status==1){ ?>
+                                                        <a href="printsettingdmtooldetail?id=<?php echo $bill_of_lading_head[0]->headid ?>" target="_blank"><?php echo $bill_of_lading_head[0]->number_bill;?> </a>
+                                               <?php } ?>
+                                            <?php } ?>
                                     </th>
                                   </tr>
                                 <?php $i++;}

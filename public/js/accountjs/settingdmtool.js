@@ -59,11 +59,23 @@ $(document).ready(function() {
  }
 
  function confirmappove(idpk){
-        console.log(idpk);
+
+        $('#idpoappoved').empty();
         var urlref = '<a href="printsettingdmtooldetail?id='+idpk+'" target="_blank"> ใบเบิกพิมพ์ :<img src="images/global/printall.png"> </a>';
         $('#poappove').empty();
         $('#poappove').append(urlref);
-        $.get('getdatedmtool?id='+id, function(res) {
-                console.log(res);
-        });
+        $('#idpoappoved').val(idpk);
+
  }
+
+function saveapprovedpostatus(){
+  var idpk = $('#idpoappoved').val();
+      $.get('approveddmtoolassetstatus?id='+idpk, function(res) {
+            if(res==1){
+              location.reload();
+            }else{
+              console.log(res);
+            }
+      });
+
+}
