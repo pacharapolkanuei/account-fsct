@@ -453,7 +453,7 @@ class SettingassettoolController extends Controller
 
           }
 
-        
+
 
 
           $accmake = '266';
@@ -494,9 +494,10 @@ class SettingassettoolController extends Controller
           SWAL::message('สำเร็จ', 'บันทึกรายการ', 'success', ['timer' => 6000]);
           return 1;
 
+    }
 
-
-
+    public function settingsalaryemptool(){
+        return view('setting.settingsalaryemptool');
     }
 
 }

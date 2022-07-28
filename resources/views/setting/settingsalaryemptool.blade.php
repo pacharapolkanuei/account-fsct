@@ -137,8 +137,6 @@ swal({!!Session::pull('sweetalert.json')!!});
                                                           echo '<p style="color:blue">เบิกของครบแล้วรออนุมัติ</p>';
                                                       }elseif($bill_of_lading_head[0]->status==3){
                                                           echo '<p style="color:orange">ยังมีของค้างในคลัง</p>';
-                                                      }elseif($bill_of_lading_head[0]->status==1){
-                                                          echo '<p style="color:green">อนุมัติเรียบร้อย</p>';
                                                       }
                                                   }else{
                                                     echo '<p style="color:blue">ยังไม่ได้เบิก</p>';
