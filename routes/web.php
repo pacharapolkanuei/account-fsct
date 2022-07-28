@@ -644,6 +644,7 @@ Route::get('/serchassetrefmaterial', 'Asset_listController@serchassetrefmaterial
 Route::get('/buysteel', 'BuysteelController@index')->name('buysteel');
 Route::get('/search','BuysteelController@search');
 Route::get('getmaterial', 'BuysteelController@getmaterial');
+Route::post('/buysteel/store','BuysteelController@store')->name('buysteel.store');
 //-----------------------------------------------
 
 //--------Percent_maincost--------------
@@ -681,8 +682,7 @@ Route::get('/printsettingdmtooldetail', function () { //กระดาษทำ
     return @$pdf->stream();
 });
 Route::get('/approveddmtoolassetstatus', 'SettingassettoolController@approveddmtoolassetstatus');
-Route::get('/getempwageselectmonthproduct', 'SettingassettoolController@getempwageselectmonthproduct');
-Route::get('/getempwageloadproductthislot', 'SettingassettoolController@getempwageloadproductthislot');
-Route::get('/saveempdateproductthislot', 'SettingassettoolController@saveempdateproductthislot');
+
+
 
 ?>

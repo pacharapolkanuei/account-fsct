@@ -95,7 +95,8 @@ swal({!!Session::pull('sweetalert.json')!!});
                                         @endif
                                         <!-- //สิ้นสุด ทำการ validate ช่องข้อมูล แสดง error -->
 
-
+                                                {!! Form::open(['route' => 'buysteel.store', 'method' => 'post' ]) !!}
+                                                  {{ csrf_field() }}
 
                                                 <div class="was-validated form-inline" style="margin: 10px 50px 0px 50px;">
                                                   <!-- <div class="col-sm-6"> -->
@@ -164,6 +165,47 @@ swal({!!Session::pull('sweetalert.json')!!});
 
 
                                     </div>
+                                  </div>
+                                </div>
+                                {!! Form::close() !!}
+
+                                <div >
+                                  <div class="table-responsive">
+                                    <table id="example" class="table table-striped table-bordered fontslabel" style="width:100%">
+                                      <thead>
+                                        <tr>
+                                          <th>ลำดับ</th>
+                                          <th>รายการ</th>
+                                          <th>ผลิตได้(ชิ้น)</th>
+                                          <th>ราคาทุนวัตถุดิบ(ต่อชิ้น)</th>
+                                          <th>ต้นทุนวัตถุดิบที่ใช้(รวม)</th>
+                                          <th>เงินเดือน/ค่าแรงในการผลิต</th>
+                                          <th>รวมต้นทุนการผลิต</th>
+                                          <th>ต้นทุนการผลิตต่อหน่วย</th>
+                                          <th>สถานะ</th>
+                                        </tr>
+                                      </thead>
+                                      <tbody>
+                                        @foreach ($propertys as $key => $property)
+                                        <tr>
+                                          <td>{{ $key+1 }}</td>
+                                          <td>{{ $property->number_property }}</td>
+                                          <td>{{ $property->descritption_thai }}</td>
+                                          <td>{{ $property->descritption_eng }}</td>
+                                          <td>{{ $property->accounttypeno }}</td>
+                                          <td>{{ $property->accounttypefull }}</td>
+                                          <td>{{ $property->accounttypeno }} - {{ $property->accounttypefull }}</td>
+                                          <td>{{ $property->accounttypeno }} - {{ $property->accounttypefull }}</td>
+                                          <td>
+                                            <button type="button" class="btn btn-warning" onclick="getdataedit({{ $property->id_group }})" data-toggle="modal" data-target="#modaledit">แก้ไข</button>
+                                            <a href="{{ route ('define_property.delete', ['id' => $property->id_group]) }}" class="btn btn-danger btn-md delete-confirm">ลบ</a>
+                                            <!-- <button type="button" class="btn btn-danger btn-md" data-toggle="modal" onclick="confirmdelete({{ $property->id_group }})">ลบ</button> -->
+                                          </td>
+                                        </tr>
+                                        @endforeach
+                                      </tbody>
+                                    </table>
+                                    <br>
                                   </div>
                                 </div>
 

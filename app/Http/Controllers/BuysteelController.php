@@ -6,8 +6,11 @@ use App\Bank;
 use Illuminate\Http\Request;
 use Softon\SweetAlert\Facades\SWAL;
 use App\Branch;
+use App\Po_head;
 use App\Accounttype;
+use App\Receiptasset;
 use App\Http\Requests\BankRequest;
+use Carbon\Carbon;
 use DB;
 
 class BuysteelController extends Controller
@@ -64,6 +67,71 @@ class BuysteelController extends Controller
           }
       }
     }
+
+    public function store(Request $request)
+    {
+        if ($request->get('get_emp') != null) {
+          // $code_branch = $request->get('branch');
+          $count = DB::connection('mysql2')
+                       ->table('receiptasset')
+                       ->get();
+          $count_num = count($count);
+
+          // $lot = $request->get('lotnumber');
+          $datenowuse = $request->get('datenow');
+          $emp_code = $request->get('get_emp');
+          $po_number = $request->get('search');
+
+          $search_po = DB::connection('mysql2')
+      			->table('po_head')
+            ->seLect('id as id_po')
+      			->where('po_number','LIKE',$po_number)
+      			->get();
+          foreach ($search_po as $key => $search_pos) {
+            $get_id_po = $search_pos->id_po;
+          }
+
+          $now = Carbon::now();
+          $yearforuse = $now->year + 543;
+          $monthforuse = $now->month;
+          $dayforuse =$now->day;
+
+          $ins_receiptasset = new Receiptasset;
+          $ins_receiptasset->setConnection('mysql2');
+          $ins_receiptasset->datein = $code_branch;
+          $ins_receiptasset->dateuse = $gettype_module;
+          $ins_receiptasset->status = 0;
+          $ins_receiptasset->emp_code = $emp_code;
+          $ins_receiptasset->po_ref = $get_id_po;
+
+          $ins_receiptasset->receiptnum = "RCT" . $yearforuse . $monthforuse . $dayforuse . sprintf('%04d', $count_num);
+          $ins_receiptasset->save();
+
+          exit;
+
+          $count_id = Receiptasset::max('id');
+          for ($i=0; $i < count($accounttypeno); $i++) {
+            $journal_generals_detail = new Journalgeneraldetail;
+            $journal_generals_detail->setConnection('mysql2');
+            $journal_generals_detail->id_journalgeneral_head = $count_id;
+            $journal_generals_detail->accounttype = $accounttypeno[$i];
+            $journal_generals_detail->debit = $debit[$i];
+            $journal_generals_detail->credit = $credit[$i];
+            $journal_generals_detail->list = $list[$i];
+            $journal_generals_detail->name_suplier = $name_supplier[$i];
+            $journal_generals_detail->save();
+          }
+
+      SWAL::message('สำเร็จ', 'บันทึกสมุดรายวันทั่วไปแล้ว!', 'success', ['timer' => 6000]);
+      return redirect()->route('journal.general');
+    }else {
+      SWAL::message('บันทึกล้มเหลว', 'session หมดอายุให้กลับไป Log In !', 'warning', ['timer' => 6000]);
+      return redirect()->route('fsctonline.com/fscthr/auth/default/index');
+    }
+    }
+
+
+
 
     public function getmaterial()
     {
