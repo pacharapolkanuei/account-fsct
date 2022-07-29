@@ -102,7 +102,7 @@ swal({!!Session::pull('sweetalert.json')!!});
                                                   // echo $level_id;
                                                 ?>
                                                 <input type="hidden" name="get_emp" value="{{ $level_id }}">
-                                                
+
                                                 <div class="was-validated form-inline" style="margin: 10px 50px 0px 50px;">
                                                   <!-- <div class="col-sm-6"> -->
                                                   <div class="row">
@@ -144,19 +144,18 @@ swal({!!Session::pull('sweetalert.json')!!});
                                                       <tfoot>
                                                         <tr>
                                                           <th style="text-align: right;" id="fontstable">รวม</th>
-                                                          <th style="text-align: right;"><input type="text" name="totaldebit" id="totaldebit" class="form-control" readonly></th>
-                                                          <th style="text-align: right;"><input type="text" name="totalcredit" id="totalcredit" class="form-control" readonly></th>
-                                                          <th></th>
-                                                          <th></th>
-                                                          <th></th>
+                                                          <th style="text-align: right;"><input type="text" name="produce_sum" id="produces" class="form-control" readonly></th>
+                                                          <th style="text-align: right;"><input type="text" name="material_cost_sum" id="material_costs" class="form-control" readonly></th>
+                                                          <th style="text-align: right;"><input type="text" name="total_cost_sum" id="total_costs" class="form-control" readonly></th>
+                                                          <th style="text-align: right;"><input type="text" name="salary_sum" id="salarys" class="form-control" readonly></th>
+                                                          <th style="text-align: right;"><input type="text" name="total_produce_sum" id="total_produces" class="form-control" readonly></th>
+                                                          <th style="text-align: right;"><input type="text" name="produce_unit_sum" id="produce_units" class="form-control" readonly></th>
                                                           <th></th>
                                                         </tr>
                                                       </tfoot>
                                                     </table>
                                                   </div>
                                                 </div>
-
-
                                       </div>
 
                                       <!-- Modal footer -->
@@ -180,6 +179,7 @@ swal({!!Session::pull('sweetalert.json')!!});
                                       <thead>
                                         <tr>
                                           <th>ลำดับ</th>
+                                          <th>LOT</th>
                                           <th>รายการ</th>
                                           <th>ผลิตได้(ชิ้น)</th>
                                           <th>ราคาทุนวัตถุดิบ(ต่อชิ้น)</th>
@@ -187,25 +187,20 @@ swal({!!Session::pull('sweetalert.json')!!});
                                           <th>เงินเดือน/ค่าแรงในการผลิต</th>
                                           <th>รวมต้นทุนการผลิต</th>
                                           <th>ต้นทุนการผลิตต่อหน่วย</th>
-                                          <th>สถานะ</th>
                                         </tr>
                                       </thead>
                                       <tbody>
-                                        @foreach ($propertys as $key => $property)
+                                        @foreach ($receiptasset_details as $key => $receiptasset_detail)
                                         <tr>
                                           <td>{{ $key+1 }}</td>
-                                          <td>{{ $property->number_property }}</td>
-                                          <td>{{ $property->descritption_thai }}</td>
-                                          <td>{{ $property->descritption_eng }}</td>
-                                          <td>{{ $property->accounttypeno }}</td>
-                                          <td>{{ $property->accounttypefull }}</td>
-                                          <td>{{ $property->accounttypeno }} - {{ $property->accounttypefull }}</td>
-                                          <td>{{ $property->accounttypeno }} - {{ $property->accounttypefull }}</td>
-                                          <td>
-                                            <button type="button" class="btn btn-warning" onclick="getdataedit({{ $property->id_group }})" data-toggle="modal" data-target="#modaledit">แก้ไข</button>
-                                            <a href="{{ route ('define_property.delete', ['id' => $property->id_group]) }}" class="btn btn-danger btn-md delete-confirm">ลบ</a>
-                                            <!-- <button type="button" class="btn btn-danger btn-md" data-toggle="modal" onclick="confirmdelete({{ $property->id_group }})">ลบ</button> -->
-                                          </td>
+                                          <td>{{ $receiptasset_detail->lot}}</td>
+                                          <td>{{ $receiptasset_detail->material_name}}</td>
+                                          <td>{{ $receiptasset_detail->produce}}</td>
+                                          <td>{{ $receiptasset_detail->cost}}</td>
+                                          <td>{{ $receiptasset_detail->total_cost}}</td>
+                                          <td>{{ $receiptasset_detail->saraly}}</td>
+                                          <td>{{ $receiptasset_detail->total_cost_produce}}</td>
+                                          <td>{{ $receiptasset_detail->cost_produce_unit}}</td>
                                         </tr>
                                         @endforeach
                                       </tbody>
@@ -223,42 +218,6 @@ swal({!!Session::pull('sweetalert.json')!!});
         </div>
       </div><!-- end card-->
   </div>
-
-
-  <!-- MODAL edit -->
-
-  <div class="modal fade" id="modaledit">
-      <div class="modal-dialog modal-lg">
-          <div class="modal-content">
-
-              <!-- Modal Header -->
-              <div class="modal-header">
-                <h4 class="modal-title" id="fontscontent2"><b>รายการทรัพย์สิน</b></h4>
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-              </div>
-
-                <!-- Modal body -->
-                <div class="modal-body">
-
-                    {{ csrf_field() }}
-
-
-              </div>
-              <!-- Modal footer -->
-              <div class="modal-footer">
-                  <a href="{{route('asset_list')}}">
-                      <input type="submit" class="btn btn-success" style="display: inline" id="button-submit-edit" value="บันทึก">
-                      <button type="button" class="btn btn-warning" data-dismiss="modal">ยกเลิก</button>
-                  </a>
-              </div>
-
-
-          </div>
-      </div>
-  </div>
-
-  <!-- end iditmodal -->
-
 
   <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script> -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>

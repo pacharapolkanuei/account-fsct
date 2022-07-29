@@ -9,6 +9,8 @@ use App\Branch;
 use App\Po_head;
 use App\Accounttype;
 use App\Receiptasset;
+use App\Api\Connectdb;
+use App\Receiptasset_detail;
 use App\Http\Requests\BankRequest;
 use Carbon\Carbon;
 use DB;
@@ -18,24 +20,101 @@ class BuysteelController extends Controller
 
     public function index()
     {
-      // $accounttypes = new Accounttype;
-      // $accounttypes->setConnection('mysql2');
-      // $accounttypes = Accounttype::where('status','=',1)
-      //               ->get();
-      //
       // $propertys = DB::connection('mysql2')
-      //     ->table('group_property')
-      //     // ->select('in_debt.id as id_indebt','in_debt.number_debt','in_debt.accept','in_debt.branch_id','in_debt.discount'
-      //     // ,'in_debt.vat','in_debt.vat_price','in_debt.id_typejournal','in_debt.datebill','po_detail.list','po_detail.note'
-      //     // ,'accounttype.accounttypeno','accounttype.accounttypefull','po_detail.total','accounttype.config_group_supp_id','good.name'
-      //     // ,'accounttype.id as id_accounttype','po_head.supplier_id')
+      //     ->table('receiptasset_detail')
       //     ->select('group_property.id as id_group','group_property.number_property','group_property.descritption_thai','group_property.descritption_eng','accounttype.accounttypeno','accounttype.accounttypefull')
       //     ->join('accounttype', 'accounttype.id', '=', 'group_property.accounttype_no')
       //     ->orderBy('group_property.id', 'asc')
       //     ->where('group_property.statususe',1)
       //     ->get();
-      return view('assetlist.buysteel');
+      $connect = Connectdb::Databaseall();
+      $baseAc = $connect['fsctaccount'];
+      $baseHr = $connect['hr_base'];
+      $baseMain = $connect['fsctmain'];
+
+      $sql = "SELECT $baseAc.receiptasset_detail.*
+                                      ,material.name as material_name
+                                      ,receiptasset.type_pd
+
+                      FROM $baseAc.receiptasset_detail
+
+                      INNER JOIN $baseMain.material
+                      ON $baseAc.receiptasset_detail.material_id = $baseMain.material.id
+
+                      INNER JOIN $baseAc.receiptasset
+                      ON $baseAc.receiptasset_detail.receiptasset_id = $baseAc.receiptasset.id
+
+                      WHERE $baseAc.receiptasset.type_pd = 0";
+
+      $receiptasset_details = DB::select($sql);
+
+      return view('assetlist.buysteel',['receiptasset_details'=>$receiptasset_details]);
     }
+
+    public function approve_buysteel_index()
+    {
+      $connect = Connectdb::Databaseall();
+      $baseAc = $connect['fsctaccount'];
+      $baseHr = $connect['hr_base'];
+      $baseMain = $connect['fsctmain'];
+
+      $sql = "SELECT $baseAc.receiptasset.*
+                                      ,po_head.po_number
+                                      ,receiptasset_detail.totalall
+                                      ,receiptasset_detail.lot
+
+
+                      FROM $baseAc.receiptasset
+
+                      INNER JOIN $baseAc.po_head
+                      ON $baseAc.receiptasset.po_ref = $baseAc.po_head.id
+
+                      LEFT JOIN $baseAc.receiptasset_detail
+                      ON $baseAc.receiptasset_detail.receiptasset_id = $baseAc.receiptasset.id
+
+                      WHERE $baseAc.receiptasset.type_pd = 0
+                      GROUP BY $baseAc.receiptasset_detail.receiptasset_id
+                      ORDER BY $baseAc.receiptasset.receiptnum ASC";
+
+      $receiptassets = DB::select($sql);
+
+      return view('assetlist.approve_buysteel',['receiptassets'=>$receiptassets]);
+    }
+
+    public function approve_confirm(Request $request)
+  	{
+  				$receiptasset_id = $request->get('receiptasset_id');
+
+  				DB::connection('mysql2')
+  				->table('receiptasset')->whereIn('id',$receiptasset_id)
+  				->update(['status' => 1]);
+
+          $connect1 = Connectdb::Databaseall();
+          $baseAc1 = $connect1['fsctaccount'];
+          $baseHr1 = $connect1['hr_base'];
+
+          $sql1 = "SELECT $baseAc1.receiptasset.*
+                                          ,
+                                          ,
+
+                          FROM $baseAc1.receiptasset
+
+                          INNER JOIN $baseAc1.receiptasset_detail
+                          ON $baseAc1.receiptasset_detail.receiptasset_id = $baseAc1.receiptasset.id
+
+                          INNER JOIN $baseAc1.material
+                          ON $baseAc1.receiptasset_detail.material_id = $baseAc1.material.id
+
+                          WHERE $baseAc1.receiptasset.id = $receiptasset_id ";
+          $getdata = DB::select($sql1);
+
+
+
+  				SWAL::message('สำเร็จ', 'ได้ผ่านการอนุมัติแล้ว!', 'success', ['timer' => 6000]);
+  				return redirect()->route('approve_buysteel');
+
+
+  	}
 
 
 
@@ -77,7 +156,7 @@ class BuysteelController extends Controller
                        ->get();
           $count_num = count($count);
 
-          // $lot = $request->get('lotnumber');
+          $lot = $request->get('lotnumber');
           $datenowuse = $request->get('datenow');
           $emp_code = $request->get('get_emp');
           $po_number = $request->get('search');
@@ -91,6 +170,17 @@ class BuysteelController extends Controller
             $get_id_po = $search_pos->id_po;
           }
 
+          $produce_unitforuse = $request->get('produce_unit');
+          $total_produceforuse = $request->get('total_produce');
+          $salaryforuse = $request->get('salary');
+          $total_costforuse = $request->get('total_cost');
+          $material_costforuse = $request->get('material_cost');
+          $produceforuse = $request->get('produce');
+          $name_materialforuse = $request->get('name_material');
+          $total_produce_sums = $request->get('total_produce_sum');
+          $cut_comma_total = str_replace(',', '', $total_produce_sums);
+
+
           $now = Carbon::now();
           $yearforuse = $now->year + 543;
           $monthforuse = $now->month;
@@ -98,32 +188,34 @@ class BuysteelController extends Controller
 
           $ins_receiptasset = new Receiptasset;
           $ins_receiptasset->setConnection('mysql2');
-          $ins_receiptasset->datein = $code_branch;
-          $ins_receiptasset->dateuse = $gettype_module;
+          $ins_receiptasset->datein = $datenowuse;
+          $ins_receiptasset->dateuse = $datenowuse;
           $ins_receiptasset->status = 0;
           $ins_receiptasset->emp_code = $emp_code;
           $ins_receiptasset->po_ref = $get_id_po;
 
-          $ins_receiptasset->receiptnum = "RCT" . $yearforuse . $monthforuse . $dayforuse . sprintf('%04d', $count_num);
+          $ins_receiptasset->receiptnum = "RCT" . $yearforuse . $monthforuse . $dayforuse . sprintf('%05d', $count_num+1);
           $ins_receiptasset->save();
 
-          exit;
-
           $count_id = Receiptasset::max('id');
-          for ($i=0; $i < count($accounttypeno); $i++) {
-            $journal_generals_detail = new Journalgeneraldetail;
-            $journal_generals_detail->setConnection('mysql2');
-            $journal_generals_detail->id_journalgeneral_head = $count_id;
-            $journal_generals_detail->accounttype = $accounttypeno[$i];
-            $journal_generals_detail->debit = $debit[$i];
-            $journal_generals_detail->credit = $credit[$i];
-            $journal_generals_detail->list = $list[$i];
-            $journal_generals_detail->name_suplier = $name_supplier[$i];
-            $journal_generals_detail->save();
+          for ($i=0; $i < count($name_materialforuse); $i++) {
+            $ins_receiptasset_detail = new Receiptasset_detail;
+            $ins_receiptasset_detail->setConnection('mysql2');
+            $ins_receiptasset_detail->receiptasset_id = $count_id;
+            $ins_receiptasset_detail->material_id = $name_materialforuse[$i];
+            $ins_receiptasset_detail->lot = $lot;
+            $ins_receiptasset_detail->produce = $produceforuse[$i];
+            $ins_receiptasset_detail->cost = $material_costforuse[$i];
+            $ins_receiptasset_detail->total_cost = $total_costforuse[$i];
+            $ins_receiptasset_detail->saraly = 0;
+            $ins_receiptasset_detail->total_cost_produce = $total_produceforuse[$i];
+            $ins_receiptasset_detail->cost_produce_unit = $produce_unitforuse[$i];
+            $ins_receiptasset_detail->totalall = $cut_comma_total;
+            $ins_receiptasset_detail->save();
           }
 
-      SWAL::message('สำเร็จ', 'บันทึกสมุดรายวันทั่วไปแล้ว!', 'success', ['timer' => 6000]);
-      return redirect()->route('assetlist.buysteel');
+      SWAL::message('สำเร็จ', 'บันทึกต้นทุนแบบเหล็ก(ซื้อสำเร็จรูป)แล้ว!', 'success', ['timer' => 6000]);
+      return redirect()->route('buysteel');
     }else {
       SWAL::message('บันทึกล้มเหลว', 'session หมดอายุให้กลับไป Log In !', 'warning', ['timer' => 6000]);
       return redirect()->route('fsctonline.com/fscthr/auth/default/index');

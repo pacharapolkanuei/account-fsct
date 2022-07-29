@@ -21,7 +21,7 @@ $(document).ready(function() {
 
           if(x < max_fields){
               x++;
-              $(wrapper2).append('<tr><td><select name="name_material[]" class="form-control"  required>'+option+'</select></td><td><input class="form-control mb-2 mr-sm-2" type="text" name="produce[]" onblur="findTotal()"></td><td><input class="form-control mb-2 mr-sm-2" type="text" name="material_cost[]" onblur="findTotal()"/></td><td><input class="form-control mb-2 mr-sm-2" type="text"  name="total_cost[]" onblur="findTotal()" /></td><td><input class="form-control mb-2 mr-sm-2" type="text"  name="salary[]" onblur="findTotal()" value="0" readonly /></td><td><input class="form-control mb-2 mr-sm-2" type="text"  name="total_produce[]" onblur="findTotal()" /></td><td><input class="form-control mb-2 mr-sm-2" type="text"  name="produce_unit[]" onblur="findTotal()" /></td><td style="text-align: center;"> <input type="hidden" onchange="count(this)" id="eieiza1" value="'+(x-1)+'"> <a href="#" class="btn btn-danger delete"> ลบ</a></td></tr>');
+              $(wrapper2).append('<tr><td><select name="name_material[]" class="form-control"  required>'+option+'</select></td><td><input class="form-control mb-2 mr-sm-2" type="text" name="produce[]" onblur="findTotal()"></td><td><input class="form-control mb-2 mr-sm-2" type="text" name="material_cost[]" onblur="findTotal()"/></td><td><input class="form-control mb-2 mr-sm-2" type="text"  name="total_cost[]" onblur="findTotal()"/></td><td><input class="form-control mb-2 mr-sm-2" type="text"  name="salary[]" onblur="findTotal()" value="0" readonly/></td><td><input class="form-control mb-2 mr-sm-2" type="text"  name="total_produce[]" onblur="findTotal()" /></td><td><input class="form-control mb-2 mr-sm-2" type="text"  name="produce_unit[]" onblur="findTotal()" /></td><td style="text-align: center;"> <input type="hidden" onchange="count(this)" id="eieiza1" value="'+(x-1)+'"> <a href="#" class="btn btn-danger delete"> ลบ</a></td></tr>');
               no = no+1;
           }
           else
@@ -45,86 +45,6 @@ $(document).ready(function() {
 
 function increase_col(){
   var inc_col2 = $('#inc_col').val();
-
-    // $('#getacc').empty();
-    // $('#getacc1').empty();
-    // $('#getacc2').empty();
-    // $('#getacc3').empty();
-    // $('#getacc4').empty();
-    // $('#getacc5').empty();
-    // $('#getacc6').empty();
-    // $('#getacc7').empty();
-    // $('#getacc8').empty();
-    // $('#getacc9').empty();
-    // $('#getacc10').empty();
-    // $('#getacc11').empty();
-    // $('#getacc12').empty();
-    // $('#getacc13').empty();
-    // $('#getacc14').empty();
-    // $('#getacc15').empty();
-    // $('#getacc16').empty();
-    // $('#getacc17').empty();
-    // $('#getacc18').empty();
-    // $('#getacc19').empty();
-    // $('#getacc20').empty();
-    // $.get('getaccountname', function(res) {
-    //     // console.log(res);
-    //   var option = '<option disabled selected></option>';
-    //       $.each(res, function(index,value ) { //วนลูป
-    //
-    //     option += '<option value="'+value.id+'">'+value.accounttypeno+' '+value.accounttypefull+'</option>';
-    //   });
-    //
-    // $('#getacc').append(option);//เป็นการเพิ่ม option #modal-input-po
-    // $('#getacc1').append(option);
-    // $('#getacc2').append(option);
-    // $('#getacc3').append(option);
-    // $('#getacc4').append(option);
-    // $('#getacc5').append(option);
-    // $('#getacc6').append(option);
-    // $('#getacc7').append(option);
-    // $('#getacc8').append(option);
-    // $('#getacc9').append(option);
-    // $('#getacc10').append(option);
-    // $('#getacc11').append(option);
-    // $('#getacc12').append(option);
-    // $('#getacc13').append(option);
-    // $('#getacc14').append(option);
-    // $('#getacc15').append(option);
-    // $('#getacc16').append(option);
-    // $('#getacc17').append(option);
-    // $('#getacc18').append(option);
-    // $('#getacc19').append(option);
-    // $('#getacc20').append(option);
-    // });
-
-//   if (inc_col2 == 1) {
-//     $(".container11").empty();
-//     $(".container11").append('<tr><td><input type="hidden" value="1" name="key"><select name="account[]" class="form-control mb-2 mr-sm-2" id="getacc" required></select></td><td><input class="form-control mb-2 mr-sm-2" type="text"  name="debit[]" onblur="findTotal()" ></td><td><input class="form-control mb-2 mr-sm-2" type="text"  name="credit[]" onblur="findTotal()" /></td><td><textarea class="form-control mb-2 mr-sm-2" name="memo[]" required></textarea></td><td><input class="form-control mb-2 mr-sm-2" type="text" name="name[]" required/></td></tr>');
-//   }
-//   else if (inc_col2 == 2) {
-//     $(".container11").empty();
-//     $(".container11").append('<tr><td><input type="hidden" value="2" name="key"><select name="account[]" class="form-control mb-2 mr-sm-2" id="getacc1" required></select></td><td><input class="form-control mb-2 mr-sm-2" type="text"  name="debit[]" onblur="findTotal()"></td><td><input class="form-control mb-2 mr-sm-2" type="text"  name="credit[]" onblur="findTotal()"></td><td><textarea class="form-control mb-2 mr-sm-2" name="memo[]" required></textarea></td><td><input class="form-control mb-2 mr-sm-2" type="text" name="name[]" required/></td></tr><tr><td><select name="account[]" class="form-control mb-2 mr-sm-2" id="getacc2" required></select></td><td><input class="form-control mb-2 mr-sm-2" type="text"  name="debit[]" onblur="findTotal()"></td><td><input class="form-control mb-2 mr-sm-2" type="text"  name="credit[]" onblur="findTotal()"></td><td><textarea class="form-control mb-2 mr-sm-2" name="memo[]" required></textarea></td><td><input class="form-control mb-2 mr-sm-2" type="text" name="name[]" required/></td></tr>');
-//   }
-//   else if (inc_col2 == 3) {
-//     $(".container11").empty();
-//     $(".container11").append('<tr><td><input type="hidden" value="3" name="key"><select name="account[]" class="form-control mb-2 mr-sm-2" id="getacc3" required></select></td><td><input class="form-control mb-2 mr-sm-2" type="text"  name="debit[]" onblur="findTotal()"></td><td><input class="form-control mb-2 mr-sm-2" type="text"  name="credit[]" onblur="findTotal()"></td><td><textarea class="form-control mb-2 mr-sm-2" name="memo[]" required></textarea></td><td><input class="form-control mb-2 mr-sm-2" type="text" name="name[]" required/></td></tr><tr><td><select name="account[]" class="form-control mb-2 mr-sm-2" id="getacc4" required></select></td><td><input class="form-control mb-2 mr-sm-2" type="text"  name="debit[]" onblur="findTotal()"></td><td><input class="form-control mb-2 mr-sm-2" type="text"  name="credit[]" onblur="findTotal()"></td><td><textarea class="form-control mb-2 mr-sm-2" name="memo[]" required></textarea></td><td><input class="form-control mb-2 mr-sm-2" type="text" name="name[]" required/></td></tr><tr><td><select name="account[]" class="form-control mb-2 mr-sm-2" id="getacc5" required></select></td><td><input class="form-control mb-2 mr-sm-2" type="text"  name="debit[]" onblur="findTotal()"></td><td><input class="form-control mb-2 mr-sm-2" type="text"  name="credit[]" onblur="findTotal()"></td><td><textarea class="form-control mb-2 mr-sm-2" name="memo[]" required></textarea></td><td><input class="form-control mb-2 mr-sm-2" type="text" name="name[]" required/></td></tr>');
-//   }
-//   else if (inc_col2 == 4) {
-//     $(".container11").empty();
-//     $(".container11").append('<tr><td><input type="hidden" value="4" name="key"><select name="account[]" class="form-control mb-2 mr-sm-2" id="getacc6" required></select></td><td><input class="form-control mb-2 mr-sm-2" type="text"  name="debit[]" onblur="findTotal()"></td><td><input class="form-control mb-2 mr-sm-2" type="text" name="credit[]" onblur="findTotal()"></td><td><textarea class="form-control mb-2 mr-sm-2" name="memo[]" required></textarea></td><td><input class="form-control mb-2 mr-sm-2" type="text" name="name[]" required/></td></tr><tr><td><select name="account[]" class="form-control mb-2 mr-sm-2" id="getacc7" required></select></td><td><input class="form-control mb-2 mr-sm-2" type="text"  name="debit[]" onblur="findTotal()"></td><td><input class="form-control mb-2 mr-sm-2" type="text" name="credit[]" onblur="findTotal()"></td><td><textarea class="form-control mb-2 mr-sm-2" name="memo[]" required></textarea></td><td><input class="form-control mb-2 mr-sm-2" type="text" name="name[]" required/></td></tr><tr><td><select name="account[]" class="form-control mb-2 mr-sm-2" id="getacc8" required></select></td><td><input class="form-control mb-2 mr-sm-2" type="text"  name="debit[]" onblur="findTotal()"></td><td><input class="form-control mb-2 mr-sm-2" type="text" name="credit[]" onblur="findTotal()"></td><td><textarea class="form-control mb-2 mr-sm-2" name="memo[]" required></textarea></td><td><input class="form-control mb-2 mr-sm-2" type="text" name="name[]" required/></td></tr><tr><td><select name="account[]" class="form-control mb-2 mr-sm-2" id="getacc9" required></select></td><td><input class="form-control mb-2 mr-sm-2" type="text"  name="debit[]" onblur="findTotal()"></td><td><input class="form-control mb-2 mr-sm-2" type="text" name="credit[]" onblur="findTotal()"></td><td><textarea class="form-control mb-2 mr-sm-2" name="memo[]" required></textarea></td><td><input class="form-control mb-2 mr-sm-2" type="text" name="name[]" required/></td></tr>');
-//   }
-//   else if (inc_col2 == 5) {
-//     $(".container11").empty();
-//     $(".container11").append('<tr><td><input type="hidden" value="5" name="key"><select name="account[]" class="form-control mb-2 mr-sm-2" id="getacc10" required></select></td><td><input class="form-control mb-2 mr-sm-2" type="text"  name="debit[]" onblur="findTotal()"></td><td><input class="form-control mb-2 mr-sm-2" type="text"  name="credit[]" onblur="findTotal()"></td><td><textarea class="form-control mb-2 mr-sm-2" name="memo[]" required></textarea></td><td><input class="form-control mb-2 mr-sm-2" type="text" name="name[]" required/></td></tr><tr><td><select name="account[]" class="form-control mb-2 mr-sm-2" id="getacc11" required></select></td><td><input class="form-control mb-2 mr-sm-2" type="text"  name="debit[]" onblur="findTotal()"></td><td><input class="form-control mb-2 mr-sm-2" type="text"  name="credit[]" onblur="findTotal()"></td><td><textarea class="form-control mb-2 mr-sm-2" name="memo[]" required></textarea></td><td><input class="form-control mb-2 mr-sm-2" type="text" name="name[]" required/></td></tr><tr><td><select name="account[]" class="form-control mb-2 mr-sm-2" id="getacc12" required></select></td><td><input class="form-control mb-2 mr-sm-2" type="text"  name="debit[]" onblur="findTotal()"></td><td><input class="form-control mb-2 mr-sm-2" type="text"  name="credit[]" onblur="findTotal()"></td><td><textarea class="form-control mb-2 mr-sm-2" name="memo[]" required></textarea></td><td><input class="form-control mb-2 mr-sm-2" type="text" name="name[]" required/></td></tr><tr><td><select name="account[]" class="form-control mb-2 mr-sm-2" id="getacc13" required></select></td><td><input class="form-control mb-2 mr-sm-2" type="text"  name="debit[]" onblur="findTotal()"</td><td><input class="form-control mb-2 mr-sm-2" type="text"  name="credit[]" onblur="findTotal()"></td><td><textarea class="form-control mb-2 mr-sm-2" name="memo[]" required></textarea></td><td><input class="form-control mb-2 mr-sm-2" type="text" name="name[]" required/></td></tr><tr><td><select name="account[]" class="form-control mb-2 mr-sm-2" id="getacc14" required></select></td><td><input class="form-control mb-2 mr-sm-2" type="text"  name="debit[]" onblur="findTotal()"></td><td><input class="form-control mb-2 mr-sm-2" type="text"  name="credit[]" onblur="findTotal()" ></td><td><textarea class="form-control mb-2 mr-sm-2" name="memo[]" required></textarea></td><td><input class="form-control mb-2 mr-sm-2" type="text" name="name[]" required/></td></tr>');
-//   }
-//   else if (inc_col2 == 6) {
-//     $(".container11").empty();
-//     $(".container11").append('<tr><td><input type="hidden" value="6" name="key"><select name="account[]" class="form-control mb-2 mr-sm-2" id="getacc15" required></select></td><td><input class="form-control mb-2 mr-sm-2" type="text"  name="debit[]" onblur="findTotal()"></td><td><input class="form-control mb-2 mr-sm-2" type="text"  name="credit[]" onblur="findTotal()"></td><td><textarea class="form-control mb-2 mr-sm-2" name="memo[]" required></textarea></td><td><input class="form-control mb-2 mr-sm-2" type="text" name="name[]" required/></td></tr><tr><td><select name="account[]" class="form-control mb-2 mr-sm-2" id="getacc16" required></select></td><td><input class="form-control mb-2 mr-sm-2" type="text"  name="debit[]" onblur="findTotal()"></td><td><input class="form-control mb-2 mr-sm-2" type="text"  name="credit[]" onblur="findTotal()"></td><td><textarea class="form-control mb-2 mr-sm-2" name="memo[]" required></textarea></td><td><input class="form-control mb-2 mr-sm-2" type="text" name="name[]" required/></td></tr><tr><td><select name="account[]" class="form-control mb-2 mr-sm-2" id="getacc17" required></select></td><td><input class="form-control mb-2 mr-sm-2" type="text"  name="debit[]" onblur="findTotal()"></td><td><input class="form-control mb-2 mr-sm-2" type="text"  name="credit[]" onblur="findTotal()"></td><td><textarea class="form-control mb-2 mr-sm-2" name="memo[]" required></textarea></td><td><input class="form-control mb-2 mr-sm-2" type="text" name="name[]" required/></td></tr><tr><td><select name="account[]" class="form-control mb-2 mr-sm-2" id="getacc18" required></select></td><td><input class="form-control mb-2 mr-sm-2" type="text"  name="debit[]" onblur="findTotal()"</td><td><input class="form-control mb-2 mr-sm-2" type="text"  name="credit[]" onblur="findTotal()"></td><td><textarea class="form-control mb-2 mr-sm-2" name="memo[]" required></textarea></td><td><input class="form-control mb-2 mr-sm-2" type="text" name="name[]" required/></td></tr><tr><td><select name="account[]" class="form-control mb-2 mr-sm-2" id="getacc19" required></select></td><td><input class="form-control mb-2 mr-sm-2" type="text"  name="debit[]" onblur="findTotal()"></td><td><input class="form-control mb-2 mr-sm-2" type="text"  name="credit[]" onblur="findTotal()" ></td><td><textarea class="form-control mb-2 mr-sm-2" name="memo[]" required></textarea></td><td><input class="form-control mb-2 mr-sm-2" type="text" name="name[]" required/></td></tr><tr><td><select name="account[]" class="form-control mb-2 mr-sm-2" id="getacc20" required></select></td><td><input class="form-control mb-2 mr-sm-2" type="text"  name="debit[]" onblur="findTotal()"></td><td><input class="form-control mb-2 mr-sm-2" type="text" name="credit[]" onblur="findTotal()"></td><td><textarea class="form-control mb-2 mr-sm-2" name="memo[]" required></textarea></td><td><input class="form-control mb-2 mr-sm-2" type="text" name="name[]" required/></td></tr>');
-//   }
-//   else {
-//     $(".container11").empty();
-//   }
 }
 
 function confirmdelete(no){
@@ -153,22 +73,103 @@ function confirmdelete(no){
 }
 
 function findTotal(){
-    var arr = document.getElementsByName('debit[]');
+    var arr = document.getElementsByName('produce[]');
     var tot=0;
     for(var i=0;i<arr.length;i++){
         if(parseFloat(arr[i].value))
             tot += parseFloat(arr[i].value);
+            tot_final = new Intl.NumberFormat().format(tot);
     }
-    document.getElementById('totaldebit').value = tot;
+    document.getElementById('produces').value = tot_final;
 
-    var arr1 = document.getElementsByName('credit[]');
+    var arr1 = document.getElementsByName('material_cost[]');
     var tot1=0;
     for(var i=0;i<arr1.length;i++){
         if(parseFloat(arr1[i].value))
             tot1 += parseFloat(arr1[i].value);
+            tot_final1 = new Intl.NumberFormat().format(tot1);
     }
-    document.getElementById('totalcredit').value = tot1;
+    document.getElementById('material_costs').value = tot_final1;
+
+    var arr2 = document.getElementsByName('total_cost[]');
+    var tot2=0;
+    for(var i=0;i<arr2.length;i++){
+        if(parseFloat(arr2[i].value))
+            tot2 += parseFloat(arr2[i].value);
+            tot_final2 = new Intl.NumberFormat().format(tot2);
+    }
+    document.getElementById('total_costs').value = tot_final2;
+
+    var arr3 = document.getElementsByName('salary[]');
+    var tot3=0;
+    for(var i=0;i<arr3.length;i++){
+        if(parseFloat(arr3[i].value))
+            tot3 += parseFloat(arr3[i].value);
+            tot_final3 = new Intl.NumberFormat().format(tot3);
+    }
+    document.getElementById('salarys').value = tot_final3;
+
+    var arr4 = document.getElementsByName('total_produce[]');
+    var tot4=0;
+    for(var i=0;i<arr4.length;i++){
+        if(parseFloat(arr4[i].value))
+            tot4 += parseFloat(arr4[i].value);
+            tot_final4 = new Intl.NumberFormat().format(tot4);
+    }
+    document.getElementById('total_produces').value = tot_final4;
+
+    var arr5 = document.getElementsByName('produce_unit[]');
+    var tot5=0;
+    for(var i=0;i<arr5.length;i++){
+        if(parseFloat(arr5[i].value))
+            tot5 += parseFloat(arr5[i].value);
+            tot_final5 = new Intl.NumberFormat().format(tot5);
+    }
+    document.getElementById('produce_units').value = tot_final5;
+
+
 }
+
+function produceUnit(){
+    // var arr = document.getElementsByName('debit[]');
+    // var tot=0;
+    // for(var i=0;i<arr.length;i++){
+    //     if(parseFloat(arr[i].value))
+    //         tot += parseFloat(arr[i].value);
+    // }
+    // document.getElementById('totaldebit').value = tot;
+    //
+    // var arr1 = document.getElementsByName('credit[]');
+    // var tot1=0;
+    // for(var i=0;i<arr1.length;i++){
+    //     if(parseFloat(arr1[i].value))
+    //         tot1 += parseFloat(arr1[i].value);
+    // }
+    // document.getElementById('totalcredit').value = tot1;
+
+
+    // var produce_cal = document.getElementsByName('produce[]');
+    // console.log(produce_cal);
+    // var material_cost_cal = document.getElementsByName('material_cost[]');
+    // console.log(material_cost_cal);
+    // var sum1 = produce_cal * material_cost_cal;
+    // console.log(sum1);
+    // document.getElementById('total_cost_produce').value = produce_cal;
+
+
+    // var arr = document.getElementsByName('produce[]');
+    // var arr1 = document.getElementsByName('material_cost[]');
+    // var tot = 0;
+    // for(var i=0;i<arr.length;i++){
+    //     if(parseFloat(arr[i].value) && parseFloat(arr1[i].value))
+    //         tot = parseFloat(arr[i].value)*parseFloat(arr1[i].value);
+    //
+    // document.getElementById('total_cost_produce[]').value = tot;
+    // }
+
+}
+
+
 
 $(function() {
     $('input[name="daterange"]').daterangepicker();
