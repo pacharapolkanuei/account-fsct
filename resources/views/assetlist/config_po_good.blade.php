@@ -1,0 +1,159 @@
+@extends('index')
+@section('content')
+<script type="text/javascript" src="https://unpkg.com/sweetalert2@7.0.6/dist/sweetalert2.all.js"></script>
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+@if (Session::has('sweetalert.json'))
+<script>
+swal({!!Session::pull('sweetalert.json')!!});
+</script>
+@endif
+
+<style media="screen">
+.select2-container .select2-selection--single{
+  height:40px !important;
+}
+.select2-container--default .select2-selection--single{
+  border: 1px solid #ccc !important;
+  border-radius: 0px !important;
+}
+</style>
+
+  <div class="content-page">
+    <!-- Start content -->
+        <div class="content">
+             <div class="container-fluid">
+
+                  <div class="row">
+                        <div class="col-xl-12">
+                            <div class="breadcrumb-holder" id="fontscontent">
+                                <h1 class="float-left">Account - FSCT</h1>
+                                <ol class="breadcrumb float-right">
+                                  <li class="breadcrumb-item">ทรัพย์สินและค่าเสื่อม</li>
+                                  <li class="breadcrumb-item active">ตั้งค่าแบบเหล็ก(ซื้อสำเร็จรูป)</li>
+                                </ol>
+                                <div class="clearfix"></div>
+                            </div>
+                        </div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-sm-12">
+                      <div class="card mb-3">
+                        <div class="card-header">
+                          <h3><i class="fas fa-edit"></i>
+                            <fonts id="fontsheader">ตั้งค่าแบบเหล็ก(ซื้อสำเร็จรูป)</fonts>
+                          </h3>
+                        </div>
+                        </div><!-- end card-->
+
+                                <!-- Button to Open the Modal -->
+                                <div>
+                                  <button type="button" class="btn btn-primary" data-toggle="modal" style="float: right;margin: 0px 12px 10px 10px;" data-target="#myModal">
+                                    <i class="fas fa-plus">
+                                      <fonts id="fontscontent">เพิ่มข้อมูล
+                                    </i>
+                                  </button>
+                                </div>
+
+                                <br>
+
+                                <!-- แสดง error กรอกข้อมูลไม่ครบ -->
+                                @if ($errors->any())
+                                <script>
+                                  swal({
+                                    title: 'กรุณาระบุข้อมูลให้ครบถ้วน',
+                                    html: '{!! implode(' <br> ',$errors->all()) !!}',
+                                    type: 'error'
+                                  })
+                                </script>
+                                @endif
+                                <!-- แสดง error -->
+
+                                <br>
+                                <!-- The Modal -->
+                                <div class="modal fade" id="myModal">
+                                  <div class="modal-dialog modal-xl">
+                                    <div class="modal-content">
+
+                                      <!-- Modal Header -->
+                                      <div class="modal-header">
+                                        <h4 class="modal-title" id="fontscontent2"><b>ตั้งค่าแบบเหล็ก(ซื้อสำเร็จรูป)</b></h4>
+                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                      </div>
+
+                                      <!-- Modal body -->
+                                      <!-- ทำการ validate ช่องข้อมูล แสดง error -->
+                                      <div class="modal-body">
+                                        @if ($errors->any())
+                                        <div class="alert alert-danger">
+                                          <ul>
+                                            @foreach ($errors->all() as $error)
+                                            <li>{{ $error }}</li>
+                                            @endforeach
+                                          </ul>
+                                        </div>
+                                        @endif
+                                        <!-- //สิ้นสุด ทำการ validate ช่องข้อมูล แสดง error -->
+
+                                                {!! Form::open(['route' => 'config_po_good.config_ins', 'method' => 'post' ]) !!}
+                                                  {{ csrf_field() }}
+                                                <?php
+                                                  $level_id = Session::get('emp_code');
+                                                  // echo $level_id;
+                                                ?>
+                                                <input type="hidden" name="get_emp" value="{{ $level_id }}">
+                                                <div style="padding: 10px 0px 0px 0px;">
+                                                  <div class="table-responsive">
+                                                    <table class="table">
+                                                      <thead class="thead-light" id="fontstable">
+                                                          <th width="45%" style="text-align: center;">ชื่อของชิ้นส่วนวัสดุ</th>
+                                                          <th width="45%" style="text-align: center;">ชื่อของสินค้า</th>
+                                                          <th width="10%" style="text-align: center;"><button class="btn-primary add_form_field" type="button">เพิ่มข้อมูล</button></th>
+                                                      </thead>
+
+                                                      <tbody class="container11">
+
+                                                      </tbody>
+                                                    </table>
+                                                  </div>
+                                                </div>
+
+
+
+                                      </div>
+
+                                      <!-- Modal footer -->
+
+                                      <div class="modal-footer">
+                                        <a href="{{route('paycredit')}}">
+                                      {!! Form::submit('บันทึก', ['class' => 'btn btn-success', 'style' => 'dispaly: inline']) !!}
+                                        <button type="button" class="btn btn-warning" data-dismiss="modal">ยกเลิก</button>
+                                        </a>
+                                      </div>
+
+
+                                    </div>
+                                  </div>
+                                </div>
+                                {!! Form::close() !!}
+
+
+                    </div>
+      			<!-- END container-fluid -->
+      		    </div>
+      		<!-- END content -->
+        </div>
+      </div><!-- end card-->
+  </div>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+  <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script> -->
+  <script type="text/javascript" src = 'js/accountjs/config_po_good.js'></script>
+  <script>
+      $(document).ready(function() {
+      $('#example').DataTable();
+      } );
+  </script>
+@endsection

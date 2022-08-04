@@ -72,7 +72,7 @@ swal({!!Session::pull('sweetalert.json')!!});
                                 <br>
                                 <!-- The Modal -->
                                 <div class="modal fade" id="myModal">
-                                  <div class="modal-dialog modal-xl">
+                                  <div class="modal-dialog modal-xl" style="max-width: 80%;">
                                     <div class="modal-content">
 
                                       <!-- Modal Header -->
@@ -113,7 +113,8 @@ swal({!!Session::pull('sweetalert.json')!!});
                                                     <input type="date" autocomplete="off" class="form-control mb-2 mr-sm-2" name="datenow" required>
 
                                                     &nbsp;&nbsp;<label class="mb-2 mr-sm-2" for="modal-input-priceservice" id="fontslabel"><b>PO :</b></label>
-                                                    <input type="text" class="form-controller" id="search" name="search"></input>
+                                                    <input type="date" autocomplete="off" class="form-control mb-2 mr-sm-2" name="search1" required>
+                                                    <!-- <input type="text" class="form-controller" id="search" name="search"></input> -->
                                                     <br>
 
                                                   </div>

@@ -7,7 +7,9 @@ use Illuminate\Http\Request;
 use Softon\SweetAlert\Facades\SWAL;
 use App\Branch;
 use App\Po_head;
+use App\Po_detail;
 use App\Accounttype;
+use App\Material_ref_good;
 use App\Receiptasset;
 use App\Api\Connectdb;
 use App\Receiptasset_detail;
@@ -81,6 +83,30 @@ class BuysteelController extends Controller
       return view('assetlist.approve_buysteel',['receiptassets'=>$receiptassets]);
     }
 
+    public function config_buysteel_index()
+    {
+      $connect = Connectdb::Databaseall();
+  		$baseAc = $connect['fsctaccount'];
+  		$sql = "SELECT * FROM $baseAc.po_head
+
+                       WHERE $baseAc.po_head.branch_id = 1001";
+  		$po_heads = DB::select($sql);
+
+      return view('assetlist.config_po_good',['po_heads'=>$po_heads]);
+    }
+    function getpodetailbyidhead(Request $request)
+    {
+        $id = $request->post('data');
+         $po_detail = new Po_detail;
+         $po_detail->setConnection('mysql2');
+         $po_detail = Po_detail::join('po_head', 'po_head.id', '=', 'po_detail.po_headid')
+                       ->whereIn('po_detail.po_headid', $id)
+                       ->where('statususe','=',1)
+                       ->get();
+         return $po_detail;
+    }
+
+
     public function approve_confirm(Request $request)
   	{
   				$receiptasset_id = $request->get('receiptasset_id');
@@ -146,6 +172,32 @@ class BuysteelController extends Controller
           }
       }
     }
+
+    public function config_ins(Request $request)
+    {
+        if ($request->get('get_emp') != null) {
+
+          $emp_code = $request->get('get_emp');
+          $name_materials = $request->get('name_material');
+          $name_goods = $request->get('name_good');
+
+          for ($i=0; $i < count($name_materials); $i++) {
+            $ins_mat_ref_good = new Material_ref_good;
+            $ins_mat_ref_good->setConnection('mysql2');
+            $ins_mat_ref_good->id_material = $name_materials[$i];
+            $ins_mat_ref_good->id_good = $name_goods[$i];
+            $ins_mat_ref_good->emp_code = $emp_code;
+            $ins_mat_ref_good->save();
+          }
+
+      SWAL::message('สำเร็จ', 'บันทึกการตั้งค่าแบบเหล็ก(ซื้อสำเร็จรูป)แล้ว!', 'success', ['timer' => 6000]);
+      return redirect()->route('buysteel');
+    }else {
+      SWAL::message('บันทึกล้มเหลว', 'session หมดอายุให้กลับไป Log In !', 'warning', ['timer' => 6000]);
+      return redirect()->route('fsctonline.com/fscthr/auth/default/index');
+    }
+    }
+
 
     public function store(Request $request)
     {
@@ -243,5 +295,27 @@ class BuysteelController extends Controller
       return $materials;
     }
 
+    public function config_getmaterial()
+    {
+      $materials = DB::connection('mysql3')
+          ->table('material')
+          ->seLect('id','name')
+          ->orderBy('name', 'asc')
+          ->where('status',1)
+          ->get();
+
+      return $materials;
+    }
+    public function config_getgood()
+    {
+      $goods = DB::connection('mysql2')
+          ->table('good')
+          ->seLect('id','name')
+          ->orderBy('name', 'asc')
+          ->where('status',1)
+          ->get();
+
+      return $goods;
+    }
 
 }

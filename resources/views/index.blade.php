@@ -133,6 +133,7 @@ use App\Api\Connectdb;
                 <li class="submenu">
                     <a href="#" id="fontsmenu2"><span>รายการต้นทุนแบบเหล็ก(ซื้อสำเร็จรูป)</span> <span class="menu-arrow"></span> </a>
                         <ul style="">
+                            <li><a href="/account-fsct/public/config_po_good" id="fontsmenu2">ตั้งค่าแบบเหล็ก(ซื้อสำเร็จรูป)</a></li>
                             <li><a href="/account-fsct/public/buysteel" id="fontsmenu2">เพิ่มรายการต้นทุนแบบเหล็ก(ซื้อสำเร็จรูป)</a></li>
                             <li><a href="/account-fsct/public/approve_buysteel" id="fontsmenu2">อนุมัติรายการต้นทุนแบบเหล็ก(ซื้อสำเร็จรูป)</a></li>
                         </ul>

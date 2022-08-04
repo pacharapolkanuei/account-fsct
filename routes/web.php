@@ -642,6 +642,11 @@ Route::get('/getlisttypeassetrefaccnumber', 'Asset_listController@getlisttypeass
 Route::get('/serchassetrefmaterial', 'Asset_listController@serchassetrefmaterial');
 
 //-------------------------------------- buysteel --------------------------
+Route::get('/config_po_good', 'BuysteelController@config_buysteel_index')->name('config_po_good');
+Route::get('config_getmaterial', 'BuysteelController@config_getmaterial');
+Route::get('config_getgood', 'BuysteelController@config_getgood');
+Route::post('/config_po_good/config_ins','BuysteelController@config_ins')->name('config_po_good.config_ins');
+
 Route::get('/buysteel', 'BuysteelController@index')->name('buysteel');
 Route::get('/search','BuysteelController@search');
 Route::get('getmaterial', 'BuysteelController@getmaterial');
