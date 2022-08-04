@@ -931,4 +931,197 @@ class SettingassettoolController extends Controller
 
             //
     }
+
+    public function saveproductgoodtoproduct(){
+          $data = Input::all();
+          $connect1 = Connectdb::Databaseall();
+
+
+          $emp_code = Session::get('emp_code');
+          $baseMan = $connect1['fsctmain'];
+
+
+          //  หาว่าได้ตั้ง ใบเบิกใช้วัสตุตัวไหน
+          $baseAc1 = $connect1['fsctaccount'];
+          $sql2 = "SELECT Max($baseAc1.receiptasset.id)+1 as idgen
+                  FROM $baseAc1.receiptasset ";
+          $idgen = DB::select($sql2);
+          $Y = (date('Y')+543);
+          $m = date('m');
+          $d = date('d');
+          $bill = $data['bill_of_lading_head'];
+
+          $sql2 = "SELECT $baseAc1.bill_of_lading_head.*,
+                          $baseAc1.bill_of_lading_detail.*
+                  FROM $baseAc1.bill_of_lading_head
+                  INNER JOIN $baseAc1.bill_of_lading_detail
+                  ON $baseAc1.bill_of_lading_head.id = $baseAc1.bill_of_lading_detail.bill_of_lading_head
+                  WHERE $baseAc1.bill_of_lading_head.status  = '1'
+                  AND $baseAc1.bill_of_lading_head.number_bill = '$bill' ";
+          $getdatabillhead = DB::select($sql2);
+
+
+          $arrInert = [ 'id'=>'',
+                  'po_ref'=>0,
+                  'receiptnum'=>'RCT'.$Y.$m.$d.str_pad($idgen[0]->idgen, 5, '0', STR_PAD_LEFT),
+                  'datein'=>date('Y-m-d H:m:s'),
+                  'dateuse'=>date('Y-m-d H:m:s'),
+                  'status'=>'0',
+                  'emp_code'=>$emp_code,
+                  'type_pd'=>'1',
+                  'bill_of_lading_head_id'=>$getdatabillhead[0]->bill_of_lading_head,
+                  ];
+
+          // print_r($data);
+           $lastid = DB::table($connect1['fsctaccount'].'.receiptasset')->insertGetId($arrInert);
+
+          foreach ($data['material_id'] as $key => $value) {
+                $arrInert = [ 'id'=>'',
+                        'receiptasset_id'=>$lastid,
+                        'material_id'=>$value,
+                        'lot'=>$data['LotShow'],
+                        'produce'=>$data['produce'][$key],
+                        'cost'=>$data['cost'][$key],
+                        'total_cost'=>$data['total_cost'][$key],
+                        'saraly'=>$data['saraly'][$key],
+                        'total_cost_produce'=>$data['total_cost_produce'][$key],
+                        'cost_produce_unit'=>$data['cost_produce_unit'][$key],
+                        'beginningbalance'=>0,
+                        'depreciation_first'=>0,
+                        ];
+              DB::table($connect1['fsctaccount'].'.receiptasset_detail')->insert($arrInert);
+          }
+
+
+          SWAL::message('สำเร็จ', 'บันทึกรายการ', 'success', ['timer' => 6000]);
+          return redirect()->back();
+
+    }
+
+
+    public function approveasset_product_tool(){
+            $data = Input::all();
+            $connect1 = Connectdb::Databaseall();
+            $emp_code = Session::get('emp_code');
+            ////////////  save app ac
+            // print_r($data);
+            $baseAc1 = $connect1['fsctaccount'];
+            // print_r($data);
+            $id = $data['id'];
+            $sqlUpdate = ' UPDATE '.$baseAc1.'.receiptasset
+                      SET status = "1"
+                      WHERE '.$baseAc1.'.receiptasset.id = "'.$id.'" ';
+            $lgUpdateResulte = DB::connection('mysql')->select($sqlUpdate);
+
+            $sql2 = "SELECT $baseAc1.receiptasset.*,
+                            sum($baseAc1.receiptasset_detail.total_cost_produce) as sumtotal_cost_produce
+                   FROM $baseAc1.receiptasset
+                   INNER JOIN $baseAc1.receiptasset_detail
+                   ON $baseAc1.receiptasset.id = $baseAc1.receiptasset_detail.receiptasset_id
+                   WHERE $baseAc1.receiptasset.status  = '1'
+                   AND $baseAc1.receiptasset.id =  '$id' ";
+
+            $getdatadetail = DB::select($sql2);
+
+
+          $receiptnum = $getdatadetail[0]->receiptnum;
+          $sumtotal_cost_produce = $getdatadetail[0]->sumtotal_cost_produce;
+          $brcode = Session::get('brcode');
+          ///////////////////    บันทึก GL
+          $arrInert = [ 'id'=>'',
+                      'type_module'=>'5',
+                      'number_bill_journal'=>$receiptnum,
+                      'code_branch'=>$brcode,
+                      'datebill'=>date('Y-m-d'),
+                      'balance_forward_status'=>0,
+                      'accept'=>1,
+                      'status'=>1,
+                      'totalsum'=>$sumtotal_cost_produce];
+
+        $lastid = DB::table($connect1['fsctaccount'].'.journal_5')->insertGetId($arrInert);
+
+
+            // dr บันทึกบัญชี   เครื่องมือให้เช่า 121  151900//
+          $totaldr = $sumtotal_cost_produce;
+
+            $accmake = '121';
+            $arrInert = [ 'id'=>'',
+                          'id_journalgeneral_head'=>$lastid,
+                          'accounttype'=>$accmake,
+                          'list'=>'เครื่องมือให้เช่า',
+                          'name_suplier'=>'',
+                          'status'=>1,
+                          'debit'=>$totaldr,
+                          'credit'=>0];
+            DB::table($connect1['fsctaccount'].'.journalgeneral_detail')->insert($arrInert);
+
+            $arrInert = [ 'id'=>'',
+                    'dr'=>$sumtotal_cost_produce,
+                    'cr'=>0.00,
+                    'acc_code'=>'151900',
+                    'branch'=>$brcode,
+                    'status'=> 1,
+                    'number_bill'=>$receiptnum,
+                    'customer_vendor'=>'',
+                    'timestamp'=>date('Y-m-d'),
+                    //'code_emp'=>$emp_outs,
+                    'subtotal'=> 0,
+                    'discount'=> 0,
+                    'vat'=> 0,
+                    'vatmoney'=> 0,
+                    // 'wht'=> $withholds,
+                    'whtmoney'=> 0,
+                    'grandtotal'=> $totaldr,
+                    'type_journal' => 5,
+                    'id_type_ref_journal'=>$lastid,
+                    'timereal'=>date('Y-m-d'),
+                    'list'=> ' นั่งร้าน :'.'bill'.$receiptnum];
+            DB::table($connect1['fsctaccount'].'.ledger')->insert($arrInert);
+
+
+            // cr บันทึกบัญชี   งานระหว่างทำ-นั่งร้าน 266  115301//
+          $totalcr = $sumtotal_cost_produce;
+
+            $acccr = '266';
+            $arrInert = [ 'id'=>'',
+                          'id_journalgeneral_head'=>$lastid,
+                          'accounttype'=>$acccr,
+                          'list'=>'งานระหว่างทำ-นั่งร้าน',
+                          'name_suplier'=>'',
+                          'status'=>1,
+                          'debit'=>0,
+                          'credit'=>$sumtotal_cost_produce];
+            DB::table($connect1['fsctaccount'].'.journalgeneral_detail')->insert($arrInert);
+
+            $arrInert = [ 'id'=>'',
+                    'dr'=>0.00,
+                    'cr'=>$sumtotal_cost_produce,
+                    'acc_code'=>'115301',
+                    'branch'=>$brcode,
+                    'status'=> 1,
+                    'number_bill'=>$receiptnum,
+                    'customer_vendor'=>'',
+                    'timestamp'=>date('Y-m-d'),
+                    //'code_emp'=>$emp_outs,
+                    'subtotal'=> 0,
+                    'discount'=> 0,
+                    'vat'=> 0,
+                    'vatmoney'=> 0,
+                    // 'wht'=> $withholds,
+                    'whtmoney'=> 0,
+                    'grandtotal'=> $totalcr,
+                    'type_journal' => 5,
+                    'id_type_ref_journal'=>$lastid,
+                    'timereal'=>date('Y-m-d'),
+                    'list'=> 'งานระหว่างทำ-นั่งร้าน :'.'bill'.$receiptnum];
+            DB::table($connect1['fsctaccount'].'.ledger')->insert($arrInert);
+
+            SWAL::message('สำเร็จ', 'บันทึกรายการ', 'success', ['timer' => 6000]);
+            return 1;
+
+
+    }
+
+
+
 }

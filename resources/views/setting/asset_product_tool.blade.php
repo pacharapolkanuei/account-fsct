@@ -63,79 +63,62 @@ swal({!!Session::pull('sweetalert.json')!!});
                                 $baseAc1 = $connect1['fsctaccount'];
                                 $baseMan = $connect1['fsctmain'];
 
-                                $sql1 = "SELECT $baseMan.goods_to_material_head.*,
-                                                $baseMan.material.name
-                                        FROM $baseMan.goods_to_material_head
-                                        INNER JOIN $baseMan.material
-                                        ON $baseMan.material.id = $baseMan.goods_to_material_head.material_id
-                                        WHERE $baseMan.goods_to_material_head.status = '1' ";
+                                $sql1 = "SELECT $baseAc1.receiptasset.*,
+                                                $baseAc1.bill_of_lading_head.number_bill as  bill_of_lading_head,
+                                                SUM($baseAc1.receiptasset_detail.total_cost_produce) as sum_total_cost_produce
+                                        FROM $baseAc1.receiptasset
+                                        INNER JOIN $baseAc1.bill_of_lading_head
+                                        ON $baseAc1.bill_of_lading_head.id = $baseAc1.receiptasset.bill_of_lading_head_id
+                                        INNER JOIN $baseAc1.receiptasset_detail
+                                        ON $baseAc1.receiptasset_detail.receiptasset_id = $baseAc1.receiptasset.id
+                                        WHERE $baseAc1.receiptasset.status != '99'
+                                        AND  $baseAc1.receiptasset.type_pd = '1'";
                                 $gethead = DB::select($sql1);
+
                                 //print_r($getdatas);
                                 ?>
                                 <div class="table-responsive">
                                   <table id="example" class="table table-striped table-bordered fontslabel" style="width:100%">
                                     <thead>
                                       <tr>
-                                        <th>Material </th>
-                                        <th>วัตถุดิบ</th>
+                                        <th>รหัสใบผลิตสินค้า </th>
+                                        <th>วันที่</th>
+                                        <th>รวมต้นทุนผลิต</th>
+                                        <th>สถานะ</th>
+                                        <th>อนุมัติ</th>
+                                        <th>พิมพ์รายละเอียด</th>
                                       </tr>
                                     </thead>
-
-
-                                    <tbody>
-                                    <?php if(!empty($gethead)){?>
-                                      <?php foreach ($gethead as $key => $value) {?>
-                                        <tr>
-                                          <th><?php echo $value->name;?> </th>
-                                          <th>
-                                            <table class="table table-bordered table-hover">
-                                              <thead>
-                                              <tr>
-                                                <th style="width: 25%;">ชื่อวัตถุดิบ</th>
-                                                <th>กี่เมตร</th>
-                                                <th>ราคาต่อเมตร</th>
-                                                <th>รวมต้นทุน/ชิ้น</th>
-                                              </tr>
-                                                <tbody>
-                                                    <?php
-                                                        $a = 0;
-                                                        $b = 0 ;
-                                                        $c = 0;
-                                                        $sql1 = "SELECT $baseMan.goods_to_material_detail.*,
-                                                                      $baseAc1.good.name
-                                                              FROM $baseMan.goods_to_material_detail
-                                                              INNER JOIN $baseAc1.good
-                                                              ON $baseMan.goods_to_material_detail.goodsid = $baseAc1.good.id
-                                                              WHERE $baseMan.goods_to_material_detail.goods_to_material_head_id = '$value->id' ";
-                                                      $getheaddetail = DB::select($sql1);
-                                                    ?>
-                                                    <?php foreach ($getheaddetail as $k => $v):
-                                                        $a = $a + $v->amountpermeet;
-                                                        $b = $b + $v->pricepermeet;
-                                                        $c = $c + $v->totalthis;
-                                                      ?>
-                                                    <tr>
-                                                      <td style="width: 25%;"><?php echo $v->name;?></td>
-                                                      <td><?php echo $v->amountpermeet;?></td>
-                                                      <td><?php echo $v->pricepermeet;?></td>
-                                                      <td><?php echo $v->totalthis;?></td>
-                                                    </tr>
-                                                    <?php endforeach; ?>
-                                                    <tr>
-                                                      <th style="width: 25%;">รวม</th>
-                                                      <th><?php echo $a;?></th>
-                                                      <th><?php echo $b;?></th>
-                                                      <th><?php echo $c;?></th>
-                                                    </tr>
-                                                </tbody>
-                                              </thead>
-                                            </table>
-                                          </th>
-                                        </tr>
-                                      <?php } ?>
-                                    <?php } ?>
-                                    </tbody>
-                                  </table><br>
+                                    <?php if(isset($gethead)){
+                                        foreach ($gethead as $key => $value) {
+                                    ?>
+                                          <tbody>
+                                            <tr>
+                                              <td><?php echo $value->bill_of_lading_head;?></td>
+                                              <td><?php echo $value->datein;?></th>
+                                              <td><?php echo $value->sum_total_cost_produce;?></th>
+                                              <td><?php
+                                                      if($value->status==0){
+                                                          echo '<p style="color:blue">รออนุมัติ</p>';
+                                                      }elseif($value->status==1){
+                                                          echo '<p style="color:green">อนุมัติเรียบร้อย</p>';
+                                                      }
+                                                  ?>
+                                              </td>
+                                              <td>
+                                                <button type="button" class="btn btn-primary" data-toggle="modal" onclick="saveapprovedtool(<?php echo $value->id ?>)" data-target="#exampleModal">
+                                                  <i class="fas fa-check">
+                                                    <fonts id="fontscontent">เพิ่มข้อมูล
+                                                  </i>
+                                                </button>
+                                              </td>
+                                              <td> <a href="printasset_product_tool?id=<?php echo $value->id ?>" target="_blank"><img src="images/global/printall.png"> </a></td>
+                                            </tr>
+                                          </tbody>
+                                      <?php }?>
+                                  <?php }?>
+                                  </table>
+                                  <br>
                                 </div>
 
                                 <!-- แสดง error กรอกข้อมูลไม่ครบ -->
@@ -260,7 +243,7 @@ swal({!!Session::pull('sweetalert.json')!!});
                                                     <td><input type="text" class="form-control mb-2 mr-sm-2" name="saraly[]" id="saraly0"   readonly></td>
                                                     <td><input type="text" class="form-control mb-2 mr-sm-2 tpc" name="total_cost_produce[]" id="total_cost_produce0"   readonly></td>
                                                     <td><input type="text" class="form-control mb-2 mr-sm-2 cpu" name="cost_produce_unit[]" id="cost_produce_unit0"   readonly></td>
-                                                  
+
                                                     </tr>
 
                                                   </tbody>
@@ -302,39 +285,27 @@ swal({!!Session::pull('sweetalert.json')!!});
   </div>
 
 
-  <!-- MODAL edit -->
-
-  <div class="modal fade" id="modaledit">
-      <div class="modal-dialog modal-lg">
-          <div class="modal-content">
-
-              <!-- Modal Header -->
-              <div class="modal-header">
-                <h4 class="modal-title" id="fontscontent2"><b>รายการทรัพย์สิน</b></h4>
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-              </div>
-
-                <!-- Modal body -->
-                <div class="modal-body">
-
-                    {{ csrf_field() }}
-
-
-              </div>
-              <!-- Modal footer -->
-              <div class="modal-footer">
-                  <a href="{{route('asset_list')}}">
-                      <input type="submit" class="btn btn-success" style="display: inline" id="button-submit-edit" value="บันทึก">
-                      <button type="button" class="btn btn-warning" data-dismiss="modal">ยกเลิก</button>
-                  </a>
-              </div>
-
-
-          </div>
+  <!-- Modal confrime-->
+  <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          ยืนยันการอนุมัติ <b id="poappove"></b>
+          <input type="hidden" id="idappoved" value="">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" onclick="saveapprovedrecstatus();">Save</button>
+        </div>
       </div>
+    </div>
   </div>
-
-  <!-- end iditmodal -->
 
 
   <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script> -->
