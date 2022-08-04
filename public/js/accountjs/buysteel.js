@@ -43,6 +43,71 @@ $(document).ready(function() {
 
 });
 
+
+function select_po(val){
+	var id_po = val.value;
+  var change_array = Array.from(id_po);
+  console.log(change_array);
+  var _token = $("input[name='_token']").val();
+
+  $.post('getdetails',{_token:_token , data:change_array}, function(res) {
+        console.log(res);
+        $('#po_content').empty();
+        var table_content = '';
+        var no = 1;
+        // var amount = $("#amount").val();
+        // var price = $("#price").val();
+        // var sum_onelist = (amount*price);
+        // var discount = ($("#discount").val()*sum_onelist/100); //ส่วนลดเป็นเปอร์เซ็น
+        $.each(res, function(index,value) {
+          console.log(value);
+
+          table_content +='<tr>';
+            table_content +='<td id="fontstable">'+no+'</td>';
+            table_content +='<td id="fontstable">'+'<input type="hidden" name="config_group_supp_id[]" value="'+value.config_group_supp_id+'" >'+'<input type="hidden" name="materialid[]" value="'+value.materialid+'">'+'<input type="hidden" name="wht_percent" value="'+value.whd+'" id="whd">'+'<input type="hidden" name="list[]" value="'+value.list+'" >'+'<input type="hidden" name="type_amount[]" value="'+value.type_amount+'">'+'<input type="hidden" name="withhold[]" value="'+value.withhold+'">'+'<input type="hidden" value="'+value.whd+'" id="getwhd">'+'<input type="hidden" value="'+value.statusbank+'" name="ins_statusbank" id="getdetailprivate">'+'<input type="hidden" value="'+value.ckreservemoney+'" name="ins_pettycash" id="getdetailpettycash">'+'<input type="hidden" value="'+value.vat+'" id="getvat">'+'<input type="hidden" name="quantity_get[]" value="'+value.quantity_get+'">'+'<input type="hidden" name="quantity_loss[]" value="'+value.quantity_loss+'">'+'<input type="hidden" name="status[]" value="'+value.status+'">'+'<input type="hidden" name="check_ins_reserv" value="'+value.po_reservemoney+'">'+'<input type="hidden" name="po_headid[]" value="'+value.po_headid+'">'+value.list+'</td>';
+            table_content +='<td>'+'<input class="form-control" type="text" value="'+value.amount+'" id="amount'+no+'"  name="amount[]" readonly>'+'<input type="hidden" name="po_number_ins" value="'+value.po_number+'">'+'</td>';
+            table_content +='<td>'+'<input class="form-control" type="text" onchange="change_cal('+no+')" value="'+value.price+'" id="price'+no+'" name="price[]" readonly>'+'</td>';
+
+
+            table_content +='<td>'+'<input class="form-control" type="text" value="'+value.amount*value.price+'" id="sum_onelist'+no+'" name="sum[]" readonly>'+'</td>';
+
+            if (value.note == null) {
+              table_content +='<td id="fontstable">ไม่มีข้อมูล</td>';
+            } else {
+              table_content +='<td id="fontstable">'+value.note+'</td>';
+            }
+
+          table_content +='</tr>';
+          no = no+1;
+        });
+        var id_result = '<tr>\
+        <td></td>\
+        <td></td>\
+        <td></td>\
+        <td></td>\
+        <td style="text-align:right;" id="fontstable"><b>จำนวนรายการ</b></td>\
+        <td id="fontstable"> '+(no-1)+' <b> รายการ<input type="hidden" name="count_list" class="form-control" id="count_list" value="'+(no-1)+'" ></b></td>\
+        </tr>';
+
+      $('#po_content').append(table_content);
+      $('#po_content').append(id_result);
+      $('#getwhd').val();
+      $('#getvat').val();
+      $('#getdetailprivate').val();
+        // change_cal(no);
+        calculatelast();
+        showwhd();
+        insert();
+        insert_pettycash();
+  });
+}
+
+
+
+
+
+
+
 function increase_col(){
   var inc_col2 = $('#inc_col').val();
 }

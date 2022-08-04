@@ -136,6 +136,34 @@ swal({!!Session::pull('sweetalert.json')!!});
                                   </div>
                                 </div>
                                 {!! Form::close() !!}
+                                <div >
+                                  <div class="table-responsive">
+                                    <table id="example" class="table table-striped table-bordered" style="width:100%">
+                                      <thead>
+                                        <tr>
+                                          <th>ลำดับ</th>
+                                          <th>ชื่อของชิ้นส่วนวัสด</th>
+                                          <th>ชื่อของสินค้า</th>
+                                          <th>สถานะ</th>
+                                        </tr>
+                                      </thead>
+                                      <tbody>
+                                        @foreach ($matrefgoods as $key => $matrefgood)
+                                        <tr>
+                                          <td>{{ $key+1 }}</td>
+                                          <td>{{ $matrefgood->material_name}}</td>
+                                          <td>{{ $matrefgood->good_name}}</td>
+                                          <td>
+                                            <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#modaledit">แก้ไข</button>
+                                            <a class="btn btn-danger btn-md delete-confirm">ลบ</a>
+                                          </td>
+                                        </tr>
+                                        @endforeach
+                                      </tbody>
+                                    </table>
+                                    <br>
+                                  </div>
+                                </div>
 
 
                     </div>
@@ -146,9 +174,42 @@ swal({!!Session::pull('sweetalert.json')!!});
       </div><!-- end card-->
   </div>
 
+  <!-- MODAL edit -->
+  @foreach ($matrefgoods as $key => $matrefgood)
+  <div class="modal fade" id="modaledit">
+      <div class="modal-dialog modal-xl">
+          <div class="modal-content">
+
+              <!-- Modal Header -->
+              <div class="modal-header">
+                <h4 class="modal-title" id="fontscontent2"><b>แจ้งการจ่ายเงิน (สด/โอน)</b></h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+              </div>
+                <!-- Modal body -->
+                <div class="modal-body">
+
+
+
+                </div>
+                <!-- Modal footer -->
+                <div class="modal-footer">
+                    <a href="{{route('payser')}}">
+                        <input type="submit" class="btn btn-success" style="display: inline" id="button-submit-edit" value="บันทึก">
+                        <button type="button" class="btn btn-warning" data-dismiss="modal">ยกเลิก</button>
+                    </a>
+                </div>
+                {!! Form::close() !!}
+
+          </div>
+      </div>
+  </div>
+  @endforeach
+  <!-- end iditmodal -->
+
+
+
+
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
-  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-  <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
   <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script> -->
   <script type="text/javascript" src = 'js/accountjs/config_po_good.js'></script>
   <script>

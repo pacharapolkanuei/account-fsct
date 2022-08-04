@@ -29,6 +29,8 @@ class BuysteelController extends Controller
       //     ->orderBy('group_property.id', 'asc')
       //     ->where('group_property.statususe',1)
       //     ->get();
+
+
       $connect = Connectdb::Databaseall();
       $baseAc = $connect['fsctaccount'];
       $baseHr = $connect['hr_base'];
@@ -50,7 +52,15 @@ class BuysteelController extends Controller
 
       $receiptasset_details = DB::select($sql);
 
-      return view('assetlist.buysteel',['receiptasset_details'=>$receiptasset_details]);
+      $sql1 = "SELECT * FROM $baseAc.po_head
+
+                      WHERE $baseAc.po_head.branch_id = 1001 AND $baseAc.po_head.status_head = 99";
+
+      $po_heads = DB::select($sql1);
+
+
+      return view('assetlist.buysteel',['receiptasset_details'=>$receiptasset_details,
+                                        'po_heads'=>$po_heads]);
     }
 
     public function approve_buysteel_index()
@@ -87,13 +97,37 @@ class BuysteelController extends Controller
     {
       $connect = Connectdb::Databaseall();
   		$baseAc = $connect['fsctaccount'];
-  		$sql = "SELECT * FROM $baseAc.po_head
+      $baseMain = $connect['fsctmain'];
+  		$sql = "SELECT $baseAc.material_ref_good.*
+                                            ,material.name as material_name
+                                            ,good.name as good_name
 
-                       WHERE $baseAc.po_head.branch_id = 1001";
-  		$po_heads = DB::select($sql);
+                        FROM $baseAc.material_ref_good
 
-      return view('assetlist.config_po_good',['po_heads'=>$po_heads]);
+                        INNER JOIN $baseMain.material
+                        ON $baseAc.material_ref_good.id_material = $baseMain.material.id
+
+                        INNER JOIN $baseAc.good
+                        ON $baseAc.material_ref_good.id_good = $baseAc.good.id
+
+                        WHERE $baseAc.material_ref_good.status = 1";
+  		$matrefgoods = DB::select($sql);
+
+      return view('assetlist.config_po_good',['matrefgoods'=>$matrefgoods]);
     }
+
+    function getdetails(Request $request)
+    {
+         $id = $request->post('data');
+         $po_detail = new Po_detail;
+         $po_detail->setConnection('mysql2');
+         $po_detail = Po_detail::join('po_head', 'po_head.id', '=', 'po_detail.po_headid')
+                       ->whereIn('po_detail.po_headid', $id)
+                       ->where('statususe','=',1)
+                       ->get();
+         return $po_detail;
+    }
+
     function getpodetailbyidhead(Request $request)
     {
         $id = $request->post('data');
@@ -191,7 +225,7 @@ class BuysteelController extends Controller
           }
 
       SWAL::message('สำเร็จ', 'บันทึกการตั้งค่าแบบเหล็ก(ซื้อสำเร็จรูป)แล้ว!', 'success', ['timer' => 6000]);
-      return redirect()->route('buysteel');
+      return redirect()->route('config_po_good');
     }else {
       SWAL::message('บันทึกล้มเหลว', 'session หมดอายุให้กลับไป Log In !', 'warning', ['timer' => 6000]);
       return redirect()->route('fsctonline.com/fscthr/auth/default/index');

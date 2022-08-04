@@ -651,6 +651,7 @@ Route::get('/buysteel', 'BuysteelController@index')->name('buysteel');
 Route::get('/search','BuysteelController@search');
 Route::get('getmaterial', 'BuysteelController@getmaterial');
 Route::post('/buysteel/store','BuysteelController@store')->name('buysteel.store');
+Route::post('getdetails','BuysteelController@getdetails');
 
 Route::get('/approve_buysteel', 'BuysteelController@approve_buysteel_index')->name('approve_buysteel');
 Route::post('/approve_buysteel_confirm', 'BuysteelController@approve_confirm')->name('approve_buysteel_confirm');

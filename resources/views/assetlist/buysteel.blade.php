@@ -109,22 +109,30 @@ swal({!!Session::pull('sweetalert.json')!!});
                                                     <label class="mb-2 mr-sm-2" id="fontslabel" for=""><b>Lot :</b></label>
                                                     <input type="text" class="form-control mb-2 mr-sm-2" name="lotnumber"required>
 
-                                                    &nbsp;&nbsp;<label class="mb-2 mr-sm-2" id="fontslabel" for=""><b>วันที่ผลิตเสร็จ :</b></label>
+                                                    &nbsp;&nbsp;<label class="mb-2 mr-sm-2" id="fontslabel" for=""><b>วันที่เริ่มใช้งาน :</b></label>
                                                     <input type="date" autocomplete="off" class="form-control mb-2 mr-sm-2" name="datenow" required>
 
-                                                    &nbsp;&nbsp;<label class="mb-2 mr-sm-2" for="modal-input-priceservice" id="fontslabel"><b>PO :</b></label>
+                                                    &nbsp;&nbsp;<label class="mb-2 mr-sm-2" id="fontslabel" for=""><b>เลือก PO :</b></label>
+                                                    <select class="form-control mb-2 mr-sm-2" id="modal-input-branch" name="po_id" onchange="select_po(this)">
+                                                      <option disabled selected>เลือก PO</option>
+                                                      @foreach ($po_heads as $key => $po_head)
+                                                      <option value="{{$po_head->id}}">{{$po_head->po_number}}</option>
+                                                      @endforeach
+                                                    </select>
+
+                                                    <!-- &nbsp;&nbsp;<label class="mb-2 mr-sm-2" for="modal-input-priceservice" id="fontslabel"><b>PO :</b></label>
                                                     <input type="date" autocomplete="off" class="form-control mb-2 mr-sm-2" name="search1" required>
-                                                    <!-- <input type="text" class="form-controller" id="search" name="search"></input> -->
-                                                    <br>
+                                                    <input type="text" class="form-controller" id="search" name="search"></input>
+                                                    <br> -->
 
                                                   </div>
                                                   <!-- </div> -->
 
-                                                  <div id="show_po">
-                                                  </div>
+                                                  <!-- <div id="show_po">
+                                                  </div> -->
                                                 </div>
 
-                                                <div style="padding: 10px 0px 0px 0px;">
+                                                <!-- <div style="padding: 10px 0px 0px 0px;">
                                                   <div class="table-responsive">
                                                     <table class="table">
                                                       <thead class="thead-light" id="fontstable">
@@ -156,7 +164,7 @@ swal({!!Session::pull('sweetalert.json')!!});
                                                       </tfoot>
                                                     </table>
                                                   </div>
-                                                </div>
+                                                </div> -->
                                       </div>
 
                                       <!-- Modal footer -->
@@ -220,8 +228,8 @@ swal({!!Session::pull('sweetalert.json')!!});
       </div><!-- end card-->
   </div>
 
-  <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script> -->
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+  <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script> -->
   <script type="text/javascript" src = 'js/accountjs/buysteel.js'></script>
   <script>
       $(document).ready(function() {

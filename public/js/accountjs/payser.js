@@ -42,7 +42,7 @@ function selectbranch2(val){
       $("#modal-input-po").on("select2:select select2:unselect", function (e) {
           //this returns all the selected item
           var items= $(this).val();
-          // console.log(items);
+          console.log(items);
 
           calculatetotalreal(items);
 
