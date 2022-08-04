@@ -18,6 +18,13 @@ swal({!!Session::pull('sweetalert.json')!!});
 }
 </style>
 
+<style media="screen">
+  tr.group,
+  tr.group:hover {
+    background-color: #ddd !important;
+  }
+</style>
+
   <div class="content-page">
     <!-- Start content -->
         <div class="content">
@@ -131,6 +138,11 @@ swal({!!Session::pull('sweetalert.json')!!});
                                                   <!-- <div id="show_po">
                                                   </div> -->
                                                 </div>
+                                                <br>
+
+                                                <div class="container1">
+                                                </div>
+
 
                                                 <!-- <div style="padding: 10px 0px 0px 0px;">
                                                   <div class="table-responsive">
@@ -165,6 +177,45 @@ swal({!!Session::pull('sweetalert.json')!!});
                                                     </table>
                                                   </div>
                                                 </div> -->
+
+
+
+                                                <br>
+                                                <div style="padding: 10px 50px 0px 50px;" id="table-po">
+                                                  <div class="table-responsive">
+                                                    <table class="table">
+                                                      <thead class="thead-light">
+                                                        <tr>
+                                                          <th id="fontstable" width="5%" style="text-align: center;">ลำดับ</th>
+                                                          <th id="fontstable" width="30%" style="text-align: center;">รายการ</th>
+                                                          <th id="fontstable" width="16.25%" style="text-align: center;">ผลิตได้(ชิ้น)</th>
+                                                          <th id="fontstable" width="16.25%" style="text-align: center;">ราคาทุนวัตถุดิบ(ต่อชิ้น)</th>
+                                                          <th id="fontstable" width="16.25%" style="text-align: center;">ต้นทุนวัตถุดิบที่ใช้(รวม)</th>
+                                                          <th id="fontstable" width="16.25%" style="text-align: center;">ต้นทุนการผลิตต่อหน่วย</th>
+                                                        </tr>
+                                                      </thead>
+                                                      <tbody id="po_content">
+
+                                                      </tbody>
+                                                      <tfoot>
+                                                        <tr>
+                                                          <th></th>
+                                                          <th></th>
+                                                          <th></th>
+                                                          <th id="fontstable" style="text-align: right;">รวม</th>
+                                                          <th><input type="text" name="sum_col" id="sum_col" class="form-control" readonly></th>
+                                                          <td></td>
+                                                        </tr>
+                                                      </tfoot>
+                                                    </table>
+                                                  </div>
+                                                </div>
+
+
+
+
+
+
                                       </div>
 
                                       <!-- Modal footer -->
@@ -183,8 +234,8 @@ swal({!!Session::pull('sweetalert.json')!!});
                                 {!! Form::close() !!}
 
                                 <div >
-                                  <div class="table-responsive">
-                                    <table id="example" class="table table-striped table-bordered fontslabel" style="width:100%">
+                                  <div class="table-responsive" id="fontstable">
+                                    <table id="example" class="display" cellspacing="0" width="100%">
                                       <thead>
                                         <tr>
                                           <th>ลำดับ</th>
@@ -232,12 +283,44 @@ swal({!!Session::pull('sweetalert.json')!!});
   <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script> -->
   <script type="text/javascript" src = 'js/accountjs/buysteel.js'></script>
   <script>
-      $(document).ready(function() {
-      $('#example').DataTable();
-      } );
+  $(document).ready(function() {
+    var table = $('#example').DataTable({
+        "columnDefs": [
+            { "visible": false, "targets": 1 }
+        ],
+        "order": [[ 1, 'asc' ]],
+        "displayLength": 25,
+        "drawCallback": function ( settings ) {
+            var api = this.api();
+            var rows = api.rows( {page:'current'} ).nodes();
+            var last=null;
+
+            api.column(1, {page:'current'} ).data().each( function ( group, i ) {
+                if ( last !== group ) {
+                    $(rows).eq( i ).before(
+                        '<tr class="group"><td colspan="8">'+group+'</td></tr>'
+                    );
+
+                    last = group;
+                }
+            } );
+        }
+    } );
+
+    // Order by the grouping
+    $('#example tbody').on( 'click', 'tr.group', function () {
+        var currentOrder = table.order()[0];
+        if ( currentOrder[0] === 1 && currentOrder[1] === 'asc' ) {
+            table.order( [ 1, 'desc' ] ).draw();
+        }
+        else {
+            table.order( [ 1, 'asc' ] ).draw();
+        }
+    } );
+  } );
   </script>
 
-  <script type="text/javascript">
+  <!-- <script type="text/javascript">
   $('#search').on('keyup',function(){
   $value = $(this).val();
   var e = window.event || e;
@@ -261,7 +344,7 @@ swal({!!Session::pull('sweetalert.json')!!});
 
   <script type="text/javascript">
   $.ajaxSetup({ headers: { 'csrftoken' : '{{ csrf_token() }}' } });
-  </script>
+  </script> -->
 
 
 

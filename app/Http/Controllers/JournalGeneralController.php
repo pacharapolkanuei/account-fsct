@@ -162,6 +162,7 @@ class JournalGeneralController extends Controller
             $name_supplier = $request->get('name');
             $accounttypeno = $request->get('account');
 
+
             if ($request->get('check_bankclose')) {
               $check_bankclose = $request->get('check_bankclose');
             }

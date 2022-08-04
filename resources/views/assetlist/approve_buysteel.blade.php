@@ -58,6 +58,7 @@ swal({!!Session::pull('sweetalert.json')!!});
                                           <th>LOT</th>
                                           <th>รวมต้นทุนการผลิต</th>
                                           <th>สถานะ</th>
+                                          <th>พิมพ์</th>
                                         </tr>
                                       </thead>
                                       <tbody>
@@ -73,12 +74,13 @@ swal({!!Session::pull('sweetalert.json')!!});
                                             @if($receiptasset->status == 0)
                                             {!! Form::open(['route' => 'approve_buysteel_confirm', 'method' => 'post']) !!}
                                               <input type="hidden" name="receiptasset_id[]" value="{{$receiptasset->id}}">
-                                              <button type="submit" class="btn btn-warning">อนุมัติ</buttosn>
+                                              <button type="submit" class="btn btn-warning">อนุมัติ</button>
                                             {!! Form::close() !!}
                                             @else
                                               <button class="btn btn-success">อนุมัติแล้ว</button>
                                             @endif
                                           </td>
+                                          <td><a href="{{ route ('approve_buysteelpdf', ['id' => $receiptasset->id]) }}"><img src="images/global/printall.png"></a></td>
                                         </tr>
                                         @endforeach
                                       </tbody>

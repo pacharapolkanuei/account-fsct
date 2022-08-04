@@ -1,45 +1,43 @@
 $(document).ready(function() {
   console.log( "ready!" );
 
-    $.get('getmaterial', function(res) {
-        // console.log(res);
-      var option = '<option disabled selected>โปรดเลือกรายการ</option>';
-          $.each(res, function(index,value ) { //วนลูป
-
-        option += '<option value="'+value.id+'">'+value.name+'</option>';
-      });
-
-
-      var max_fields      = 1000;
-      // var wrapper         = $(".container10");
-      var wrapper2         = $(".container11");
-      var add_button      = $(".add_form_field");
-      var no = 1;
-      var x = 1;
-      $(add_button).click(function(e){
-          e.preventDefault();
-
-          if(x < max_fields){
-              x++;
-              $(wrapper2).append('<tr><td><select name="name_material[]" class="form-control"  required>'+option+'</select></td><td><input class="form-control mb-2 mr-sm-2" type="text" name="produce[]" onblur="findTotal()"></td><td><input class="form-control mb-2 mr-sm-2" type="text" name="material_cost[]" onblur="findTotal()"/></td><td><input class="form-control mb-2 mr-sm-2" type="text"  name="total_cost[]" onblur="findTotal()"/></td><td><input class="form-control mb-2 mr-sm-2" type="text"  name="salary[]" onblur="findTotal()" value="0" readonly/></td><td><input class="form-control mb-2 mr-sm-2" type="text"  name="total_produce[]" onblur="findTotal()" /></td><td><input class="form-control mb-2 mr-sm-2" type="text"  name="produce_unit[]" onblur="findTotal()" /></td><td style="text-align: center;"> <input type="hidden" onchange="count(this)" id="eieiza1" value="'+(x-1)+'"> <a href="#" class="btn btn-danger delete"> ลบ</a></td></tr>');
-              no = no+1;
-          }
-          else
-          {
-          alert('เกิน Limit ที่ตั้งไว้')
-          }
-      });
-
-      $(wrapper2).on("click",".delete", function(e){
-          e.preventDefault(); $(this).parent('').parent('tr').remove(); x--;
-      })
-
-
-
-
-    });
-
-
+    // $.get('getmaterial', function(res) {
+    //     // console.log(res);
+    //   var option = '<option disabled selected>โปรดเลือกรายการ</option>';
+    //       $.each(res, function(index,value ) { //วนลูป
+    //
+    //     option += '<option value="'+value.id+'">'+value.name+'</option>';
+    //   });
+    //
+    //
+    //   var max_fields      = 1000;
+    //   // var wrapper         = $(".container10");
+    //   var wrapper2         = $(".container11");
+    //   var add_button      = $(".add_form_field");
+    //   var no = 1;
+    //   var x = 1;
+    //   $(add_button).click(function(e){
+    //       e.preventDefault();
+    //
+    //       if(x < max_fields){
+    //           x++;
+    //           $(wrapper2).append('<tr><td><select name="name_material[]" class="form-control"  required>'+option+'</select></td><td><input class="form-control mb-2 mr-sm-2" type="text" name="produce[]" onblur="findTotal()"></td><td><input class="form-control mb-2 mr-sm-2" type="text" name="material_cost[]" onblur="findTotal()"/></td><td><input class="form-control mb-2 mr-sm-2" type="text"  name="total_cost[]" onblur="findTotal()"/></td><td><input class="form-control mb-2 mr-sm-2" type="text"  name="salary[]" onblur="findTotal()" value="0" readonly/></td><td><input class="form-control mb-2 mr-sm-2" type="text"  name="total_produce[]" onblur="findTotal()" /></td><td><input class="form-control mb-2 mr-sm-2" type="text"  name="produce_unit[]" onblur="findTotal()" /></td><td style="text-align: center;"> <input type="hidden" onchange="count(this)" id="eieiza1" value="'+(x-1)+'"> <a href="#" class="btn btn-danger delete"> ลบ</a></td></tr>');
+    //           no = no+1;
+    //       }
+    //       else
+    //       {
+    //       alert('เกิน Limit ที่ตั้งไว้')
+    //       }
+    //   });
+    //
+    //   $(wrapper2).on("click",".delete", function(e){
+    //       e.preventDefault(); $(this).parent('').parent('tr').remove(); x--;
+    //   })
+    //
+    //
+    //
+    //
+    // });
 
 });
 
@@ -63,19 +61,12 @@ function select_po(val){
           console.log(value);
 
           table_content +='<tr>';
-            table_content +='<td id="fontstable">'+no+'</td>';
-            table_content +='<td id="fontstable">'+'<input type="hidden" name="config_group_supp_id[]" value="'+value.config_group_supp_id+'" >'+'<input type="hidden" name="materialid[]" value="'+value.materialid+'">'+'<input type="hidden" name="wht_percent" value="'+value.whd+'" id="whd">'+'<input type="hidden" name="list[]" value="'+value.list+'" >'+'<input type="hidden" name="type_amount[]" value="'+value.type_amount+'">'+'<input type="hidden" name="withhold[]" value="'+value.withhold+'">'+'<input type="hidden" value="'+value.whd+'" id="getwhd">'+'<input type="hidden" value="'+value.statusbank+'" name="ins_statusbank" id="getdetailprivate">'+'<input type="hidden" value="'+value.ckreservemoney+'" name="ins_pettycash" id="getdetailpettycash">'+'<input type="hidden" value="'+value.vat+'" id="getvat">'+'<input type="hidden" name="quantity_get[]" value="'+value.quantity_get+'">'+'<input type="hidden" name="quantity_loss[]" value="'+value.quantity_loss+'">'+'<input type="hidden" name="status[]" value="'+value.status+'">'+'<input type="hidden" name="check_ins_reserv" value="'+value.po_reservemoney+'">'+'<input type="hidden" name="po_headid[]" value="'+value.po_headid+'">'+value.list+'</td>';
-            table_content +='<td>'+'<input class="form-control" type="text" value="'+value.amount+'" id="amount'+no+'"  name="amount[]" readonly>'+'<input type="hidden" name="po_number_ins" value="'+value.po_number+'">'+'</td>';
-            table_content +='<td>'+'<input class="form-control" type="text" onchange="change_cal('+no+')" value="'+value.price+'" id="price'+no+'" name="price[]" readonly>'+'</td>';
-
-
-            table_content +='<td>'+'<input class="form-control" type="text" value="'+value.amount*value.price+'" id="sum_onelist'+no+'" name="sum[]" readonly>'+'</td>';
-
-            if (value.note == null) {
-              table_content +='<td id="fontstable">ไม่มีข้อมูล</td>';
-            } else {
-              table_content +='<td id="fontstable">'+value.note+'</td>';
-            }
+            table_content +='<td id="fontstable" style="text-align: center;">'+no+'</td>';
+            table_content +='<td id="fontstable" style="text-align: center;">'+'<input type="hidden" name="material_ids[]" value="'+value.material_id+'" >'+value.material_name+'</td>';
+            table_content +='<td style="text-align: center;">'+'<input class="form-control" type="text" value="'+value.amount+'" id="amount'+no+'"  name="amount[]" readonly>'+'</td>';
+            table_content +='<td style="text-align: center;">'+'<input class="form-control" type="text" value="'+value.price+'" id="price'+no+'" name="price[]" readonly>'+'</td>';
+            table_content +='<td style="text-align: center;">'+'<input class="form-control" type="text" value="'+value.amount*value.price+'" id="sum_onelist'+no+'" name="sum[]" readonly>'+'</td>';
+            table_content +='<td style="text-align: center;">'+'<input class="form-control" type="text" value="'+value.price+'" id="price_unit'+no+'" name="price_unit[]" readonly>'+'</td>';
 
           table_content +='</tr>';
           no = no+1;
@@ -88,22 +79,60 @@ function select_po(val){
         <td style="text-align:right;" id="fontstable"><b>จำนวนรายการ</b></td>\
         <td id="fontstable"> '+(no-1)+' <b> รายการ<input type="hidden" name="count_list" class="form-control" id="count_list" value="'+(no-1)+'" ></b></td>\
         </tr>';
-
       $('#po_content').append(table_content);
       $('#po_content').append(id_result);
-      $('#getwhd').val();
-      $('#getvat').val();
-      $('#getdetailprivate').val();
-        // change_cal(no);
         calculatelast();
-        showwhd();
-        insert();
-        insert_pettycash();
+        incpo(id_po);
   });
 }
 
+function incpo(id_po) {
+  var wrapper = $(".container1");
+  // var name = '<label class="col-form-label" id="fontslabel"><b>ธนาคาร :</b></label>';
+      $('.container1').empty();
+      if (!id_po) {
+        console.log(id_po);
+            $.post('getpodetailforshow',{_token:_token , data:id_po}, function(res) {
+            $('#totalsum').val(res[0].totolsumall);
+            // $('#address_send').append(res[0].address_send);
+            // $('#phone').append(res[0].phone);
+            // var option = '';
+            //   $.each(res, function(index,value) {
+            //     option += '<option value="'+value.accounttypeno+'|'+value.accounttypefull+'">'+value.accounttypeno+' - '+value.accounttypefull+'</option>';
+            //   });
+            $(wrapper).append('<br><div class="was-validated form-inline" style="margin: 10px 50px 0px 50px;"><div class="row"><label class="mb-2 mr-sm-2" id="fontslabel" for=""><b>ยอดเงินรวม(PO) :</b></label>'+'<p id="totalsum"></p>'+'</div></div>');
+          });
+      }
+}
+////    สำหรับ colum
+// function change_cal(no){
+//   ////   สำหรับ rows
+//    console.log(no);
+//
+//    var grantotal = subtotal*amount;
+//
+//    var sum_whd = document.getElementById("sumallwhd"+no);
+//
+//    var value = document.getElementById("sum_onelist"+no);
+//        value.value = grantotal;
+//
+//        calculatelast();
+// }
 
+function calculatelast(){
+    var count_list = $('#count_list').val();
+    $('#sum_col').empty();
 
+    var sum = 0;
+    for (var i = 1; i <= count_list; i++){
+          // console.log($('#sum_onelist'+i).val());
+        sum = parseFloat(sum) + parseFloat($('#sum_onelist'+i).val());
+        // console.log(sum);
+    }
+    var sum01 = sum.toFixed(2);
+    console.log(sum01);
+    $('#sum_col').val(sum01);
+}
 
 
 

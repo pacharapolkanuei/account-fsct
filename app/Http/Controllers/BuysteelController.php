@@ -16,6 +16,7 @@ use App\Receiptasset_detail;
 use App\Http\Requests\BankRequest;
 use Carbon\Carbon;
 use DB;
+use PDF;
 
 class BuysteelController extends Controller
 {
@@ -54,7 +55,7 @@ class BuysteelController extends Controller
 
       $sql1 = "SELECT * FROM $baseAc.po_head
 
-                      WHERE $baseAc.po_head.branch_id = 1001 AND $baseAc.po_head.status_head = 99";
+                      WHERE $baseAc.po_head.branch_id = 1001 AND $baseAc.po_head.status_head = 99 AND $baseAc.po_head.po_number IN ('PO10016111008','PO10016111009','PO10016111011','PO10016111007','PO10016112087')";
 
       $po_heads = DB::select($sql1);
 
@@ -93,6 +94,25 @@ class BuysteelController extends Controller
       return view('assetlist.approve_buysteel',['receiptassets'=>$receiptassets]);
     }
 
+    public function pdf($id)
+      {
+      if (isset($id)) {
+        $keep_id = $id;
+      }
+
+      $report_receiptassets = DB::connection('mysql2')
+        ->table('receiptasset')
+        ->join('po_head', 'receiptasset.po_ref', '=', 'po_head.id')
+        ->join('po_detail', 'receiptasset.po_ref', '=', 'po_detail.po_headid')
+        ->join('supplier', 'po_head.supplier_id', '=', 'supplier.id')
+        ->where('po_detail.statususe','=',1)
+        ->where('receiptasset.id',$keep_id)
+        ->get();
+
+        $pdf = PDF::loadView('assetlist.approve_buysteelpdf', ['report_receiptassets' => $report_receiptassets]);
+        return @$pdf->stream();
+      }
+
     public function config_buysteel_index()
     {
       $connect = Connectdb::Databaseall();
@@ -118,13 +138,50 @@ class BuysteelController extends Controller
 
     function getdetails(Request $request)
     {
+        // Model1::where('postID',$postID)
+        //       ->join('database2.table2 as db2','Model1.id','=','db2.id')
+        //       ->select(['Model1.*','db2.firstName','db2.lastName'])
+        //       ->orderBy('score','desc')
+        //       ->get();
+
          $id = $request->post('data');
-         $po_detail = new Po_detail;
-         $po_detail->setConnection('mysql2');
-         $po_detail = Po_detail::join('po_head', 'po_head.id', '=', 'po_detail.po_headid')
-                       ->whereIn('po_detail.po_headid', $id)
-                       ->where('statususe','=',1)
-                       ->get();
+         // $po_detail = new Po_detail;
+         // $po_detail->setConnection('mysql2');
+         // $po_detail = Po_detail::join('po_head', 'po_head.id', '=', 'po_detail.po_headid')
+         //               ->whereIn('po_detail.po_headid', $id)
+         //               ->where('statususe','=',1)
+         //               ->get();
+         // return $po_detail;
+         $comma_separated3 = implode('', $id);
+
+         $connect = Connectdb::Databaseall();
+         $baseAc = $connect['fsctaccount'];
+         $baseHr = $connect['hr_base'];
+         $baseMain = $connect['fsctmain'];
+
+         $sql = "SELECT $baseAc.po_detail.*
+                                         ,material.name as material_name
+                                         ,material.id as material_id
+                                         ,good.name as good_name
+                                         ,po_head.totolsumall
+
+                         FROM $baseAc.po_detail
+
+                         INNER JOIN $baseAc.po_head
+                         ON $baseAc.po_detail.po_headid = $baseAc.po_head.id
+
+                         INNER JOIN $baseAc.material_ref_good
+                         ON $baseAc.po_detail.materialid = $baseAc.material_ref_good.id_good
+
+                         INNER JOIN $baseAc.good
+                         ON $baseAc.material_ref_good.id_good = $baseAc.good.id
+
+                         INNER JOIN $baseMain.material
+                         ON $baseAc.material_ref_good.id_material = $baseMain.material.id
+
+                         WHERE $baseAc.po_detail.po_headid IN ($comma_separated3) AND $baseAc.po_detail.statususe = 1";
+
+         $po_detail = DB::select($sql);
          return $po_detail;
     }
 
@@ -245,26 +302,35 @@ class BuysteelController extends Controller
           $lot = $request->get('lotnumber');
           $datenowuse = $request->get('datenow');
           $emp_code = $request->get('get_emp');
-          $po_number = $request->get('search');
+          $po_number = $request->get('po_id');
+          $sum_cols = $request->get('sum_col');
 
-          $search_po = DB::connection('mysql2')
-      			->table('po_head')
-            ->seLect('id as id_po')
-      			->where('po_number','LIKE',$po_number)
-      			->get();
-          foreach ($search_po as $key => $search_pos) {
-            $get_id_po = $search_pos->id_po;
-          }
+          // $search_po = DB::connection('mysql2')
+      		// 	->table('po_head')
+          //   ->seLect('id as id_po')
+      		// 	->where('po_number','LIKE',$po_number)
+      		// 	->get();
+          // foreach ($search_po as $key => $search_pos) {
+          //   $get_id_po = $search_pos->id_po;
+          // }
 
-          $produce_unitforuse = $request->get('produce_unit');
-          $total_produceforuse = $request->get('total_produce');
-          $salaryforuse = $request->get('salary');
-          $total_costforuse = $request->get('total_cost');
-          $material_costforuse = $request->get('material_cost');
-          $produceforuse = $request->get('produce');
-          $name_materialforuse = $request->get('name_material');
-          $total_produce_sums = $request->get('total_produce_sum');
-          $cut_comma_total = str_replace(',', '', $total_produce_sums);
+          $material_idss = $request->get('material_ids');
+          $amounts = $request->get('amount');
+          $prices = $request->get('price');
+          $sums = $request->get('sum');
+          $price_units = $request->get('price_units');
+          $count_lists = $request->get('count_list');
+
+
+          // $produce_unitforuse = $request->get('produce_unit');
+          // $total_produceforuse = $request->get('total_produce');
+          // $salaryforuse = $request->get('salary');
+          // $total_costforuse = $request->get('total_cost');
+          // $material_costforuse = $request->get('material_cost');
+          // $produceforuse = $request->get('produce');
+          // $name_materialforuse = $request->get('name_material');
+          // $total_produce_sums = $request->get('total_produce_sum');
+          // $cut_comma_total = str_replace(',', '', $total_produce_sums);
 
 
           $now = Carbon::now();
@@ -278,25 +344,25 @@ class BuysteelController extends Controller
           $ins_receiptasset->dateuse = $datenowuse;
           $ins_receiptasset->status = 0;
           $ins_receiptasset->emp_code = $emp_code;
-          $ins_receiptasset->po_ref = $get_id_po;
+          $ins_receiptasset->po_ref = $po_number;
 
           $ins_receiptasset->receiptnum = "RCT" . $yearforuse . $monthforuse . $dayforuse . sprintf('%05d', $count_num+1);
           $ins_receiptasset->save();
 
           $count_id = Receiptasset::max('id');
-          for ($i=0; $i < count($name_materialforuse); $i++) {
+          for ($i=0; $i < count($material_idss); $i++) {
             $ins_receiptasset_detail = new Receiptasset_detail;
             $ins_receiptasset_detail->setConnection('mysql2');
             $ins_receiptasset_detail->receiptasset_id = $count_id;
-            $ins_receiptasset_detail->material_id = $name_materialforuse[$i];
+            $ins_receiptasset_detail->material_id = $material_idss[$i];
             $ins_receiptasset_detail->lot = $lot;
-            $ins_receiptasset_detail->produce = $produceforuse[$i];
-            $ins_receiptasset_detail->cost = $material_costforuse[$i];
-            $ins_receiptasset_detail->total_cost = $total_costforuse[$i];
+            $ins_receiptasset_detail->produce = $amounts[$i];
+            $ins_receiptasset_detail->cost = $prices[$i];
+            $ins_receiptasset_detail->total_cost = $sums[$i];
             $ins_receiptasset_detail->saraly = 0;
-            $ins_receiptasset_detail->total_cost_produce = $total_produceforuse[$i];
-            $ins_receiptasset_detail->cost_produce_unit = $produce_unitforuse[$i];
-            $ins_receiptasset_detail->totalall = $cut_comma_total;
+            $ins_receiptasset_detail->total_cost_produce = $sums[$i];
+            $ins_receiptasset_detail->cost_produce_unit = $prices[$i];
+            $ins_receiptasset_detail->totalall = $sum_cols;
             $ins_receiptasset_detail->save();
           }
 
@@ -350,6 +416,15 @@ class BuysteelController extends Controller
           ->get();
 
       return $goods;
+    }
+    public function getpodetailforapend(Request $request)
+    {
+      $id = $request->post('data');
+      $po_heads = new Po_head;
+      $po_heads->setConnection('mysql2');
+      $po_heads = Po_head::whereIn('po_detail.po_headid', $id)
+                    ->get();
+      return $po_heads;
     }
 
 }
