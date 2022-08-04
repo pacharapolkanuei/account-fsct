@@ -693,7 +693,7 @@ Route::get('/printsettingswdetail', function () {
     $data = Input::all();
 	// print_r($data);
 
-	$pdf = PDF::loadView('setting.printsettingswdetail', $data);
+	$pdf = PDF::loadView('setting.printsettingswdetail', $data)->setPaper('a4', 'landscape');
     return @$pdf->stream();
 });
 Route::get('/getgoodformaterial', 'SettingassettoolController@getgoodformaterial');
@@ -708,7 +708,7 @@ Route::get('/printasset_product_tool', function () {
     $data = Input::all();
 	// print_r($data);
 
-	$pdf = PDF::loadView('setting.printasset_product_tool', $data);
+	$pdf = PDF::loadView('setting.printasset_product_tool', $data)->setPaper('a4', 'landscape');
     return @$pdf->stream();
 });
 Route::post('/saveproductgoodtoproduct', 'SettingassettoolController@saveproductgoodtoproduct');

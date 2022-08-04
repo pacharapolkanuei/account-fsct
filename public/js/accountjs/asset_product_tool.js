@@ -20,7 +20,7 @@ function addrow(){
 
 
     var tb = '<tr>';
-        tb += '<td><select  class="form-control select2" name="mproduct[]" id="mproduct'+id+'" onchange="calmapping('+id+')"  required>';
+        tb += '<td><select  class="form-control select2" name="material_id[]" id="mproduct'+id+'" onchange="calmapping('+id+')"  required>';
         tb += '<option value="" selected>เลือกสินค้า</option>';
         $.each(mlist, function( key, value ) {
             tb += '<option value="'+value.id+'">'+value.name+'</option>';
@@ -233,3 +233,25 @@ function recaladd(z,amthis,sumthis){
 //         $('#cost_produce_unitshow').val(totolproducecpu);
 //
 // }
+
+function saveapprovedtool(id){
+      $('#poappove').empty();
+      $('#idappoved').val(0);
+      var urlapr = '<a href="printasset_product_tool?id='+id+'" target="_blank"><img src="images/global/printall.png"> </a>';
+      $('#idappoved').val(id);
+      $('#poappove').append(urlapr);
+}
+
+function saveapprovedrecstatus(){
+    var idappoved = $('#idappoved').val();
+    // console.log(idappoved);
+      $.get('approveasset_product_tool?id='+idappoved, function(res) {
+              if(res==1){
+                location.reload();
+              }else{
+                console.log(res);
+              }
+
+      });
+
+}
