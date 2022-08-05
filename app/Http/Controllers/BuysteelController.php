@@ -210,20 +210,18 @@ class BuysteelController extends Controller
           $baseAc1 = $connect1['fsctaccount'];
           $baseHr1 = $connect1['hr_base'];
 
-          $sql1 = "SELECT $baseAc1.receiptasset.*
-                                          ,
-                                          ,
-
-                          FROM $baseAc1.receiptasset
-
-                          INNER JOIN $baseAc1.receiptasset_detail
-                          ON $baseAc1.receiptasset_detail.receiptasset_id = $baseAc1.receiptasset.id
-
-                          INNER JOIN $baseAc1.material
-                          ON $baseAc1.receiptasset_detail.material_id = $baseAc1.material.id
-
-                          WHERE $baseAc1.receiptasset.id = $receiptasset_id ";
-          $getdata = DB::select($sql1);
+          // $sql1 = "SELECT $baseAc1.receiptasset.*
+          //
+          //                 FROM $baseAc1.receiptasset
+          //
+          //                 INNER JOIN $baseAc1.receiptasset_detail
+          //                 ON $baseAc1.receiptasset_detail.receiptasset_id = $baseAc1.receiptasset.id
+          //
+          //                 INNER JOIN $baseAc1.material
+          //                 ON $baseAc1.receiptasset_detail.material_id = $baseAc1.material.id
+          //
+          //                 WHERE $baseAc1.receiptasset.id = $receiptasset_id ";
+          // $getdata = DB::select($sql1);
 
 
 
