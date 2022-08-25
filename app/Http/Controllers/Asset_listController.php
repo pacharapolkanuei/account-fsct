@@ -42,23 +42,12 @@ class Asset_listController extends Controller
     	$branchs->setConnection('hr_base');
 		  $branchs = Branch::get();
 
-      $asset_lists = DB::connection('mysql2')
-          ->table('asset_list')
-          ->select('group_property.id as id_group_property' , 'accounttype.id as id_accounttype'
-          , 'asset_list.id as id_assetlist', 'asset_list.no_asset', 'asset_list.name_thai', 'asset_list.date_buy'
-          , 'asset_list.price_buy', 'asset_list.life_for_use', 'asset_list.end_price_sellpercent', 'asset_list.date_sell'
-          , 'asset_list.depreciation_sell', 'asset_list.profit_loss' , 'asset_list.asset_different')
-          ->join('group_property', 'group_property.id', '=', 'asset_list.group_acc_id')
-          ->join('accounttype', 'accounttype.id', '=', 'asset_list.group_property_id')
-          ->orderBy('asset_list.id', 'asc')
-          ->where('asset_list.statususe',1)
-          ->limit(0)
-          ->get();
 
 
 
 
-      return view('assetlist.asset_list' , compact('accounttypes' , 'group_propertys' , 'asset_lists' , 'branchs' ));
+
+      return view('assetlist.asset_list' , compact('accounttypes' , 'group_propertys' ,  'branchs' ));
     }
 
     public function  asset_list_filter(Request $request)
@@ -67,9 +56,11 @@ class Asset_listController extends Controller
         $branchs = Branch::get();
 
         $date = $request->get('daterange');
-        $branch = $request->get('branch');
-        // dd($date);
-        // exit;
+        $branchselct = $request->get('branch');
+
+        $dateset = Datetime::convertStartToEnd($date);
+        $start = $dateset['start'];
+        $end = $dateset['end'];
         $accounttypes = new Accounttype;
         $accounttypes->setConnection('mysql2');
         $accounttypes = Accounttype::where('status','=',1)
@@ -80,35 +71,16 @@ class Asset_listController extends Controller
         $group_propertys = Group_Property::where('statususe','=',1)
                       ->get();
 
-        $dateset = Datetime::convertStartToEnd($date);
-        $start = $dateset['start'];
-        $end = $dateset['end'];
+        // $branchs = new Branch;
+        // $group_propertys->setConnection('mysql2');
+        // $group_propertys = Group_Property::where('statususe','=',1)
+        //               ->get();
 
-        if ($branch != '0') {
-            $asset_lists = DB::connection('mysql2')
-                ->table('asset_list')
-                ->select('asset_list.id as id_assetlist' , 'asset_list.no_asset' , 'asset_list.name_thai', 'asset_list.date_buy' ,
-                'asset_list.price_buy' , 'asset_list.life_for_use' , 'asset_list.end_price_sellpercent' , 'asset_list.depreciation_sell',
-                'asset_list.profit_loss' , 'asset_list.date_sell' , 'asset_list.asset_different' , 'asset_list.depreciation_buy')
-                ->orderBy('id', 'asc')
-                // ->whereBetween('date_buy', [$start, $end])
-                ->where('branch_id', $branch)
-                ->get();
-            // dump('have');
-        } else {
-            $asset_lists = DB::connection('mysql2')
-                ->table('asset_list')
-                ->select('asset_list.id as id_assetlist' , 'asset_list.no_asset' , 'asset_list.name_thai', 'asset_list.date_buy' ,
-                'asset_list.price_buy' , 'asset_list.life_for_use' , 'asset_list.end_price_sellpercent' , 'asset_list.depreciation_sell',
-                'asset_list.profit_loss' , 'asset_list.date_sell' , 'asset_list.asset_different' , 'asset_list.depreciation_buy')
-                ->orderBy('id', 'asc')
-                // ->whereBetween('date_buy', [$start, $end])
-                ->get();
-            // dump('empty');
-        }
-        $ap = 'default';
-        // dd($debts);
-        return view('assetlist.asset_list', compact('asset_lists', 'ap', 'branchs' , 'accounttypes' , 'group_propertys' , 'date'));
+        $branchs = new Branch;
+        $branchs->setConnection('hr_base');
+        $branchs = Branch::get();
+
+        return view('assetlist.asset_list',  compact('accounttypes' , 'group_propertys' ,  'branchs', 'start','end','branchselct'));
     }
 
 
@@ -365,5 +337,139 @@ class Asset_listController extends Controller
 
 
     }
+
+    public function asset_list_tool()
+    {
+      $accounttypes = new Accounttype;
+      $accounttypes->setConnection('mysql2');
+      $accounttypes = Accounttype::where('status','=',1)
+                    ->get();
+
+      $group_propertys = new Group_Property;
+      $group_propertys->setConnection('mysql2');
+      $group_propertys = Group_Property::where('statususe','=',1)
+                    ->get();
+
+      // $branchs = new Branch;
+      // $group_propertys->setConnection('mysql2');
+      // $group_propertys = Group_Property::where('statususe','=',1)
+      //               ->get();
+
+      $branchs = new Branch;
+      $branchs->setConnection('hr_base');
+      $branchs = Branch::get();
+
+
+
+
+
+
+      return view('assetlist.asset_list_tool' , compact('accounttypes' , 'group_propertys' ,  'branchs' ));
+    }
+
+    public function asset_list_sale()
+    {
+      $accounttypes = new Accounttype;
+      $accounttypes->setConnection('mysql2');
+      $accounttypes = Accounttype::where('status','=',1)
+                    ->get();
+
+      $group_propertys = new Group_Property;
+      $group_propertys->setConnection('mysql2');
+      $group_propertys = Group_Property::where('statususe','=',1)
+                    ->get();
+
+      // $branchs = new Branch;
+      // $group_propertys->setConnection('mysql2');
+      // $group_propertys = Group_Property::where('statususe','=',1)
+      //               ->get();
+
+      $branchs = new Branch;
+      $branchs->setConnection('hr_base');
+      $branchs = Branch::get();
+
+
+
+
+
+
+      return view('assetlist.asset_list_sale' , compact('accounttypes' , 'group_propertys' ,  'branchs' ));
+    }
+
+
+      public function  searchassetlistsale()
+      {
+          $branchs = new Branch;
+          $branchs = Branch::get();
+          $data= Input::all();
+          $date = $data['daterange'];
+          $branchselct = $data['branch'];
+          $material_id = $data['material_id'];
+
+          $dateset = Datetime::convertStartToEnd($date);
+          $start = $dateset['start'];
+          $end = $dateset['end'];
+          $accounttypes = new Accounttype;
+          $accounttypes->setConnection('mysql2');
+          $accounttypes = Accounttype::where('status','=',1)
+                        ->get();
+
+          $group_propertys = new Group_Property;
+          $group_propertys->setConnection('mysql2');
+          $group_propertys = Group_Property::where('statususe','=',1)
+                        ->get();
+
+          // $branchs = new Branch;
+          // $group_propertys->setConnection('mysql2');
+          // $group_propertys = Group_Property::where('statususe','=',1)
+          //               ->get();
+
+          $branchs = new Branch;
+          $branchs->setConnection('hr_base');
+          $branchs = Branch::get();
+
+          return view('assetlist.asset_list_sale',  compact('accounttypes' , 'group_propertys' ,  'branchs', 'start','end','branchselct','material_id'));
+      }
+
+
+      public function searchassetlisttool(){
+              $branchs = new Branch;
+              $branchs = Branch::get();
+
+              // $date = $request->get('daterange');
+              // $branchselct = $request->get('branch');
+              $data = Input::all();
+              // print_r($data);
+              // exit;
+              $branchselct = $data['branch'];
+              $dateset = Datetime::convertStartToEnd($data['daterange']);
+              $start = $dateset['start'];
+              $end = $dateset['end'];
+              $accounttypes = new Accounttype;
+              $accounttypes->setConnection('mysql2');
+              $accounttypes = Accounttype::where('status','=',1)
+                            ->get();
+
+              $group_propertys = new Group_Property;
+              $group_propertys->setConnection('mysql2');
+              $group_propertys = Group_Property::where('statususe','=',1)
+                            ->get();
+
+              // $branchs = new Branch;
+              // $group_propertys->setConnection('mysql2');
+              // $group_propertys = Group_Property::where('statususe','=',1)
+              //               ->get();
+
+              $branchs = new Branch;
+              $branchs->setConnection('hr_base');
+              $branchs = Branch::get();
+
+              return view('assetlist.asset_list_tool',  compact('accounttypes' , 'group_propertys' ,  'branchs', 'start','end','branchselct'));
+
+      }
+
+
+
+
 
 }

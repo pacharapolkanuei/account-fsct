@@ -90,7 +90,8 @@ swal({!!Session::pull('sweetalert.json')!!});
                                   </button>
                                 </div> -->
                                 <input type="hidden" id="timethis" name="timethis" value="<?php echo date('Ymd')?>">
-                                {!! Form::open(['route' => 'asset_list_filter', 'method' => 'post']) !!}
+                                <form action="searchassetlisttool" method="post" id="myForm" files='true' >
+                                  <input type="hidden" name="_token" value="{{ csrf_token() }}">
                                 <div class="row" class="fontslabel">
                                     <div class="col-sm-3">
                                         <div class="input-group mb-6">
@@ -116,7 +117,7 @@ swal({!!Session::pull('sweetalert.json')!!});
                                     <center><button type="submit" class="btn btn-primary btn-sm fontslabel">ค้นหา</button></center>&nbsp;
                                     <!-- <center><a class="btn btn-info btn-sm fontslabel" href="{{url('asset_list')}}">ดูทั้งหมด</a></center> -->
 
-                                {!! Form::close() !!}
+                                </form>
                                 </div>
 
                                 <br>
@@ -498,7 +499,7 @@ swal({!!Session::pull('sweetalert.json')!!});
                             INNER JOIN $baseAc1.typeasset
                             ON $baseAc1.typeasset.id = $baseAc1.asset_list.group_property_id
                             WHERE $baseAc1.asset_list.statususe ='1'
-                            AND $baseAc1.asset_list.asset_different = '1'
+                            AND $baseAc1.asset_list.asset_different = '2'
                             AND $baseAc1.asset_list.branch_id = '$branchselct' ";
 
               $getdatadetailasset = DB::select($sql1asset);
@@ -506,12 +507,13 @@ swal({!!Session::pull('sweetalert.json')!!});
               $sqltypeasset = "SELECT $baseAc1.typeasset.*
                               FROM $baseAc1.typeasset
                               WHERE $baseAc1.typeasset.status = '1'
-                              AND $baseAc1.typeasset.typeasset = '1'
+                              AND $baseAc1.typeasset.typeasset = '2'
                               AND $baseAc1.typeasset.usecalasset = '1' ";
 
               $getdatatypeasset = DB::select($sqltypeasset);
               // echo "<pre>";
               // print_r($getdatatypeasset);
+              // exit;
           }
 
 
@@ -549,6 +551,9 @@ swal({!!Session::pull('sweetalert.json')!!});
                               <th  rowspan="2">อัตรา</th>
                               <th  rowspan="2">วันที่ขาย/ตัดบัญชี</th>
                               <th  rowspan="2">เลขที่เอกสาร</th>
+                              <th  rowspan="2">จำนวนชิ้นที่ขาย</th>
+                              <th  rowspan="2">จำนวนวันที่ขาย</th>
+                              <th  rowspan="2">จำนวนเอกสาร</th>
                               <th colspan="4" >ราคาทุน</th>
                               <th rowspan="2" >จำนวนวันคิดค่าเสื่อมราคา</th>
                               <th colspan="4" >ค่าเสื่อมราคาสะสม</th>
@@ -569,7 +574,7 @@ swal({!!Session::pull('sweetalert.json')!!});
                           <tbody>
                             <?php foreach ($getdatatypeasset as $key => $value) { ?>
                               <tr>
-                                <td  colspan="25"><?php echo $value->name_typeasset;?></td>
+                                <td  colspan="28"><?php echo $value->name_typeasset;?></td>
 
                               </tr>
                               <?php foreach ($getdatadetailasset as $k => $v): ?>
@@ -588,6 +593,9 @@ swal({!!Session::pull('sweetalert.json')!!});
                                   <td ><?php echo $v->end_price_sell;?></td>
                                   <td ><?php echo $v->price_buy-$v->end_price_sell;?></td>
                                   <td ><?php echo $v->end_price_sellpercent;?></td>
+                                  <td ></td>
+                                  <td ></td>
+                                  <td ></td>
                                   <td ></td>
                                   <td ></td>
                                   <td >
@@ -667,7 +675,7 @@ swal({!!Session::pull('sweetalert.json')!!});
                               <?php } ?>
                               <?php endforeach; ?>
                               <tr>
-                                <td  colspan="9">รวม<?php echo $value->name_typeasset;?></td>
+                                <td  colspan="12">รวม<?php echo $value->name_typeasset;?></td>
 
                                 <td ></td>
                                 <td ></td>
@@ -723,15 +731,7 @@ swal({!!Session::pull('sweetalert.json')!!});
                             </tr>
                           </thead>
                           <?php if(!empty($start)){?>
-                          <tbody>
-                            <?php foreach ($getdatatypeasset as $key => $value) { ?>
-                              <tr>
-                                <td><?php echo $value->name_typeasset;?></td>
 
-                              </tr>
-
-                            <?php } ?>
-                          </tbody>
                         <?php } ?>
                         </table>
                       </div>

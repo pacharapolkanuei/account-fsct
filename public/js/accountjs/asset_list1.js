@@ -7,12 +7,12 @@ var selectlot = '';
 $( document ).ready(function() {
     //console.log( "ready!" )
     $.get('getlisttypeasset', function(res) {
-        //console.log(res);
+       console.log(res);
         typeassetval = res;
      });
 
      $.get('getlisttypeassetrefaccnumber', function(res) {
-         //console.log(res);
+        console.log(res);
          typeassetrefacc = res;
       });
 

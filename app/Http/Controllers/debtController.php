@@ -105,7 +105,7 @@ class debtController extends Controller
 		$baseAc1 = $connect['fsctaccount'];
 
 		$start = "2020-01-01";
-	  $end = "2020-12-31";
+	  $end = "2022-12-31";
 
 		$get_po_num = new Po;
 		$get_po_num->setConnection('mysql2');

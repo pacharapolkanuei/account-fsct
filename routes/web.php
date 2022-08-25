@@ -637,9 +637,12 @@ Route::get('/getassetlistforedit/{id}', 'Asset_listController@getassetlist');
 Route::post('/asset_list/store','Asset_listController@store')->name('asset_list.store');
 Route::post('/asset_list/update','Asset_listController@update')->name('asset_list.update');
 Route::get('/asset_list/delete/{id}','Asset_listController@delete')->name('asset_list.delete');
-Route::get('/getlisttypeasset', 'Asset_listController@getlisttypeasset');
-Route::get('/getlisttypeassetrefaccnumber', 'Asset_listController@getlisttypeassetrefaccnumber');
-Route::get('/serchassetrefmaterial', 'Asset_listController@serchassetrefmaterial');
+Route::get('/asset_list/getlisttypeasset', 'Asset_listController@getlisttypeasset');
+Route::get('/asset_list/getlisttypeassetrefaccnumber', 'Asset_listController@getlisttypeassetrefaccnumber');
+Route::get('/asset_list/serchassetrefmaterial', 'Asset_listController@serchassetrefmaterial');
+Route::get('getlisttypeasset', 'Asset_listController@getlisttypeasset');
+Route::get('getlisttypeassetrefaccnumber', 'Asset_listController@getlisttypeassetrefaccnumber');
+Route::get('serchassetrefmaterial', 'Asset_listController@serchassetrefmaterial');
 
 //-------------------------------------- buysteel --------------------------
 Route::get('/config_po_good', 'BuysteelController@config_buysteel_index')->name('config_po_good');
@@ -720,5 +723,14 @@ Route::get('/printasset_product_tool', function () {
     return @$pdf->stream();
 });
 Route::post('/saveproductgoodtoproduct', 'SettingassettoolController@saveproductgoodtoproduct');
+Route::get('/calstopdepreciation', 'SettingassettoolController@calstopdepreciation');
+Route::post('/searchtypecalstoppreciation', 'SettingassettoolController@searchtypecalstoppreciation');
+Route::post('/savedatestopdepreciation', 'SettingassettoolController@savedatestopdepreciation');
+
+
+Route::get('asset_list_tool', 'Asset_listController@asset_list_tool');
+Route::get('asset_list_sale', 'Asset_listController@asset_list_sale');
+Route::post('searchassetlistsale', 'Asset_listController@searchassetlistsale');
+Route::post('searchassetlisttool', 'Asset_listController@searchassetlisttool');
 
 ?>

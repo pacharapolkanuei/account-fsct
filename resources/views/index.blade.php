@@ -129,7 +129,9 @@ use App\Api\Connectdb;
 								</span> <span class="menu-arrow"></span></a>
 							<ul class="list-unstyled">
 								<li><a href="/account-fsct/public/define_property" id="fontsmenu2">กลุ่มบัญชีทรัพย์สิน</a></li>
-								<li><a href="/account-fsct/public/asset_list" id="fontsmenu2">เพิ่มรายการทรัพย์สิน</a></li>
+								<li><a href="/account-fsct/public/asset_list" id="fontsmenu2">เพิ่มรายการทรัพย์สิน(สินทัพย์)</a></li>
+                <li><a href="/account-fsct/public/asset_list_tool" id="fontsmenu2">เพิ่มรายการทรัพย์สิน(สินค้าให้เช่า)</a></li>
+                <li><a href="/account-fsct/public/asset_list_sale" id="fontsmenu2">รายการค่าเสื่อมการขาย</a></li>
                 <li class="submenu">
                     <a href="#" id="fontsmenu2"><span>รายการต้นทุนแบบเหล็ก(ซื้อสำเร็จรูป)</span> <span class="menu-arrow"></span> </a>
                         <ul style="">
@@ -148,7 +150,7 @@ use App\Api\Connectdb;
                             <li><a href="/account-fsct/public/settingtool" id="fontsmenu2">การจัดการชิ้นส่วนสินค่าให้เช่า(ซื้อมาผลิต)</a></li>
                         </ul>
                 </li>
-
+                <li><a href="/account-fsct/public/calstopdepreciation" id="fontsmenu2">หยุดคิดค่าเสืื่อมราคา</a></li>
 							</ul>
 						</li>
 

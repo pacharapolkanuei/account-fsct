@@ -1122,6 +1122,34 @@ class SettingassettoolController extends Controller
 
     }
 
+    public function calstopdepreciation(){
+          return view('setting.calstopdepreciation');
+    }
+
+    public function searchtypecalstoppreciation(){
+            $data= Input::all();
+
+
+            return view('setting.calstopdepreciation',['daterange' => $data['daterange'],'type' => $data['type']]);
+    }
+
+    public function savedatestopdepreciation(){
+
+            $data = Input::all();
+            $connect1 = Connectdb::Databaseall();
+            $typeref = $data['typeref'];
+            $datestop = $data['datestop'];
+            $idref = $data['idref'];
+            $arrInert = [ 'id'=>'',
+                          'type'=>$typeref,
+                          'id_tax'=>$idref,
+                          'datestop'=>$datestop,
+                          'status'=>'1'];
+            DB::table($connect1['fsctaccount'].'.ref_sell_depreciationexpense')->insert($arrInert);
+
+            SWAL::message('สำเร็จ', 'บันทึกรายการ', 'success', ['timer' => 6000]);
+              return view('setting.calstopdepreciation');
+    }
 
 
 }
