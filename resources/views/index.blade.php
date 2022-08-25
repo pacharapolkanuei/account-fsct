@@ -114,6 +114,15 @@ use App\Api\Connectdb;
 							</ul>
 						</li>
 
+            <li class="submenu">
+              <a href="#"><i class="fa fa-fw fa-book"></i><span>
+                  <fonts id="fontsmenu">เจ้าหนี้การค้า</fonts>
+                </span> <span class="menu-arrow"></span></a>
+              <ul class="list-unstyled">
+                <li><a href="/account-fsct/public/ap_list" id="fontsmenu2">รายงานเจ้าหนี้การค้า</a></li>
+              </ul>
+            </li>
+
 						<!-- <li class="submenu">
 							<a href="#"><i class="fa fa-shopping-cart"></i><span>
 									<fonts id="fontsmenu">ระบบขาย</fonts>

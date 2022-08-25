@@ -644,6 +644,16 @@ Route::get('getlisttypeasset', 'Asset_listController@getlisttypeasset');
 Route::get('getlisttypeassetrefaccnumber', 'Asset_listController@getlisttypeassetrefaccnumber');
 Route::get('serchassetrefmaterial', 'Asset_listController@serchassetrefmaterial');
 
+
+//-------------------------------------- ap_list --------------------------
+Route::get('/ap_list', 'ap_listController@index')->name('ap_list');
+Route::post('/ap_list/filter','ap_listController@ap_list_filters')->name('ap_list_filter');
+
+
+//-----------------------------------------------
+
+
+
 //-------------------------------------- buysteel --------------------------
 Route::get('/config_po_good', 'BuysteelController@config_buysteel_index')->name('config_po_good');
 Route::get('config_getmaterial', 'BuysteelController@config_getmaterial');
