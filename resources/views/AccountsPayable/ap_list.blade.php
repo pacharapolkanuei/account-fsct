@@ -48,7 +48,7 @@ swal({!!Session::pull('sweetalert.json')!!});
             <h1 class="float-left">Account - FSCT</h1>
             <ol class="breadcrumb float-right">
               <li class="breadcrumb-item">เจ้าหนี้การค้า</li>
-              <li class="breadcrumb-item active">รายงานเจ้าหนี้การค้า</li>
+              <li class="breadcrumb-item active">รายงานเคลื่อนไหวลูกหนี้รายตัว</li>
             </ol>
             <div class="clearfix"></div>
           </div>
@@ -60,7 +60,7 @@ swal({!!Session::pull('sweetalert.json')!!});
           <div class="card mb-3">
             <div class="card-header">
               <h3><i class="fas fa-edit"></i>
-                <fonts id="fontsheader">รายงานเจ้าหนี้การค้า</fonts>
+                <fonts id="fontsheader">รายงานเคลื่อนไหวลูกหนี้รายตัว</fonts>
               </h3>
             </div>
           </div><!-- end card-->
