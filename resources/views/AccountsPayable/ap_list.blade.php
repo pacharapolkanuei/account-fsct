@@ -76,8 +76,156 @@ swal({!!Session::pull('sweetalert.json')!!});
                   </div>
               </div>
               <button type="submit" class="btn btn-primary btn-sm fontslabel">ค้นหา</button>
+              <a href="{{url('ap_list')}}" class="btn btn-danger btn-md delete-confirm">RESET</a>
             </center>
           {!! Form::close() !!}
+
+
+          <br>
+          <br>
+          <center>
+            <?php if (isset($start) && isset($end)): ?>
+              <label id="fontslabel"><b>วันที่ <?php echo $start ?> ถึง <?php echo $end ?></b></label>
+            <?php endif; ?>
+          </center>
+          <br>
+
+          <?php if (isset($supplier_aps)): ?>
+            <table class="table table-bordered" cellspacing="0" id="fontslabel" style="width : 70%;margin-left: auto;margin-right: auto;">
+              <thead>
+                <tr style="background-color:#aab6c2;color:white;">
+                  <th style="vertical-align : middle;text-align:center;">วันที่</th>
+                  <th style="vertical-align : middle;text-align:center;">เลขที่เอกสาร</th>
+                  <th style="vertical-align : middle;text-align:center;">เพิ่มขึ้น</th>
+                  <th style="vertical-align : middle;text-align:center;">ลดลง</th>
+                  <th style="vertical-align : middle;text-align:center;">ยอดคงเหลือ</th
+                </tr>
+              </thead>
+              <tbody>
+                @foreach ($supplier_aps  as $key => $supplier_ap)
+                  @if ($supplier_ap->name_supplier == $ap)
+                    <tr>
+                      <td>{{ $supplier_ap->date_po }}</td>
+                      <td>{{ $supplier_ap->po_number_use }}</td>
+                      <td>
+                          <?php $keep_totalsum_inc = number_format($supplier_ap->totalsum,2,".",",");
+                                echo $keep_totalsum_inc;
+                          ?>
+                          <?php $sumtotal_inc = $sumtotal_inc + $supplier_ap->totalsum;?>
+                      </td>
+                      <td></td>
+                      <td>
+                          <?php $keep_totalsum_inc_1 = number_format($supplier_ap->totalsum,2,".",",");
+                                echo $keep_totalsum_inc_1;
+                          ?>
+                          <?php $sumtotal_inc1 = $sumtotal_inc1 + $supplier_ap->totalsum;?>
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td>{{ $supplier_ap->date_inform_po }}</td>
+                      <td>{{ $supplier_ap->payser_number_use }}</td>
+                      <td></td>
+                      <td>
+                          <?php $keep_totalsum_dec = number_format($supplier_ap->payout,2,".",",");
+                                echo $keep_totalsum_dec;
+                          ?>
+                          <?php $sumtotal_dec = $sumtotal_dec + $supplier_ap->payout;?>
+                      </td>
+                      <td>
+                          <?php $keep_totalsum_dec = number_format($supplier_ap->payout,2,".",",");
+                                echo $keep_totalsum_dec;
+                          ?>
+                          <?php $sumtotal_dec1 = $sumtotal_dec1 + $supplier_ap->payout;?>
+                      </td>
+                    </tr>
+                    @if ($key == count($supplier_aps)-1)
+                        <tr>
+                          <td></td>
+                          <td></td>
+                          <td><?php echo number_format($sumtotal_inc,2);?></td>
+                          <td><?php echo number_format($sumtotal_dec,2);?></td>
+                          <td>
+                            <?php $calculate = $sumtotal_inc1 - $sumtotal_dec1;
+                                  echo number_format($calculate,2);
+                            ?>
+                          </td>
+                        </tr>
+                    @endif
+                    <?php $ap = $supplier_ap->name_supplier ?>
+                  @else
+                    @if ($key != 0)
+                        <!-- ก่อนเปลี่ยนรายการเขียนปิดรายการก่อนหน้า -->
+                        <tr>
+                          <td></td>
+                          <td></td>
+                          <td><?php echo number_format($sumtotal_inc,2);?></td>
+                          <td><?php echo number_format($sumtotal_dec,2);?></td>
+                          <td>
+                            <?php $calculate = $sumtotal_inc1 - $sumtotal_dec1;
+                                  echo number_format($calculate,2);
+                            ?>
+                          </td>
+                        </tr>
+                        <?php $sumtotal_inc = 0;
+                              $sumtotal_inc1 = 0;
+                              $sumtotal_dec = 0;
+                              $sumtotal_dec1 = 0;
+                              $calculate = 0;
+                        ?>
+                    @endif
+                    <?php $sumtotal_inc = 0;
+                          $sumtotal_inc1 = 0;
+                          $sumtotal_dec = 0;
+                          $sumtotal_dec1 = 0;
+                          $calculate = 0;
+                    ?>
+                    <tr style="border-top-style:solid;">
+                      <!-- เขียน row แรก แต่ละรายการ -->
+                      <td><b>{{ $supplier_ap->pre }} {{ $supplier_ap->name_supplier }}</b></td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                    </tr>
+                    <tr>
+                      <td><b>ยอดยกมา</b></td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td> - </td>
+                    </tr>
+
+                      @if ($key == count($supplier_aps)-1)
+                      <!-- เขียนสำหรับรายการสุดท้าย -->
+                          <tr>
+                            <td></td>
+                            <td></td>
+                            <td><?php echo number_format($sumtotal_inc,2);?></td>
+                            <td><?php echo number_format($sumtotal_dec,2);?></td>
+                            <td>
+                              <?php $calculate = $sumtotal_inc1 - $sumtotal_dec1;
+                                    echo number_format($calculate,2);
+                              ?>
+                            </td>
+                          </tr>
+                          <?php $sumtotal_inc = 0;
+                                $sumtotal_inc1 = 0;
+                                $sumtotal_dec = 0;
+                                $sumtotal_dec1 = 0;
+                                $calculate = 0;
+                          ?>
+                      @endif
+                  <?php $ap = $supplier_ap->name_supplier ?>
+                  @endif
+                @endforeach
+              </tbody>
+            </table>
+
+          <?php endif; ?>
+
+
+
 
         </div>
       </div>
@@ -86,570 +234,9 @@ swal({!!Session::pull('sweetalert.json')!!});
     <!-- END container-fluid -->
   </div>
   <!-- END content -->
-  <br>
-  <br>
-  <center>
-    <?php if (isset($start) && isset($end)): ?>
-      <label id="fontslabel"><b>วันที่จาก <?php echo $start ?> ถึง <?php echo $end ?></b></label>
-    <?php endif; ?>
-  </center>
-  <br>
-
-            <?php if (isset($supplier_aps) && isset($supplier_informs)): ?>
-              <table class="table table-bordered" cellspacing="0" id="fontsjournal">
-                <thead>
-                    <tr style="background-color:#aab6c2;color:white;">
-                        <th scope="col">วันที่</th>
-                        <th scope="col">เลขที่เอกสาร</th>
-                        <th scope="col">เพิ่มขึ้น</th>
-                        <th scope="col">ลดลง</th>
-                        <th scope="col">ยอดคงเหลือ</th>
-                    </tr>
-                </thead>
-                <tbody>
-                  @foreach ($supplier_aps  as $key => $supplier_ap)
-                    @if ($supplier_ap->name_suplier == $ap)
-                    <!-- ถ้า ap เหมือนกันเขียนแค่ list -->
-                      <tr>
-                          <td>{{ $supplier_ap->date_po }}</td>
-                          <td>{{ $supplier_ap->po_number_use }}</td>
-                          <td>{{ $supplier_ap->date_po }}</td>
-                          <td></td>
-                          <td>{{ $supplier_ap->date_po }}</td>
-                      </tr>
-
-                      <tr>
-                          <td>{{ $supplier_ap->date_inform_po }}</td>
-                          <td>{{ $supplier_ap->date_inform_po }}</td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                      </tr>
-
-                      @if ($key == count($databillengines)-1)
-                      <!-- เขียนสำหรับรายการสุดท้าย -->
-                          <tr>
-                              <td></td>
-                              <td></td>
-                              <td></td>
-                              <td></td>
-                              <td></td>
-                              <td></td>
-                              <td></td>
-                              <td></td>
-                              <td><b>
-                                <?php if ($databillengine->vat == 1.00 && $databillengine->discount == 0.00 && $databillengine->withhold == 0.00) {
-                                  $vatshow = $databillengine->cal_total/1.01;
-                                    echo number_format($vatshow, 2, '.', ''); ?>
-                                <?php }elseif ($databillengine->vat == 3.00 && $databillengine->discount == 0.00 && $databillengine->withhold == 0.00) {
-                                    $vatshow = $databillengine->cal_total/1.03;
-                                      echo number_format($vatshow, 2, '.', ''); ?>
-                                <?php }elseif ($databillengine->vat == 5.00 && $databillengine->discount == 0.00 && $databillengine->withhold == 0.00) {
-                                    $vatshow = $databillengine->cal_total/1.05;
-                                      echo number_format($vatshow, 2, '.', ''); ?>
-                                <?php }elseif ($databillengine->vat == 7.00 && $databillengine->discount == 0.00 && $databillengine->withhold == 0.00) {
-                                    $vatshow = $databillengine->cal_total/1.07;
-                                      echo number_format($vatshow, 2, '.', ''); ?>
-
-                                <?php }elseif ($databillengine->vat == 0.00 && $databillengine->discount >= 1.00 && $databillengine->withhold == 0.00) {
-                                    $discount_show = $databillengine->discount/100;
-                                    $totalforsum = $databillengine->cal_total - $discount_show;
-                                      echo number_format($totalforsum, 2, '.', ''); ?>
-
-                                <?php }elseif ($databillengine->vat == 7.00 && $databillengine->discount >= 0.01 && $databillengine->withhold == 0.00) {
-                                        $discount_show = $databillengine->discount/100;
-                                        $discount_show1 = 1.00 - $discount_show;
-                                        $valuetotal = $databillengine->cal_total;
-                                        $vatsum = 100/107;
-                                        $totalforsum = ($valuetotal*$vatsum)/$discount_show1;
-                                      echo number_format($totalforsum, 2, '.', ''); ?>
-                                <?php }elseif ($databillengine->vat == 7.00 && $databillengine->discount == 0.00 && $databillengine->withhold == 3.00) {
-                                        $vatshow = $databillengine->cal_total;
-                                        $vatshow1 = 100/104;
-                                        $vatshow_final = $vatshow*$vatshow1;
-                                      echo number_format($vatshow_final, 2, '.', ''); ?>
-                                <?php }elseif ($databillengine->vat == 7.00 && $databillengine->discount == 0.00 && $databillengine->withhold == 5.00) {
-                                        $vatshow = $databillengine->cal_total;
-                                        $vatshow1 = 100/102;
-                                        $vatshow_final = $vatshow*$vatshow1;
-                                      echo number_format($vatshow_final, 2, '.', ''); ?>
-
-                                <?php }elseif ($databillengine->vat == 7.00 && $databillengine->discount >= 0.01 && $databillengine->withhold == 3.00) {
-                                        $discount_show = $databillengine->discount/100;
-                                        $discount_show1 = 1.00 - $discount_show;
-                                        $vatshow = $databillengine->cal_total;
-                                        $vatshow1 = 100/104;
-                                        $vatshow_final = ($vatshow*$vatshow1)/$discount_show1;
-                                      echo number_format($vatshow_final, 2, '.', ''); ?>
-
-                                <?php }elseif ($databillengine->vat == 7.00 && $databillengine->discount >= 0.01 && $databillengine->withhold == 5.00) {
-                                        $discount_show = $databillengine->discount/100;
-                                        $discount_show1 = 1.00 - $discount_show;
-                                        $vatshow = $databillengine->cal_total;
-                                        $vatshow1 = 100/102;
-                                        $vatshow_final = ($vatshow*$vatshow1)/$discount_show1;
-                                      echo number_format($vatshow_final, 2, '.', ''); ?>
-                                <?php }else{
-                                    $vatshow = $databillengine->cal_total;
-                                      echo number_format($vatshow, 2, '.', ''); ?>
-                                <?php } ?>
-                              </b></td>
-                              <td><b>
-                                <?php if ($databillengine->vat == 1.00 && $databillengine->discount == 0.00 && $databillengine->withhold == 0.00) {
-                                  $vatshow = $databillengine->cal_total/1.01;
-                                    echo number_format($vatshow, 2, '.', ''); ?>
-                                <?php }elseif ($databillengine->vat == 3.00 && $databillengine->discount == 0.00 && $databillengine->withhold == 0.00) {
-                                    $vatshow = $databillengine->cal_total/1.03;
-                                      echo number_format($vatshow, 2, '.', ''); ?>
-                                <?php }elseif ($databillengine->vat == 5.00 && $databillengine->discount == 0.00 && $databillengine->withhold == 0.00) {
-                                    $vatshow = $databillengine->cal_total/1.05;
-                                      echo number_format($vatshow, 2, '.', ''); ?>
-                                <?php }elseif ($databillengine->vat == 7.00 && $databillengine->discount == 0.00 && $databillengine->withhold == 0.00) {
-                                    $vatshow = $databillengine->cal_total/1.07;
-                                      echo number_format($vatshow, 2, '.', ''); ?>
-
-                                <?php }elseif ($databillengine->vat == 0.00 && $databillengine->discount >= 1.00 && $databillengine->withhold == 0.00) {
-                                    $discount_show = $databillengine->discount/100;
-                                    $totalforsum = $databillengine->cal_total - $discount_show;
-                                      echo number_format($totalforsum, 2, '.', ''); ?>
-
-                                <?php }elseif ($databillengine->vat == 7.00 && $databillengine->discount >= 0.01 && $databillengine->withhold == 0.00) {
-                                        $discount_show = $databillengine->discount/100;
-                                        $discount_show1 = 1.00 - $discount_show;
-                                        $valuetotal = $databillengine->cal_total;
-                                        $vatsum = 100/107;
-                                        $totalforsum = ($valuetotal*$vatsum)/$discount_show1;
-                                      echo number_format($totalforsum, 2, '.', ''); ?>
-                                <?php }elseif ($databillengine->vat == 7.00 && $databillengine->discount == 0.00 && $databillengine->withhold == 3.00) {
-                                        $vatshow = $databillengine->cal_total;
-                                        $vatshow1 = 100/104;
-                                        $vatshow_final = $vatshow*$vatshow1;
-                                      echo number_format($vatshow_final, 2, '.', ''); ?>
-                                <?php }elseif ($databillengine->vat == 7.00 && $databillengine->discount == 0.00 && $databillengine->withhold == 5.00) {
-                                        $vatshow = $databillengine->cal_total;
-                                        $vatshow1 = 100/102;
-                                        $vatshow_final = $vatshow*$vatshow1;
-                                      echo number_format($vatshow_final, 2, '.', ''); ?>
-
-                                <?php }elseif ($databillengine->vat == 7.00 && $databillengine->discount >= 0.01 && $databillengine->withhold == 3.00) {
-                                        $discount_show = $databillengine->discount/100;
-                                        $discount_show1 = 1.00 - $discount_show;
-                                        $vatshow = $databillengine->cal_total;
-                                        $vatshow1 = 100/104;
-                                        $vatshow_final = ($vatshow*$vatshow1)/$discount_show1;
-                                      echo number_format($vatshow_final, 2, '.', ''); ?>
-
-                                <?php }elseif ($databillengine->vat == 7.00 && $databillengine->discount >= 0.01 && $databillengine->withhold == 5.00) {
-                                        $discount_show = $databillengine->discount/100;
-                                        $discount_show1 = 1.00 - $discount_show;
-                                        $vatshow = $databillengine->cal_total;
-                                        $vatshow1 = 100/102;
-                                        $vatshow_final = ($vatshow*$vatshow1)/$discount_show1;
-                                      echo number_format($vatshow_final, 2, '.', ''); ?>
-                                <?php }else{
-                                    $vatshow = $databillengine->cal_total;
-                                      echo number_format($vatshow, 2, '.', ''); ?>
-                                <?php } ?>
-                              </b></td>
-                          </tr>
-                      @endif
-
-                    @else
-                    <!-- เปลี่ยนรายการ -->
-                      @if ($key != 0)
-                          <!-- ก่อนเปลี่ยนรายการเขียนปิดรายการก่อนหน้า -->
-                          <tr>
-                              <td></td>
-                              <td></td>
-                              <td></td>
-                              <td></td>
-                              <td></td>
-                              <td></td>
-                              <td></td>
-                              <td></td>
-                              <td><b>
-                                <?php if ($databillengines[$key-1]->vat == 1.00 && $databillengines[$key-1]->discount == 0.00 && $databillengines[$key-1]->withhold == 0.00) {
-                                  $vatshow = $databillengines[$key-1]->cal_total/1.01;
-                                    echo number_format($vatshow, 2, '.', ''); ?>
-                                <?php }elseif ($databillengines[$key-1]->vat == 3.00 && $databillengines[$key-1]->discount == 0.00 && $databillengines[$key-1]->withhold == 0.00) {
-                                    $vatshow = $databillengines[$key-1]->cal_total/1.03;
-                                      echo number_format($vatshow, 2, '.', ''); ?>
-                                <?php }elseif ($databillengines[$key-1]->vat == 5.00 && $databillengines[$key-1]->discount == 0.00 && $databillengines[$key-1]->withhold == 0.00) {
-                                    $vatshow = $databillengines[$key-1]->cal_total/1.05;
-                                      echo number_format($vatshow, 2, '.', ''); ?>
-                                <?php }elseif ($databillengines[$key-1]->vat == 7.00 && $databillengines[$key-1]->discount == 0.00 && $databillengines[$key-1]->withhold == 0.00) {
-                                    $vatshow = $databillengines[$key-1]->cal_total/1.07;
-                                      echo number_format($vatshow, 2, '.', ''); ?>
-
-                                <?php }elseif ($databillengines[$key-1]->vat == 0.00 && $databillengines[$key-1]->discount >= 1.00 && $databillengines[$key-1]->withhold == 0.00) {
-                                    $discount_show = $databillengines[$key-1]->discount/100;
-                                    $totalforsum = $databillengines[$key-1]->cal_total - $discount_show;
-                                      echo number_format($totalforsum, 2, '.', ''); ?>
-
-                                <?php }elseif ($databillengines[$key-1]->vat == 7.00 && $databillengines[$key-1]->discount >= 0.01 && $databillengines[$key-1]->withhold == 0.00) {
-                                        $discount_show = $databillengines[$key-1]->discount/100;
-                                        $discount_show1 = 1.00 - $discount_show;
-                                        $valuetotal = $databillengines[$key-1]->cal_total;
-                                        $vatsum = 100/107;
-                                        $totalforsum = ($valuetotal*$vatsum)/$discount_show1;
-                                      echo number_format($totalforsum, 2, '.', ''); ?>
-                                <?php }elseif ($databillengines[$key-1]->vat == 7.00 && $databillengines[$key-1]->discount == 0.00 && $databillengines[$key-1]->withhold == 3.00) {
-                                        $vatshow = $databillengines[$key-1]->cal_total;
-                                        $vatshow1 = 100/104;
-                                        $vatshow_final = $vatshow*$vatshow1;
-                                      echo number_format($vatshow_final, 2, '.', ''); ?>
-                                <?php }elseif ($databillengines[$key-1]->vat == 7.00 && $databillengines[$key-1]->discount == 0.00 && $databillengines[$key-1]->withhold == 5.00) {
-                                        $vatshow = $databillengines[$key-1]->cal_total;
-                                        $vatshow1 = 100/102;
-                                        $vatshow_final = $vatshow*$vatshow1;
-                                      echo number_format($vatshow_final, 2, '.', ''); ?>
-
-                                <?php }elseif ($databillengines[$key-1]->vat == 7.00 && $databillengines[$key-1]->discount >= 0.01 && $databillengines[$key-1]->withhold == 3.00) {
-                                        $discount_show = $databillengines[$key-1]->discount/100;
-                                        $discount_show1 = 1.00 - $discount_show;
-                                        $vatshow = $databillengines[$key-1]->cal_total;
-                                        $vatshow1 = 100/104;
-                                        $vatshow_final = ($vatshow*$vatshow1)/$discount_show1;
-                                      echo number_format($vatshow_final, 2, '.', ''); ?>
-
-                                <?php }elseif ($databillengines[$key-1]->vat == 7.00 && $databillengines[$key-1]->discount >= 0.01 && $databillengines[$key-1]->withhold == 5.00) {
-                                        $discount_show = $databillengines[$key-1]->discount/100;
-                                        $discount_show1 = 1.00 - $discount_show;
-                                        $vatshow = $databillengines[$key-1]->cal_total;
-                                        $vatshow1 = 100/102;
-                                        $vatshow_final = ($vatshow*$vatshow1)/$discount_show1;
-                                      echo number_format($vatshow_final, 2, '.', ''); ?>
-                                <?php }else{
-                                    $vatshow = $databillengines[$key-1]->cal_total;
-                                      echo number_format($vatshow, 2, '.', ''); ?>
-                                <?php } ?>
-                              </b></td>
-                              <td><b>
-                                <?php if ($databillengines[$key-1]->vat == 1.00 && $databillengines[$key-1]->discount == 0.00 && $databillengines[$key-1]->withhold == 0.00) {
-                                  $vatshow = $databillengines[$key-1]->cal_total/1.01;
-                                    echo number_format($vatshow, 2, '.', ''); ?>
-                                <?php }elseif ($databillengines[$key-1]->vat == 3.00 && $databillengines[$key-1]->discount == 0.00 && $databillengines[$key-1]->withhold == 0.00) {
-                                    $vatshow = $databillengines[$key-1]->cal_total/1.03;
-                                      echo number_format($vatshow, 2, '.', ''); ?>
-                                <?php }elseif ($databillengines[$key-1]->vat == 5.00 && $databillengines[$key-1]->discount == 0.00 && $databillengines[$key-1]->withhold == 0.00) {
-                                    $vatshow = $databillengines[$key-1]->cal_total/1.05;
-                                      echo number_format($vatshow, 2, '.', ''); ?>
-                                <?php }elseif ($databillengines[$key-1]->vat == 7.00 && $databillengines[$key-1]->discount == 0.00 && $databillengines[$key-1]->withhold == 0.00) {
-                                    $vatshow = $databillengines[$key-1]->cal_total/1.07;
-                                      echo number_format($vatshow, 2, '.', ''); ?>
-
-                                <?php }elseif ($databillengines[$key-1]->vat == 0.00 && $databillengines[$key-1]->discount >= 1.00 && $databillengines[$key-1]->withhold == 0.00) {
-                                    $discount_show = $databillengines[$key-1]->discount/100;
-                                    $totalforsum = $databillengines[$key-1]->cal_total - $discount_show;
-                                      echo number_format($totalforsum, 2, '.', ''); ?>
-
-                                <?php }elseif ($databillengines[$key-1]->vat == 7.00 && $databillengines[$key-1]->discount >= 0.01 && $databillengines[$key-1]->withhold == 0.00) {
-                                        $discount_show = $databillengines[$key-1]->discount/100;
-                                        $discount_show1 = 1.00 - $discount_show;
-                                        $valuetotal = $databillengines[$key-1]->cal_total;
-                                        $vatsum = 100/107;
-                                        $totalforsum = ($valuetotal*$vatsum)/$discount_show1;
-                                      echo number_format($totalforsum, 2, '.', ''); ?>
-                                <?php }elseif ($databillengines[$key-1]->vat == 7.00 && $databillengines[$key-1]->discount == 0.00 && $databillengines[$key-1]->withhold == 3.00) {
-                                        $vatshow = $databillengines[$key-1]->cal_total;
-                                        $vatshow1 = 100/104;
-                                        $vatshow_final = $vatshow*$vatshow1;
-                                      echo number_format($vatshow_final, 2, '.', ''); ?>
-                                <?php }elseif ($databillengines[$key-1]->vat == 7.00 && $databillengines[$key-1]->discount == 0.00 && $databillengines[$key-1]->withhold == 5.00) {
-                                        $vatshow = $databillengines[$key-1]->cal_total;
-                                        $vatshow1 = 100/102;
-                                        $vatshow_final = $vatshow*$vatshow1;
-                                      echo number_format($vatshow_final, 2, '.', ''); ?>
-
-                                <?php }elseif ($databillengines[$key-1]->vat == 7.00 && $databillengines[$key-1]->discount >= 0.01 && $databillengines[$key-1]->withhold == 3.00) {
-                                        $discount_show = $databillengines[$key-1]->discount/100;
-                                        $discount_show1 = 1.00 - $discount_show;
-                                        $vatshow = $databillengines[$key-1]->cal_total;
-                                        $vatshow1 = 100/104;
-                                        $vatshow_final = ($vatshow*$vatshow1)/$discount_show1;
-                                      echo number_format($vatshow_final, 2, '.', ''); ?>
-
-                                <?php }elseif ($databillengines[$key-1]->vat == 7.00 && $databillengines[$key-1]->discount >= 0.01 && $databillengines[$key-1]->withhold == 5.00) {
-                                        $discount_show = $databillengines[$key-1]->discount/100;
-                                        $discount_show1 = 1.00 - $discount_show;
-                                        $vatshow = $databillengines[$key-1]->cal_total;
-                                        $vatshow1 = 100/102;
-                                        $vatshow_final = ($vatshow*$vatshow1)/$discount_show1;
-                                      echo number_format($vatshow_final, 2, '.', ''); ?>
-                                <?php }else{
-                                    $vatshow = $databillengines[$key-1]->cal_total;
-                                      echo number_format($vatshow, 2, '.', ''); ?>
-                                <?php } ?>
-                              </b></td>
-                          </tr>
-                      @endif
-
-                    <tr style="border-top-style:solid;">
-                        <!-- เขียน row แรก แต่ละรายการ -->
-                        <td>
-                            @if($databillengine->accept == 0)
-                            <label class="con">
-                            <input type="checkbox" name="id_journal_5[]" value="{{$databillengine->id_engine}}">
-                                <span class="checkmark"></span>
-                            </label>
-                            @else
-                            <i class="fa fa-check" style="color:green;font-size:20px;"></i>
-                            @endif
-                        </td>
-                        <td>{{$databillengine->date_req_rent}}</td>
-                        <td>{{$databillengine->billengine_rent}}</td>
-                        <td>เครื่องมือให้เช่า {{$databillengine->name_engine}}</td>
-                        <td>ขึ้นเครื่องมือให้เช่าลูกค้า {{$databillengine->name}} {{$databillengine->lastname}}</td>
-                        <td>151901</td>
-                        <td style="text-align:left;">เครื่องมือให้เช่าลูกค้า {{$databillengine->name}} {{$databillengine->lastname}}</td>
-                        <td>{{$databillengine->branch_id}}</td>
-                        <td>{{$databillengine->last_total}}</td>
-                        <td></td>
-                    </tr>
-
-                    <tr>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td>151900</td>
-                        <td style="text-align:center;">เครื่องมือให้เช่า {{$databillengine->name_engine}}</td>
-                        <td></td>
-                        <td></td>
-                        <td>{{$databillengine->last_total}}</td>
-                    </tr>
-
-                    @if ($key == count($databillengines)-1)
-                    <!-- เขียนสำหรับรายการสุดท้าย -->
-                        <tr>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td><b>
-                              <?php if ($databillengine->vat == 1.00 && $databillengine->discount == 0.00 && $databillengine->withhold == 0.00) {
-                                $vatshow = $databillengine->cal_total/1.01;
-                                  echo number_format($vatshow, 2, '.', ''); ?>
-                              <?php }elseif ($databillengine->vat == 3.00 && $databillengine->discount == 0.00 && $databillengine->withhold == 0.00) {
-                                  $vatshow = $databillengine->cal_total/1.03;
-                                    echo number_format($vatshow, 2, '.', ''); ?>
-                              <?php }elseif ($databillengine->vat == 5.00 && $databillengine->discount == 0.00 && $databillengine->withhold == 0.00) {
-                                  $vatshow = $databillengine->cal_total/1.05;
-                                    echo number_format($vatshow, 2, '.', ''); ?>
-                              <?php }elseif ($databillengine->vat == 7.00 && $databillengine->discount == 0.00 && $databillengine->withhold == 0.00) {
-                                  $vatshow = $databillengine->cal_total/1.07;
-                                    echo number_format($vatshow, 2, '.', ''); ?>
-
-                              <?php }elseif ($databillengine->vat == 0.00 && $databillengine->discount >= 1.00 && $databillengine->withhold == 0.00) {
-                                  $discount_show = $databillengine->discount/100;
-                                  $totalforsum = $databillengine->cal_total - $discount_show;
-                                    echo number_format($totalforsum, 2, '.', ''); ?>
-
-                              <?php }elseif ($databillengine->vat == 7.00 && $databillengine->discount >= 0.01 && $databillengine->withhold == 0.00) {
-                                      $discount_show = $databillengine->discount/100;
-                                      $discount_show1 = 1.00 - $discount_show;
-                                      $valuetotal = $databillengine->cal_total;
-                                      $vatsum = 100/107;
-                                      $totalforsum = ($valuetotal*$vatsum)/$discount_show1;
-                                    echo number_format($totalforsum, 2, '.', ''); ?>
-                              <?php }elseif ($databillengine->vat == 7.00 && $databillengine->discount == 0.00 && $databillengine->withhold == 3.00) {
-                                      $vatshow = $databillengine->cal_total;
-                                      $vatshow1 = 100/104;
-                                      $vatshow_final = $vatshow*$vatshow1;
-                                    echo number_format($vatshow_final, 2, '.', ''); ?>
-                              <?php }elseif ($databillengine->vat == 7.00 && $databillengine->discount == 0.00 && $databillengine->withhold == 5.00) {
-                                      $vatshow = $databillengine->cal_total;
-                                      $vatshow1 = 100/102;
-                                      $vatshow_final = $vatshow*$vatshow1;
-                                    echo number_format($vatshow_final, 2, '.', ''); ?>
-
-                              <?php }elseif ($databillengine->vat == 7.00 && $databillengine->discount >= 0.01 && $databillengine->withhold == 3.00) {
-                                      $discount_show = $databillengine->discount/100;
-                                      $discount_show1 = 1.00 - $discount_show;
-                                      $vatshow = $databillengine->cal_total;
-                                      $vatshow1 = 100/104;
-                                      $vatshow_final = ($vatshow*$vatshow1)/$discount_show1;
-                                    echo number_format($vatshow_final, 2, '.', ''); ?>
-
-                              <?php }elseif ($databillengine->vat == 7.00 && $databillengine->discount >= 0.01 && $databillengine->withhold == 5.00) {
-                                      $discount_show = $databillengine->discount/100;
-                                      $discount_show1 = 1.00 - $discount_show;
-                                      $vatshow = $databillengine->cal_total;
-                                      $vatshow1 = 100/102;
-                                      $vatshow_final = ($vatshow*$vatshow1)/$discount_show1;
-                                    echo number_format($vatshow_final, 2, '.', ''); ?>
-                              <?php }else{
-                                  $vatshow = $databillengine->cal_total;
-                                    echo number_format($vatshow, 2, '.', ''); ?>
-                              <?php } ?>
-                            </b></td>
-                            <td><b>
-                              <?php if ($databillengine->vat == 1.00 && $databillengine->discount == 0.00 && $databillengine->withhold == 0.00) {
-                                $vatshow = $databillengine->cal_total/1.01;
-                                  echo number_format($vatshow, 2, '.', ''); ?>
-                              <?php }elseif ($databillengine->vat == 3.00 && $databillengine->discount == 0.00 && $databillengine->withhold == 0.00) {
-                                  $vatshow = $databillengine->cal_total/1.03;
-                                    echo number_format($vatshow, 2, '.', ''); ?>
-                              <?php }elseif ($databillengine->vat == 5.00 && $databillengine->discount == 0.00 && $databillengine->withhold == 0.00) {
-                                  $vatshow = $databillengine->cal_total/1.05;
-                                    echo number_format($vatshow, 2, '.', ''); ?>
-                              <?php }elseif ($databillengine->vat == 7.00 && $databillengine->discount == 0.00 && $databillengine->withhold == 0.00) {
-                                  $vatshow = $databillengine->cal_total/1.07;
-                                    echo number_format($vatshow, 2, '.', ''); ?>
-
-                              <?php }elseif ($databillengine->vat == 0.00 && $databillengine->discount >= 1.00 && $databillengine->withhold == 0.00) {
-                                  $discount_show = $databillengine->discount/100;
-                                  $totalforsum = $databillengine->cal_total - $discount_show;
-                                    echo number_format($totalforsum, 2, '.', ''); ?>
-
-                              <?php }elseif ($databillengine->vat == 7.00 && $databillengine->discount >= 0.01 && $databillengine->withhold == 0.00) {
-                                      $discount_show = $databillengine->discount/100;
-                                      $discount_show1 = 1.00 - $discount_show;
-                                      $valuetotal = $databillengine->cal_total;
-                                      $vatsum = 100/107;
-                                      $totalforsum = ($valuetotal*$vatsum)/$discount_show1;
-                                    echo number_format($totalforsum, 2, '.', ''); ?>
-                              <?php }elseif ($databillengine->vat == 7.00 && $databillengine->discount == 0.00 && $databillengine->withhold == 3.00) {
-                                      $vatshow = $databillengine->cal_total;
-                                      $vatshow1 = 100/104;
-                                      $vatshow_final = $vatshow*$vatshow1;
-                                    echo number_format($vatshow_final, 2, '.', ''); ?>
-                              <?php }elseif ($databillengine->vat == 7.00 && $databillengine->discount == 0.00 && $databillengine->withhold == 5.00) {
-                                      $vatshow = $databillengine->cal_total;
-                                      $vatshow1 = 100/102;
-                                      $vatshow_final = $vatshow*$vatshow1;
-                                    echo number_format($vatshow_final, 2, '.', ''); ?>
-
-                              <?php }elseif ($databillengine->vat == 7.00 && $databillengine->discount >= 0.01 && $databillengine->withhold == 3.00) {
-                                      $discount_show = $databillengine->discount/100;
-                                      $discount_show1 = 1.00 - $discount_show;
-                                      $vatshow = $databillengine->cal_total;
-                                      $vatshow1 = 100/104;
-                                      $vatshow_final = ($vatshow*$vatshow1)/$discount_show1;
-                                    echo number_format($vatshow_final, 2, '.', ''); ?>
-
-                              <?php }elseif ($databillengine->vat == 7.00 && $databillengine->discount >= 0.01 && $databillengine->withhold == 5.00) {
-                                      $discount_show = $databillengine->discount/100;
-                                      $discount_show1 = 1.00 - $discount_show;
-                                      $vatshow = $databillengine->cal_total;
-                                      $vatshow1 = 100/102;
-                                      $vatshow_final = ($vatshow*$vatshow1)/$discount_show1;
-                                    echo number_format($vatshow_final, 2, '.', ''); ?>
-                              <?php }else{
-                                  $vatshow = $databillengine->cal_total;
-                                    echo number_format($vatshow, 2, '.', ''); ?>
-                              <?php } ?>
-                            </b></td>
-                        </tr>
-                    @endif
-
-                    <?php $en = $databillengine->billengine_rent ?>
-                    @endif
-                  @endforeach
-                </tbody>
-              </table>
-
-            <?php endif; ?>
-
-
-              <!-- <div class="table-responsive">
-                <table id="example1" class="table table-striped table-bordered fontslabel" style="width:100%">
-                  <thead>
-                    <tr>
-                      <th>รหัส</th>
-                      <th>ชื่อเจ้าหนี้</th>
-                      <th>ยอดคงค้าง</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-
-                    <tr>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                    </tr>
-
-                  </tbody>
-                </table><br>
-              </div> -->
-
-              <!-- <div class="table-responsive">
-                <table id="example2" class="table table-striped table-bordered fontslabel" style="width:100%">
-                  <thead>
-                    <tr>
-                      <th>รหัส</th>
-                      <th>ชื่อเจ้าหนี้</th>
-                      <th>เครดิต(วัน)</th>
-                      <th>ยอดคงค้าง</th>
-                      <th>จะครบกำหนด</th>
-                      <th>เกินกำหนด</th>
-                      <th>รวมยอดหนี้</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-
-                    <tr>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                    </tr>
-
-                  </tbody>
-                </table><br>
-              </div> -->
-
 </div>
 <!-- END content-page -->
 <!-- END main -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
-<!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script> -->
 <script type="text/javascript" src = 'js/accountjs/buysteel.js'></script>
-<!-- <script>
-$(document).ready(function() {
-  var table = $('#example').DataTable({
-      "columnDefs": [
-          { "visible": false, "targets": 1 }
-      ],
-      "order": [[ 1, 'asc' ]],
-      "displayLength": 25,
-      "drawCallback": function ( settings ) {
-          var api = this.api();
-          var rows = api.rows( {page:'current'} ).nodes();
-          var last=null;
-
-          api.column(1, {page:'current'} ).data().each( function ( group, i ) {
-              if ( last !== group ) {
-                  $(rows).eq( i ).before(
-                      '<tr class="group"><td colspan="8">'+group+'</td></tr>'
-                  );
-
-                  last = group;
-              }
-          } );
-      }
-  } );
-
-  // Order by the grouping
-  $('#example tbody').on( 'click', 'tr.group', function () {
-      var currentOrder = table.order()[0];
-      if ( currentOrder[0] === 1 && currentOrder[1] === 'asc' ) {
-          table.order( [ 1, 'desc' ] ).draw();
-      }
-      else {
-          table.order( [ 1, 'asc' ] ).draw();
-      }
-  } );
-} );
-</script> -->
-
 @endsection

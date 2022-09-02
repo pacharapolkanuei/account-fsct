@@ -653,7 +653,7 @@ Route::get('/ap_list_summary', 'ap_listController@index_ap_list_summary')->name(
 Route::post('/ap_list_summary/filter','ap_listController@ap_list_summary_filters')->name('ap_list_summary_filter');
 
 Route::get('/ap_list_showdateexpire', 'ap_listController@index_ap_list_showdateexpire')->name('ap_list_showdateexpire');
-Route::post('/ap_list_showdateexpire/filter','ap_listController@ap_list_filters')->name('ap_list_showdateexpire_filter');
+Route::post('/ap_list_showdateexpire/filter','ap_listController@ap_list_showdateexpire_filters')->name('ap_list_showdateexpire_filter');
 
 //-----------------------------------------------
 

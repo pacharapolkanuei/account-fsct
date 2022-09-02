@@ -76,8 +76,60 @@ swal({!!Session::pull('sweetalert.json')!!});
                   </div>
               </div>
               <button type="submit" class="btn btn-primary btn-sm fontslabel">ค้นหา</button>
+              <a href="{{url('ap_list_summary')}}" class="btn btn-danger btn-md delete-confirm">RESET</a>
             </center>
           {!! Form::close() !!}
+
+          <br>
+          <br>
+          <center>
+            <?php if (isset($start) && isset($end)): ?>
+              <label id="fontslabel"><b>วันที่ <?php echo $start ?> ถึง <?php echo $end ?></b></label>
+            <?php endif; ?>
+          </center>
+          <br>
+
+          <?php if (isset($supplier_aps)): ?>
+            <table class="table table-bordered" cellspacing="0" id="fontslabel" style="width : 70%;margin-left: auto;margin-right: auto;">
+              <thead>
+                <tr style="background-color:#aab6c2;color:white;">
+                  <th scope="col">รหัส</th>
+                  <th scope="col">ชื่อลูกหนี้</th>
+                  <th scope="col">ยอดคงค้าง</th>
+                </tr>
+              </thead>
+              <tbody>
+                <?php
+                  $sum_totalthis = 0;
+                 ?>
+                @foreach ($supplier_aps  as $key => $supplier_ap)
+                  <tr>
+                    <td>{{ $supplier_ap->codecreditor }}</td>
+                    <td>{{ $supplier_ap->pre }} {{ $supplier_ap->name_supplier }}</td>
+                    <td>
+                        <?php $keep_totalsum = number_format($supplier_ap->totalsumreal2,2,".",",");
+                              echo $keep_totalsum;
+                        ?>
+                        <?php $sum_totalthis += $supplier_ap->totalsumreal2;?>
+                    </td>
+                  </tr>
+
+                @endforeach
+              </tbody>
+              <tfoot>
+                <tr>
+                  <th colspan="2" style="vertical-align : middle;text-align:center;"><b>รวมทั้งสิ้น</b></th>
+                  <td>
+                        <?php $sum_total_show = number_format($sum_totalthis,2,".",",");
+                              echo $sum_total_show;
+                        ?>
+                  </td>
+                </tr>
+              </tfoot>
+            </table>
+
+          <?php endif; ?>
+
 
         </div>
       </div>
@@ -86,43 +138,7 @@ swal({!!Session::pull('sweetalert.json')!!});
     <!-- END container-fluid -->
   </div>
   <!-- END content -->
-  <br>
-  <br>
-  <center>
-    <?php if (isset($start) && isset($end)): ?>
-      <label id="fontslabel"><b>วันที่ <?php echo $start ?> ถึง <?php echo $end ?></b></label>
-    <?php endif; ?>
-  </center>
-  <br>
 
-  <?php if (isset($supplier_aps)): ?>
-    <table class="table table-bordered" cellspacing="0" id="fontsjournal">
-      <thead>
-        <tr style="background-color:#aab6c2;color:white;">
-          <th scope="col">รหัส</th>
-          <th scope="col">ชื่อลูกหนี้</th>
-          <th scope="col">ยอดคงค้าง</th>
-        </tr>
-      </thead>
-      <tbody>
-        @foreach ($supplier_aps  as $key => $supplier_ap)
-          <tr>
-            <td>{{ $supplier_ap->codecreditor }}</td>
-            <td>{{ $supplier_ap->pre }} {{ $supplier_ap->name_supplier }}</td>
-            <td>{{ $supplier_ap->totalsumreal2 }}</td>
-          </tr>
-        @endforeach
-      </tbody>
-      <tfoot>
-        <tr>
-          <th></th>
-          <th></th>
-          <td></td>
-        </tr>
-      </tfoot>
-    </table>
-
-  <?php endif; ?>
 
 
 
