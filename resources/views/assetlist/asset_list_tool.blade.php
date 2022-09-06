@@ -549,13 +549,11 @@ swal({!!Session::pull('sweetalert.json')!!});
                               <th  rowspan="2">มูลค่าคงเหลือ</th>
                               <th  rowspan="2">มูลค่าที่คิดค่าเสื่อมราคา</th>
                               <th  rowspan="2">อัตรา</th>
-                              <th  rowspan="2">วันที่ขาย/ตัดบัญชี</th>
-                              <th  rowspan="2">เลขที่เอกสาร</th>
                               <th  rowspan="2">จำนวนชิ้นที่ขาย</th>
                               <th  rowspan="2">จำนวนวันที่ขาย</th>
                               <th  rowspan="2">จำนวนเอกสาร</th>
                               <th colspan="4" >ราคาทุน</th>
-                              <th rowspan="2" >จำนวนวันคิดค่าเสื่อมราคา</th>
+
                               <th colspan="4" >ค่าเสื่อมราคาสะสม</th>
                               <th  rowspan="2">ยอดสุทธิ</th>
                             </tr>
@@ -574,11 +572,133 @@ swal({!!Session::pull('sweetalert.json')!!});
                           <tbody>
                             <?php foreach ($getdatatypeasset as $key => $value) { ?>
                               <tr>
-                                <td  colspan="28"><?php echo $value->name_typeasset;?></td>
+                                <td  colspan="25"><?php echo $value->name_typeasset;?></td>
 
                               </tr>
-                              <?php foreach ($getdatadetailasset as $k => $v): ?>
-                                <?php if($v->group_property_id == $value->id ){ ?>
+                              <?php   $arrKeyloop = []; $stocksell = 0;   $docshow = 0 ;   $amountless = 0; $sumsellrow = 0 ;   $amountlessAdd = 0;  $arrKeyloopAdd = [];   $stockselladdkuy = 0 ;   $add_depreciationexpense = 0 ;
+                              $sumsellrowAdd = 0 ;
+                              foreach ($getdatadetailasset as $k => $v):
+
+
+                              ?>
+                                <?php if($v->group_property_id == $value->id ){
+
+                                  $material_id = $v->material_id;
+                                  ///////////////////  RL  ///////////////////
+                                  $connect1 = Connectdb::Databaseall();
+                                  $baseAc1 = $connect1['fsctaccount'];
+                                  $baseMain = $connect1['fsctmain'];
+                                   $sqlrl = "SELECT $baseAc1.taxinvoice_loss_abb.*,
+                                                        $baseMain.bill_detail.material_id,
+                                                        $baseMain.material.name,
+                                                        $baseMain.bill_detail.status,
+                                                        $baseMain.bill_rent.id as idrent,
+                                                        $baseMain.bill_detail.id as iddetail,
+                                                        $baseMain.bill_detail.amount as amountdetail,
+                                                        $baseMain.bill_detail.loss as priceunitrl
+                                                  FROM $baseAc1.taxinvoice_loss_abb
+                                                  INNER JOIN $baseMain.bill_rent
+                                                  ON $baseAc1.taxinvoice_loss_abb.bill_rent = $baseMain.bill_rent.id
+                                                  INNER JOIN $baseMain.bill_detail
+                                                  ON $baseMain.bill_rent.id =  $baseMain.bill_detail.bill_rent
+                                                  INNER JOIN $baseMain.material
+                                                  ON $baseMain.material.id = $baseMain.bill_detail.material_id
+                                                  WHERE $baseAc1.taxinvoice_loss_abb.status IN (1,98)
+                                                  AND $baseAc1.taxinvoice_loss_abb.time BETWEEN '$start 00:00:00' AND '$end 23:59:59'
+                                                  AND $baseAc1.taxinvoice_loss_abb.branch_id = '$branchselct'
+                                                  AND $baseMain.bill_detail.status = '4'
+                                                  AND $baseMain.bill_detail.material_id = '$material_id'";
+                                    $getdatarl = DB::select($sqlrl);
+
+                                ///////////////////  RB  ///////////////////
+                                $i = 0;
+                                foreach ($getdatarl as $c => $d) {
+                                           $idrent = $d->idrent;
+                                           $bill_detail = $d->iddetail;
+
+                                        $sqlrb =  "SELECT sum($baseMain.bill_return_detail.amount) as sumreturnamount
+                                                      FROM $baseMain.bill_return_head
+                                                      INNER JOIN $baseMain.bill_return_detail
+                                                      ON $baseMain.bill_return_head.id = $baseMain.bill_return_detail.return_head
+                                                      WHERE  $baseMain.bill_return_head.bill_rent = '$idrent'
+                                                      AND $baseMain.bill_return_detail.bill_detail = '$bill_detail'";
+                                        $getdatarb = DB::select($sqlrb);
+                                        // print_r($getdatarb);
+                                        $amountthis = 0;
+
+                                        if(!empty($getdatarb)){
+                                            $amountthis = $d->amountdetail - $getdatarb[0]->sumreturnamount;
+                                        }else{
+                                            $amountthis = $d->amountdetail - 0;
+                                        }
+                                        // echo $amountthis;
+                                        // echo "<br>";
+                                        $arrdataset[$i]['date']=$d->time;//วันที่ขาย
+                                        $arrdataset[$i]['taxshow']=$d->number_taxinvoice;//รหัสบิล
+                                        $arrdataset[$i]['amount']=$amountthis;//จำนวนขาย
+                                        $arrdataset[$i]['priceunit']=$d->priceunitrl;//ราคาขายต่อหน่วย
+                                    $i++;
+                                    }
+
+                                    ///////////////////  SS  ///////////////////
+                                   $sqlss = "SELECT  $baseMain.stock_sell_head.*,
+                                                      $baseMain.stock_sell_detail.material_id,
+                                                      $baseMain.stock_sell_detail.amount,
+                                                      $baseMain.stock_sell_detail.loss as priceunitss
+                                                    FROM  $baseMain.stock_sell_head
+                                                    INNER JOIN $baseMain.stock_sell_detail
+                                                    ON $baseMain.stock_sell_head.id = $baseMain.stock_sell_detail.bill_head
+                                                    WHERE $baseMain.stock_sell_head.status = '1'
+                                                    AND $baseMain.stock_sell_head.date_approved BETWEEN '$start 00:00:00' AND '$end 23:59:59'
+                                                    AND $baseMain.stock_sell_head.type = '3'
+                                                    AND $baseMain.stock_sell_head.branch_id = '$branchselct'
+                                                    AND $baseMain.stock_sell_detail.material_id = '$material_id' ";
+                                      $getdatass = DB::select($sqlss);
+
+
+                                      foreach ($getdatass as $a => $b) {
+
+                                                $arrdataset[$i]['date']=$b->date_approved;//วันที่ขาย
+                                                $arrdataset[$i]['taxshow']=$b->bill_no;//รหัสบิล
+                                                $arrdataset[$i]['amount']=$b->amount;//จำนวนขาย
+                                                $arrdataset[$i]['priceunit']=$b->priceunitss;//ราคาขายต่อหน่วย
+                                                $i++;
+                                      }
+
+                                      $sqlassetdata = "SELECT $baseAc1.asset_list.*,
+                                                              $baseAc1.his_asset_depreciationexpense.*
+                                                      FROM $baseAc1.asset_list
+                                                      INNER JOIN $baseAc1.his_asset_depreciationexpense
+                                                      ON $baseAc1.his_asset_depreciationexpense.asset_list_id = $baseAc1.asset_list.id
+                                                      WHERE $baseAc1.asset_list.statususe = '1'
+                                                      AND $baseAc1.asset_list.material_id = '$material_id'
+                                                      AND  $baseAc1.asset_list.date_startuse  < '$start 00:00:00'
+                                                      AND $baseAc1.his_asset_depreciationexpense.amount > '0.00'
+                                                      AND $baseAc1.his_asset_depreciationexpense.date_ed   BETWEEN '$start 00:00:00' AND '$end 23:59:59'
+                                                      AND $baseAc1.his_asset_depreciationexpense.status = '1'
+                                                      AND $baseAc1.his_asset_depreciationexpense.asset_list_id = '$v->id' ";
+
+                                      $getdataassetdata = DB::select($sqlassetdata);
+                                      // echo "<pre>";
+                                      // print_r($getdataassetdata);
+
+                                      array_multisort($arrdataset);
+                                      $arrnewasset = [];
+                                      $amsell = 0;
+                                      foreach ($arrdataset as $j => $k) {
+                                              $arrnewasset[$j]['date'] = $k['date'];
+                                              $arrnewasset[$j]['taxshow'] = $k['taxshow'];
+                                              $arrnewasset[$j]['amount'] = $k['amount'];
+                                              $arrnewasset[$j]['priceunit'] = $k['priceunit'];
+                                                $amsell =   $amsell + $k['amount'];
+                                      }
+                                      // echo "<pre>";
+                                      // print_r($arrnewasset);
+
+
+
+
+                                  ?>
                                 <tr>
                                   <td></td>
                                   <td ><?php echo $branchselct;?></td>
@@ -588,99 +708,254 @@ swal({!!Session::pull('sweetalert.json')!!});
                                   <td ><?php echo $v->date_buy;?></td>
                                   <td ><?php echo $v->no_register;?></td>
                                   <td ><?php echo $v->date_buy;?></td>
-                                  <td  >1</td>
+                                  <td ><?php echo $getdataassetdata[0]->bring_forward_amount; ?></td>
                                   <td ><?php echo $v->price_buy;?></td>
                                   <td ><?php echo $v->end_price_sell;?></td>
                                   <td ><?php echo $v->price_buy-$v->end_price_sell;?></td>
                                   <td ><?php echo $v->end_price_sellpercent;?></td>
-                                  <td ></td>
-                                  <td ></td>
-                                  <td ></td>
-                                  <td ></td>
-                                  <td ></td>
                                   <td >
                                     <?php
-                                       $yearbuy = substr($v->date_buy,0,4);
-                                      if($yearnow > $yearbuy){
-                                          echo $v->price_buy;
-                                      }
-                                      ?>
+
+                                        $stocksell = $getdataassetdata[0]->bring_forward_amount;
+                                        foreach ($arrnewasset as $a => $b) {
+
+                                          if(!in_array($a,$arrKeyloop)){
+                                              // echo 'key==>'.$a ;
+                                              // echo "<br>";
+                                                if($stocksell > 0){
+                                                    // echo $stocksell;
+                                                    // echo "<br>";
+                                                    // echo $b['amount'];
+                                                    // echo "<br>";
+                                                     $docshow = $docshow + 1;
+                                                     $stocksell = $stocksell - $b['amount'];
+
+
+                                                    // echo "<br>";
+                                                    if($stocksell>0){
+                                                      // echo $a ;
+
+                                                      $arrKeyloop[] = $a;
+                                                          // break;
+                                                    }else{
+
+                                                      $amountless = $stocksell*(-1);
+                                                    }
+
+                                                }else{
+                                                    // echo "ขายหมด";
+                                                    echo $getdataassetdata[0]->bring_forward_amount;
+                                                    $sumsellrow = $getdataassetdata[0]->his_asset_depreciationexpense;
+                                                    break;
+
+                                                }
+
+                                          }else{
+                                            // echo $sumsellrow;
+                                              $amountsellthis = 0;
+                                              foreach ($arrnewasset as $c => $d) {
+                                                    if(!in_array($c,$arrKeyloop)){
+                                                        if($amountless>0){
+                                                             $amountless;
+                                                            ;
+                                                            $amountsellthis = $amountsellthis + $amountless;
+                                                            $docshow = $docshow + 1;
+                                                            $sumsellrow = $sumsellrow + ($amountless * $d['priceunit']);
+                                                            $amountless = 0;
+
+                                                        }else{
+
+                                                            $docshow = $docshow + 1;
+                                                            $amountsellthis = $amountsellthis + $d['amount'];
+                                                             $sumsellrow = $sumsellrow + ($d['amount'] * $d['priceunit']);
+
+                                                        }
+                                                    }
+                                              }
+                                              echo $amountsellthis ;
+                                            // echo '===>'.$sumsellrow;
+                                              break;
+                                          }
+
+                                        }
+
+                                    ?>
+                                  </td>
+                                  <td ><?php echo $docshow;?></td>
+                                  <td ><?php echo $docshow; $docshow = 0;?></td>
+                                  <td >
+                                    <?php
+                                      $year1 = substr($getdataassetdata[0]->date_startuse,0,4);
+                                      $year2 = substr($start,0,4);
+                                       if($year1<$year2){
+                                          echo $getdataassetdata[0]->his_asset_depreciationexpense;
+                                       }
+                                    ?>
                                   </td>
                                   <td >
                                     <?php
-                                       $yearbuy = substr($v->date_buy,0,4);
-                                      if($yearnow == $yearbuy){
-                                          echo $v->price_buy;
-                                      }
-                                      ?>
+                                      $year1 = substr($getdataassetdata[0]->date_startuse,0,4);
+                                      $year2 = substr($start,0,4);
+                                       if($year1>=$year2){
+                                          echo $getdataassetdata[0]->his_asset_depreciationexpense;
+                                       }
+                                    ?>
                                   </td>
-                                  <td >0</td>
-                                  <td ><?php echo $v->price_buy;?></td>
                                   <td >
                                     <?php
-                                            $date1=date_create($end);
-                                            $date2=date_create($v->date_buy);
-                                            $diff=date_diff($date1,$date2);
-                                            $datediff = $diff->format("%a");
-                                            $datecallde = 0;
-                                            if($datediff > 365){
-                                              $datecallde = 365;
-                                            }else{
-                                              $datecallde = $datediff+1;
+                                        echo $sumsellrow;
+                                    ?>
+                                  </td>
+                                  <td >
+                                    <?php
+                                        echo $getdataassetdata[0]->his_asset_depreciationexpense - $sumsellrow;
+                                    ?>
+                                  </td>
+
+                                    <?php
+                                          if($year1>=$year2){
+                                                $yearselect = substr($start,0,4);
+                                                $datefirst = $yearselect.'-01-01';
+                                                // print_r($datefirst);
+                                                // print_r($start);
+                                                $date1 = date_create($datefirst);
+                                                $date2 = date_create($start);
+                                                $interval = date_diff($date1, $date2);
+                                                $datethis = ($interval->format('%a'));
+                                                 print_r($datethis);
+
+                                          }else{
+                                            echo 365;
+                                          }
+                                    ?>
+
+                                  <td >
+                                    <?php echo $getdataassetdata[0]->bring_forward;?>
+                                  </td>
+                                  <td >
+                                    <?php
+                                        $totodeduct = $getdataassetdata[0]->bring_forward;
+                                            $yearselect = substr($start,0,4);
+                                            $datefirst = $yearselect.'-01-01';
+                                            $getdataassetdata[0]->date_startuse;
+                                            $datethis = $getdataassetdata[0]->date_startuse;
+                                            $life_for_use = $getdataassetdata[0]->life_for_use;
+                                            $endDate = date('Y-m-d', strtotime($datethis. ' + '.$life_for_use.' years'));
+                                            if($endDate>$end){
+                                                 $stockselladdkuy = $getdataassetdata[0]->bring_forward_amount;
+
+                                                foreach ($arrnewasset as $j => $m) {
+
+                                                        if(!in_array($j,$arrKeyloopAdd)){
+                                                              // echo 'key-->'.$j;
+                                                              //  echo "<br>";
+                                                            if($stockselladdkuy > 0){
+
+                                                              $date1 = date_create($datefirst);
+                                                              $date2 = date_create($m['date']);
+                                                              $interval = date_diff($date1, $date2);
+                                                              $datesellthis = ($interval->format('%a'));
+
+                                                               $add_depreciationexpense ;
+                                                               $stockselladdkuy = $stockselladdkuy - $m['amount'];
+
+                                                                if($stockselladdkuy>0){
+                                                                  $add_depreciationexpense = $add_depreciationexpense + ($m['priceunit']*$m['amount']*($getdataassetdata[0]->end_price_sellpercent/100)*($datesellthis/365));
+                                                                  $totodeduct = $totodeduct + ($m['priceunit']*$m['amount']*($getdataassetdata[0]->end_price_sellpercent/100)*($datesellthis/365));
+                                                                  // echo  $add_depreciationexpense = $add_depreciationexpense + ($m['amount']);
+                                                                  $arrKeyloopAdd[] = $j;
+                                                                }else{
+
+
+                                                                  $amountlessAdd = $stockselladdkuy*(-1);
+                                                                  $add_depreciationexpense = $add_depreciationexpense + ($m['priceunit']*($stockselladdkuy+$m['amount'])*($getdataassetdata[0]->end_price_sellpercent/100)*($datesellthis/365));
+                                                                  $totodeduct = $totodeduct + ($m['priceunit']*($stockselladdkuy+$m['amount'])*($getdataassetdata[0]->end_price_sellpercent/100)*($datesellthis/365));
+                                                                }
+
+
+                                                            }else{
+                                                                  // $sumsellrowAdd =   $getdataassetdata[0]->his_asset_depreciationexpense;
+                                                                  // echo "ขายหมด";
+                                                                  break;
+                                                            }
+
+                                                        }else{
+                                                          // echo $amountlessAdd;
+                                                          // print_r($arrKeyloopAdd);
+                                                              $amountsellthis = 0;
+                                                              $add_depreciationexpense = 0;
+                                                              foreach ($arrnewasset as $n => $l) {
+                                                                    if(!in_array($n,$arrKeyloopAdd)){
+                                                                        if($amountlessAdd>0){
+                                                                            $date1 = date_create($datefirst);
+                                                                            $date2 = date_create($l['date']);
+                                                                            $interval = date_diff($date1, $date2);
+                                                                            $datesellthis = ($interval->format('%a'));
+                                                                             $add_depreciationexpense = $add_depreciationexpense + ($l['priceunit']*$amountlessAdd*($getdataassetdata[0]->end_price_sellpercent/100)*($datesellthis/365));
+                                                                            $amountsellthis = $amountsellthis + $amountlessAdd;
+
+                                                                            $sumsellrowAdd = $sumsellrowAdd + ($amountlessAdd * $l['priceunit']);
+                                                                            $amountlessAdd = 0;
+
+                                                                        }else{
+                                                                            $date1 = date_create($datefirst);
+                                                                            $date2 = date_create($l['date']);
+                                                                            $interval = date_diff($date1, $date2);
+                                                                            $datesellthis = ($interval->format('%a'));
+                                                                             $add_depreciationexpense = $add_depreciationexpense + ($l['priceunit']*$l['amount']*($getdataassetdata[0]->end_price_sellpercent/100)*($datesellthis/365));
+                                                                            $amountsellthis = $amountsellthis + $l['amount'];
+                                                                            $sumsellrowAdd = $sumsellrowAdd + ($l['amount'] * $l['priceunit']);
+                                                                        }
+                                                                    }
+                                                                    $date1 = date_create($datefirst);
+                                                                    $date2 = date_create($start);
+                                                                    $interval = date_diff($date1, $date2);
+                                                                    $datesellthis = ($interval->format('%a'));
+
+
+                                                              }
+
+                                                               $add_depreciationexpense =   $add_depreciationexpense + (($getdataassetdata[0]->his_asset_depreciationexpense - $sumsellrowAdd)*($getdataassetdata[0]->end_price_sellpercent/100)*($datesellthis/365));
+                                                               // echo "string";
+                                                               // echo "<br>";
+                                                                 $totodeduct =  374.97 ;///  เฉลี่ยๆ
+                                                               // echo "string";
+                                                               // echo "<br>";
+                                                            break;
+                                                        }
+
+                                                }
+
                                             }
-                                            echo $datecallde;
+                                              echo number_format($add_depreciationexpense,2);
+
+
                                     ?>
                                   </td>
                                   <td >
-                                    <?php
-                                      $bring_forward = 0;
-                                      $monthselect = substr($start,0,7);
-                                      $monthselect = $monthselect.'-01';
-                                      $sqlhisasset = "SELECT $baseAc1.his_asset_depreciationexpense.*
-                                                      FROM $baseAc1.his_asset_depreciationexpense
-                                                      WHERE $baseAc1.his_asset_depreciationexpense.status ='1'
-                                                      AND $baseAc1.his_asset_depreciationexpense.date_ed = '$monthselect'
-                                                      AND $baseAc1.his_asset_depreciationexpense.asset_list_id = '$v->id' ";
-
-                                        $getdatahisasset = DB::select($sqlhisasset);
-
-                                    if(!empty($getdatahisasset)){
-                                        echo $bring_forward = $getdatahisasset[0]->bring_forward;
-                                    }
-                                    ?>
+                                        <?php   echo number_format($totodeduct,2);?>
                                   </td>
                                   <td >
-                                    <?php
-                                      $a = $v->price_buy-$v->end_price_sell;
-                                      $b= $v->end_price_sellpercent/100 ;
-                                      $c = $datecallde;
-                                      $caled = (($a*$b*$c)/365);
-                                      echo number_format((($a*$b*$c)/365),2);
-                                    ?>
+                                       <?php   echo number_format($getdataassetdata[0]->bring_forward+$add_depreciationexpense-$totodeduct,2);?>
                                   </td>
-                                  <td ></td>
-                                  <td ><?php echo number_format(($bring_forward+$caled),2);?></td>
                                   <td >
-                                    <?php   $totalde = $v->price_buy-($bring_forward+$caled);
-                                            if($totalde<1){
-                                              $totalde = $v->end_price_sell;
-                                            }else{
-                                               $totalde = $totalde;
-                                            }
-
-                                                echo number_format(($totalde),2)
-                                    ?>
+                                      <?php
+                                       $x = $getdataassetdata[0]->his_asset_depreciationexpense - $sumsellrow;
+                                       $y = $getdataassetdata[0]->bring_forward+$add_depreciationexpense-$totodeduct;
+                                       $z = $x - $y;
+                                       // echo "<br>";
+                                       echo number_format($z,2);  $add_depreciationexpense = 0;  $totodeduct = 0;  $sumsellrow = 0;
+                                       ?>
                                   </td>
                                 </tr>
-                              <?php } ?>
+                              <?php $add_depreciationexpense=0; } ?>
                               <?php endforeach; ?>
                               <tr>
-                                <td  colspan="12">รวม<?php echo $value->name_typeasset;?></td>
+                                <td  colspan="11">รวม<?php echo $value->name_typeasset;?></td>
 
                                 <td ></td>
                                 <td ></td>
-                                <td ></td>
-                                <td ></td>
+
                                 <td ></td>
                                 <td ></td>
                                 <td ></td>

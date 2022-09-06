@@ -373,7 +373,17 @@ swal({!!Session::pull('sweetalert.json')!!});
                             $amaddless  = 0;
                             $arrKeyloop = [];
                             $totalsale = 0;
-                             $newstock=0;
+                            $newstock=0;
+                            $total1 = 0;
+                            $total2 = 0;
+                            $total3 = 0;
+                            $total4 = 0;
+                            $total5 = 0;
+                            $total6 = 0;
+                            $total7 = 0;
+                            $total8 = 0;
+                            $total9 = 0;
+                            $total10 = 0;
                           foreach ($getdataassetdata as $g => $h):
 
                               $totalsale = $h->bring_forward_amount;
@@ -384,9 +394,9 @@ swal({!!Session::pull('sweetalert.json')!!});
                             <td >LOT: <?php echo $h->name_thai;?> </td>
                             <td ></td>
 
-                            <td ><?php echo $h->amount;?></td>
-                            <td ><?php echo $h->price_buy;?></td>
-                            <td ><?php echo $h->price_buy * $h->amount;?></td>
+                            <td ><?php echo $h->amount; $total1 =  $h->amount;?></td>
+                            <td ><?php echo $h->price_buy; $total2 = $h->price_buy; ?></td>
+                            <td ><?php echo $h->price_buy * $h->amount; $total3 = $h->price_buy * $h->amount; ?></td>
                             <td ><?php echo $h->amount;?></td>
                             <td ><?php echo $h->price_buy;?></td>
                             <td ><?php echo $h->price_buy * $h->amount;?></td>
@@ -414,23 +424,24 @@ swal({!!Session::pull('sweetalert.json')!!});
                                 <td ><?php
                                       if($amaddless>0){
                                         echo $f['amount'];
-
+                                        $total4 = $total4 + $f['amount'];
                                         $arrKeyloop[] = $e;
                                       }else{
                                         echo  ($amaddless + $f['amount']) ;
-
+                                        $total4 = $total4 + ($amaddless + $f['amount']);
                                       }
                                 ?>
                                 </td>
-                                <td ><?php echo $f['priceunit'];?> </td>
+                                <td ><?php echo $f['priceunit']; $total5 = $f['priceunit']; ?> </td>
                                 <td >
                                   <?php
                                         if($amaddless>0){
-                                          echo $f['amount']*$f['priceunit'];;
-
+                                          echo $f['amount']*$f['priceunit'];
+                                          $total6 = $total6 + $f['amount']*$f['priceunit'];
 
                                         }else{
                                           echo  ($amaddless + $f['amount'])*$f['priceunit'];
+                                          $total6 = $total6 + ($amaddless + $f['amount'])*$f['priceunit'];
 
                                         }
                                   ?>
@@ -455,9 +466,11 @@ swal({!!Session::pull('sweetalert.json')!!});
                                         if($amaddless>0){
                                           echo ($h->bring_forward*$f['amount'])/$h->amount;
                                           $deducep = $deducep + ($h->bring_forward*$f['amount'])/$h->amount;
+                                          $total7 = $total7 + ($h->bring_forward*$f['amount'])/$h->amount;
                                         }else{
                                           echo ($h->bring_forward*($amaddless + $f['amount']))/$h->amount;
                                           $deducep = $deducep + ($h->bring_forward*($amaddless + $f['amount']))/$h->amount;
+                                          $total7 = $total7 + ($h->bring_forward*($amaddless + $f['amount']))/$h->amount;
                                         }
                                   ?>
                                 </td>
@@ -476,7 +489,7 @@ swal({!!Session::pull('sweetalert.json')!!});
                                               $datethis = ($interval->format('%a'));
                                               echo number_format(($f['amount']*$f['priceunit'])*($h->end_price_sellpercent/100)*($datethis/365),2);
                                                 $deducep = $deducep + ($f['amount']*$f['priceunit'])*($h->end_price_sellpercent/100)*($datethis/365);
-
+                                                $total8 = $total8 + ($f['amount']*$f['priceunit'])*($h->end_price_sellpercent/100)*($datethis/365);
 
                                             }else{
 
@@ -486,12 +499,13 @@ swal({!!Session::pull('sweetalert.json')!!});
                                               $datethis = ($interval->format('%a'));
                                               echo  number_format((($amaddless + $f['amount'])*$f['priceunit'])*($h->end_price_sellpercent/100)*($datethis/365),2) ;
                                                 $deducep = $deducep + (($amaddless + $f['amount'])*$f['priceunit'])*($h->end_price_sellpercent/100)*($datethis/365);
+                                                $total8 = $total8 + (($amaddless + $f['amount'])*$f['priceunit'])*($h->end_price_sellpercent/100)*($datethis/365);
 
                                             }
                                       }
                                     ?>
                                 </td>
-                                <td ><?php echo number_format($deducep,2);?></td>
+                                <td ><?php echo number_format($deducep,2);$total9 = $total9 + $deducep;?></td>
                                 <td ></td>
                               </tr>
                               <?php }  ?>
@@ -502,9 +516,9 @@ swal({!!Session::pull('sweetalert.json')!!});
                             <tr>
                               <td >LOT: <?php echo $h->name_thai;?> </td>
                               <td ></td>
-                              <td ><?php echo $h->amount;?></td>
-                              <td ><?php echo $h->price_buy;?></td>
-                              <td ><?php echo $h->price_buy * $h->amount;?></td>
+                              <td ><?php echo $h->amount; $total1 =  $h->amount;?></td>
+                              <td ><?php echo $h->price_buy; $total2 = $h->price_buy;?></td>
+                              <td ><?php echo $h->price_buy * $h->amount; $total3 = $h->price_buy * $h->amount;?></td>
                               <td ><?php echo $h->amount;?></td>
                               <td ><?php echo $h->price_buy;?></td>
                               <td ><?php echo $h->price_buy * $h->amount;?></td>
@@ -535,14 +549,14 @@ swal({!!Session::pull('sweetalert.json')!!});
                                   <td ></td>
                                   <td ></td>
                                   <td >
-                                    <?php echo $amaddless ;?>
+                                    <?php echo $amaddless ; $total4 = $total4 + $amaddless;?>
                                   </td>
-                                  <td ><?php echo $value['priceunit'];?></td>
-                                  <td >  <?php echo $amaddless * $value['priceunit'];?></td>
+                                  <td ><?php echo $value['priceunit']; $total5 = $value['priceunit']; ?></td>
+                                  <td >  <?php echo $amaddless * $value['priceunit']; $total6 = $total6 + $amaddless * $value['priceunit']; ?></td>
                                   <td >  <?php  echo $newstock = $newstock - $amaddless;?></td>
                                   <td ><?php echo $h->price_buy;?></td>
                                   <td ><?php echo $h->price_buy*$newstock;?></td>
-                                  <td ><?php echo ($h->bring_forward*$amaddless)/$h->amount;  ?></td>
+                                  <td ><?php echo ($h->bring_forward*$amaddless)/$h->amount;  $total7 = $total7 + ($h->bring_forward*$amaddless)/$h->amount; ?></td>
                                   <td >
                                     <?php
                                            $datethis = $h->date_startuse;
@@ -556,7 +570,7 @@ swal({!!Session::pull('sweetalert.json')!!});
                                               $interval = date_diff($date1, $date2);
                                               $datethis = ($interval->format('%a'));
                                               echo number_format(($amaddless * $value['priceunit'])*($h->end_price_sellpercent/100)*($datethis/365),2);
-
+                                              $total8 = $total8 +  ($amaddless * $value['priceunit'])*($h->end_price_sellpercent/100)*($datethis/365);
                                       }
                                     ?>
                                   </td>
@@ -574,7 +588,7 @@ swal({!!Session::pull('sweetalert.json')!!});
                                               $datethis = ($interval->format('%a'));
                                               $a = ($h->bring_forward*$amaddless)/$h->amount;
                                               echo number_format(($amaddless * $value['priceunit'])*($h->end_price_sellpercent/100)*($datethis/365)+$a,2);
-
+                                              $total9 = $total9 + ($amaddless * $value['priceunit'])*($h->end_price_sellpercent/100)*($datethis/365)+$a;
                                       }
                                     ?>
                                   </td>
@@ -588,14 +602,14 @@ swal({!!Session::pull('sweetalert.json')!!});
                                   <td ></td>
                                   <td ></td>
                                   <td >
-                                    <?php echo $value['amount'];?>
+                                    <?php echo $value['amount']; $total4 = $total4 + $value['amount']; ?>
                                   </td>
-                                  <td ><?php echo $value['priceunit'];?></td>
-                                  <td ><?php echo $value['amount']*$value['priceunit'];?></td>
+                                  <td ><?php echo $value['priceunit']; $total5 = $value['priceunit'];?></td>
+                                  <td ><?php echo $value['amount']*$value['priceunit']; $total6 = $total6 + $value['amount']*$value['priceunit']; ?></td>
                                   <td > <?php  echo $newstock = $newstock -  $value['amount'];?></td>
                                   <td ><?php echo $h->price_buy;?></td>
                                   <td ><?php echo $h->price_buy*$newstock;?></td>
-                                  <td ><?php echo ($h->bring_forward * $value['amount'])/$h->amount; ?></td>
+                                  <td ><?php echo ($h->bring_forward * $value['amount'])/$h->amount;  $total7 = $total7 + ($h->bring_forward * $value['amount'])/$h->amount; ?></td>
                                   <td >
                                     <?php
                                            $datethis = $h->date_startuse;
@@ -609,6 +623,7 @@ swal({!!Session::pull('sweetalert.json')!!});
                                               $interval = date_diff($date1, $date2);
                                               $datethis = ($interval->format('%a'));
                                               echo number_format(($value['amount']*$value['priceunit'])*($h->end_price_sellpercent/100)*($datethis/365),2);
+                                              $total8 = $total8 +  ($value['amount']*$value['priceunit'])*($h->end_price_sellpercent/100)*($datethis/365);
                                       }
                                     ?>
                                   </td>
@@ -626,6 +641,7 @@ swal({!!Session::pull('sweetalert.json')!!});
                                               $datethis = ($interval->format('%a'));
                                               $a = ($h->bring_forward * $value['amount'])/$h->amount;
                                               echo number_format(($value['amount']*$value['priceunit'])*($h->end_price_sellpercent/100)*($datethis/365)+$a,2);
+                                              $total9 = $total9 + ($value['amount']*$value['priceunit'])*($h->end_price_sellpercent/100)*($datethis/365)+$a;
 
                                       }
                                     ?>
@@ -651,7 +667,7 @@ swal({!!Session::pull('sweetalert.json')!!});
                             <td ></td>
                             <td ></td>
                             <td ></td>
-                            <td ><?php echo ($newstock*$h->bring_forward)/$h->amount;?></td>
+                            <td ><?php echo ($newstock*$h->bring_forward)/$h->amount; $total7 = $total7 + ($newstock*$h->bring_forward)/$h->amount; ?></td>
                             <td >
                               <?php
                                      $datethis = $h->date_startuse;
@@ -663,12 +679,14 @@ swal({!!Session::pull('sweetalert.json')!!});
                                 if($endDate>$datenow){
                                       if($years1 < $years2){
                                           echo ($h->price_buy*$newstock)*($h->end_price_sellpercent/100);
+                                          $total8 = $total8 +  ($h->price_buy*$newstock)*($h->end_price_sellpercent/100);
                                       }else{
                                           $date1 = date_create($h->date_startuse);
                                           $date2 = date_create($start);
                                           $interval = date_diff($date1, $date2);
                                           $datethis = ($interval->format('%a'));
                                           echo number_format(($h->price_buy*$newstock)*($h->end_price_sellpercent/100)*($datethis/365),2);
+                                          $total8 = $total8 +  ($h->price_buy*$newstock)*($h->end_price_sellpercent/100)*($datethis/365);
                                       }
                                 }
                               ?>
@@ -702,21 +720,24 @@ swal({!!Session::pull('sweetalert.json')!!});
                             <td > </td>
 
                             <td ><b><u>รวม</u></b></td>
+                            <td><?php echo $total1;?></td>
+                            <td><?php echo $total2;?></td>
+                            <td><?php echo $total3;?></td>
+                            <td><?php echo $total4; $total4 = 0;?></td>
+                            <td><?php echo $total5; $total5 = 0;?></td>
+                            <td><?php echo $total6; $total6 = 0;?></td>
+                            <td><?php echo $newstock; $newstock=0; ?></td>
+                            <td></td>
+                            <td></td>
                             <td>
-
+                              <?php
+                                $totallastthis = 0;
+                                $totallastthis = $total7+$total8-$total9;
+                              echo $total7; $total7 = 0;?>
                             </td>
-                            <td ></td>
-                            <td ><?php echo $totalsale;?></td>
-                            <td ></td>
-                            <td ></td>
-                            <td ></td>
-                            <td ></td>
-                            <td ></td>
-                            <td ></td>
-                            <td ></td>
-                            <td ></td>
-                            <td ></td>
-                            <td ></td>
+                            <td><?php echo number_format($total8,2); $total8 = 0;?></td>
+                            <td><?php echo number_format($total9,2); $total9 = 0; ?></td>
+                            <td><?php echo number_format($totallastthis,2); $totallastthis = 0; ?></td>
                           </tr>
                           <?php endforeach; ?>
 

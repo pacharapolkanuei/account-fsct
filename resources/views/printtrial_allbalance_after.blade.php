@@ -209,7 +209,7 @@ use Illuminate\Support\Facades\Input;
               //           ';
               // $datatresult = DB::connection('mysql')->select($sql);
 
-              $sql = 'SELECT '.$db['fsctaccount'].'.ledger.*
+              $sql = 'SELECT '.$db['fsctaccount'].'.ledger.acc_code
                             FROM '.$db['fsctaccount'].'.ledger
 
                             WHERE '.$db['fsctaccount'].'.ledger.timestamp  BETWEEN "'.$start_date2.'" AND  "'.$end_date2.'"

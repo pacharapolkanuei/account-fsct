@@ -251,7 +251,7 @@ class Trial_balanceController extends Controller
         //           ';
         // $datatresult = DB::connection('mysql')->select($sql);
 
-        $sql = 'SELECT '.$db['fsctaccount'].'.ledger.*
+        $sql = 'SELECT '.$db['fsctaccount'].'.ledger.acc_code
                       FROM '.$db['fsctaccount'].'.ledger
 
                       WHERE '.$db['fsctaccount'].'.ledger.timestamp  BETWEEN "'.$start_date.'" AND  "'.$end_date.'"

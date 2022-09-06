@@ -1774,8 +1774,7 @@ class Maincenter
           // print_r($end_dateold);
           // exit;
 
-          $sql = 'SELECT '.$db['fsctaccount'].'.ledger.*,
-                           SUM('.$db['fsctaccount'].'.ledger.dr) as sumdebit,
+          $sql = 'SELECT   SUM('.$db['fsctaccount'].'.ledger.dr) as sumdebit,
                            SUM('.$db['fsctaccount'].'.ledger.cr) as sumcredit
 
                         FROM '.$db['fsctaccount'].'.ledger
@@ -2001,8 +2000,7 @@ class Maincenter
                       $end_date = $e2[2] . '-' . $e2[0] . '-' . $e2[1]." 23:59:59"; //ปี - เดือน - วัน
                   }
 
-          $sql = 'SELECT '.$db['fsctaccount'].'.ledger.*,
-                           SUM('.$db['fsctaccount'].'.ledger.dr) as sumdebit,
+          $sql = 'SELECT   SUM('.$db['fsctaccount'].'.ledger.dr) as sumdebit,
                            SUM('.$db['fsctaccount'].'.ledger.cr) as sumcredit
 
                         FROM '.$db['fsctaccount'].'.ledger
@@ -2046,8 +2044,7 @@ class Maincenter
                       $end_date = $e2[2] . '-' . $e2[0] . '-' . $e2[1]." 23:59:59"; //ปี - เดือน - วัน
                   }
 
-          $sql = 'SELECT '.$db['fsctaccount'].'.ledger.*,
-                           SUM('.$db['fsctaccount'].'.ledger.dr) as sumdebit,
+          $sql = 'SELECT   SUM('.$db['fsctaccount'].'.ledger.dr) as sumdebit,
                            SUM('.$db['fsctaccount'].'.ledger.cr) as sumcredit
 
                         FROM '.$db['fsctaccount'].'.ledger
