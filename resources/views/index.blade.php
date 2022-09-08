@@ -302,6 +302,7 @@ use App\Api\Connectdb;
 								</span> <span class="menu-arrow"></span></a>
 							<ul class="list-unstyled">
 								<li><a href="/account-fsct/public/reporttaxbuy" id="fontsmenu2">รายงานภาษีซื้อ</a></li>
+                <li><a href="/account-fsct/public/reporttaxbuywaituse" id="fontsmenu2">รายงานภาษีซื้อ(รอใช้)</a></li>
 								<li><a href="/account-fsct/public/reportaccruedall" id="fontsmenu2">รายงานเจ้าหนี้การค้า (ทั้งหมด)</a></li>
 								<li><a href="/account-fsct/public/reportaccrued" id="fontsmenu2">รายงานเจ้าหนี้การค้า (ค้างจ่าย)</a></li>
 								<li><a href="/account-fsct/public/reportaccruedtransfer" id="fontsmenu2">รายงานเจ้าหนี้การค้า (โอนแล้ว)</a></li>

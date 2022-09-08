@@ -289,26 +289,25 @@ class ReportController extends Controller
           // print_r($end_date);
           // exit;
 
-          $sql = 'SELECT '.$db['fsctaccount'].'.inform_po_mainhead.*
-
-                  FROM '.$db['fsctaccount'].'.inform_po_mainhead
-
-                  WHERE '.$db['fsctaccount'].'.inform_po_mainhead.branch_id = '.$branch_id.'
-                    AND '.$db['fsctaccount'].'.inform_po_mainhead.datebill  BETWEEN "'.$start_date.'" AND  "'.$end_date.'"
-                    AND '.$db['fsctaccount'].'.inform_po_mainhead.status NOT IN (99)
-                    AND '.$db['fsctaccount'].'.inform_po_mainhead.vat_percent IN (7)
-                 ';
-
-          $datatresult = DB::connection('mysql')->select($sql);
+          // $sql = 'SELECT '.$db['fsctaccount'].'.inform_po_mainhead.*
+          //
+          //         FROM '.$db['fsctaccount'].'.inform_po_mainhead
+          //
+          //         WHERE '.$db['fsctaccount'].'.inform_po_mainhead.branch_id = '.$branch_id.'
+          //           AND '.$db['fsctaccount'].'.inform_po_mainhead.datebill  BETWEEN "'.$start_date.'" AND  "'.$end_date.'"
+          //           AND '.$db['fsctaccount'].'.inform_po_mainhead.status NOT IN (99)
+          //           AND '.$db['fsctaccount'].'.inform_po_mainhead.vat_percent IN (7)
+          //        ';
+          //
+          // $datatresult = DB::connection('mysql')->select($sql);
           // echo "<pre>";
           // print_r($datatresult);
           // exit;
-
           return view('reporttaxbuy',[
-            'data'=>$datatresult,
             'query'=>true,
             'datepicker'=>$data['reservation'],
             'branch_id'=>$branch_id,
+            'data'=>$data,
           //   'datepicker2'=>$datetime
           ]);
 

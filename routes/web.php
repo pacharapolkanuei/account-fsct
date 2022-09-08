@@ -307,6 +307,11 @@ Route::get('/reportcustomercredit','ReportController@reportcustomercredit'); //�
 
 Route::post('/serachreportcustomercredit','ReportController@serachreportcustomercredit');//ค้นหารายงานลูกหนี้
 
+Route::get('/reporttaxbuywaituse','ReportvatController@reporttaxbuywaituse'); //รายงานภาษีรอซื้อ
+
+Route::post('/serachreporttaxbuywaituse','ReportvatController@serachreporttaxbuywaituse');//ค้นหารายงานภาษีรอซื้อ
+
+Route::post('/savebuyvatwaituse','ReportvatController@savebuyvatwaituse');//
 
 //! ----------------------------- End รายงาน -----------------------------------
 

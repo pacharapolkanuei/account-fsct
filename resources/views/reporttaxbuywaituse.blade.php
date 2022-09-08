@@ -51,7 +51,7 @@ use  App\Api\DateTime;
       </div>
 
       <!-- <div class="box-body" style="overflow-x:auto;"> -->
-        <form action="serachreporttaxbuy" method="post">
+        <form action="serachreporttaxbuywaituse" method="post">
         <input type="hidden" name="_token" value="{{ csrf_token() }}">
           <div class="row">
               <div class="col-md-2">
@@ -75,7 +75,7 @@ use  App\Api\DateTime;
                   <select name="branch_id" id="branch_id" class="form-control" required>
                     <option value="">เลือกสาขา</option>
                     <?php foreach ($brcode as $key => $value) { ?>
-                        <option value="<?php echo $value->code_branch?>" <?php if(isset($query)){ if($branch_id==$value->code_branch){ echo "selected";} }?>><?php echo $value->name_branch?></option>
+                        <option value="<?php echo $value->code_branch?>" ><?php echo $value->name_branch;?></option>
                     <?php } ?>
                   </select>
               </div>
@@ -95,7 +95,7 @@ use  App\Api\DateTime;
                   </p>
               </div>
               <div class="col-md-2">
-                  <input type="text" name="reservation" id="reservation" value="<?php if(isset($query)){ print_r($datepicker); }else{ echo date('d/m/Y');}?>" class="form-control" required readonly>
+                  <input type="text" name="reservation" id="reservation" value="" class="form-control" required readonly>
               </div>
 
               <div class="col-md-2">
@@ -136,7 +136,7 @@ use  App\Api\DateTime;
             <?php //}else { ?>
             <?php //$path = '&branch_id='.$branch_id?>
                     <!-- <a href="<?php //echo url("/excelreportaccruedall?$path");?>" target="_blank"><img src="images/global/printall.png"></a> -->
-                    <a href="excelreporttaxbuy?branch_id=<?php echo $branch_id ;?>&&reservation=<?php echo $datepicker;?>" target="_blank" ><img src="images/global/printall.png"></a>
+                    <!--  -->
             <?php //} ?>
 
           <?php } ?>
@@ -150,71 +150,75 @@ use  App\Api\DateTime;
         <div class="col-md-12">
           <?php
           if(isset($query)){
+              // echo "<pre>";
 
-                $datepicker = explode("-",trim(($data['reservation'])));
+              $datepicker = explode("-",trim(($data['reservation'])));
 
-                // $start_date = $datepicker[0];
-                $e1 = explode("/",trim(($datepicker[0])));
-                        if(count($e1) > 0) {
-                            $start_date = $e1[2] . '-' . $e1[0] . '-' . $e1[1]." 00:00:00"; //ปี - เดือน - วัน
-                            $start_date2 = $start_date." 00:00:00";
-                        }
+              // $start_date = $datepicker[0];
+              $e1 = explode("/",trim(($datepicker[0])));
+                      if(count($e1) > 0) {
+                          $start_date = $e1[2] . '-' . $e1[0] . '-' . $e1[1]." 00:00:00"; //ปี - เดือน - วัน
+                          $start_date2 = $start_date." 00:00:00";
+                      }
 
-                // $end_date = $datepicker[1];
-                $e2 = explode("/",trim(($datepicker[1])));
-                        if(count($e2) > 0) {
-                            $end_date = $e2[2] . '-' . $e2[0] . '-' . $e2[1]." 23:59:59"; //ปี - เดือน - วัน
-                            $end_date2 = $end_date." 23:59:59";
-                        }
+              // $end_date = $datepicker[1];
+              $e2 = explode("/",trim(($datepicker[1])));
+                      if(count($e2) > 0) {
+                          $end_date = $e2[2] . '-' . $e2[0] . '-' . $e2[1]." 23:59:59"; //ปี - เดือน - วัน
+                          $end_date2 = $end_date." 23:59:59";
+                      }
 
-                $branch_id = $data['branch_id'];
+              $branch_id = $data['branch_id'];
 
-                // echo "<pre>";
-                // print_r($start_date);
-                // print_r($end_date);
-                // exit;
+              // echo "<pre>";
+              // print_r($start_date);
+              // print_r($end_date);
+              // exit;
 
-                $sql = 'SELECT '.$db['fsctaccount'].'.inform_po.*,
-                               '.$db['fsctaccount'].'.po_head.branch_id
+              $sql = 'SELECT '.$db['fsctaccount'].'.inform_po.*,
+                             '.$db['fsctaccount'].'.po_head.branch_id
 
-                       FROM '.$db['fsctaccount'].'.inform_po
-                       INNER JOIN  '.$db['fsctaccount'].'.po_head
-                          ON '.$db['fsctaccount'].'.po_head.id = '.$db['fsctaccount'].'.inform_po.id_po
+                     FROM '.$db['fsctaccount'].'.inform_po
+                     INNER JOIN  '.$db['fsctaccount'].'.po_head
+                        ON '.$db['fsctaccount'].'.po_head.id = '.$db['fsctaccount'].'.inform_po.id_po
 
-                        WHERE '.$db['fsctaccount'].'.po_head.branch_id = "'.$branch_id.'"
-                          AND '.$db['fsctaccount'].'.inform_po.datetime  BETWEEN "'.$start_date.'" AND  "'.$end_date.'"
-                          AND '.$db['fsctaccount'].'.inform_po.status NOT IN (99)
-                          AND '.$db['fsctaccount'].'.inform_po.vat_percent IN (7)
-                          ORDER BY '.$db['fsctaccount'].'.inform_po.datebillreceipt
-                       ';
+                      WHERE '.$db['fsctaccount'].'.po_head.branch_id = "'.$branch_id.'"
+                        AND '.$db['fsctaccount'].'.inform_po.datetime  BETWEEN "'.$start_date.'" AND  "'.$end_date.'"
+                        AND '.$db['fsctaccount'].'.inform_po.status NOT IN (99)
+                        AND '.$db['fsctaccount'].'.inform_po.vat_percent IN (7)
+                        ORDER BY '.$db['fsctaccount'].'.inform_po.datebillreceipt
+                     ';
 
-                $datatresult = DB::connection('mysql')->select($sql);
-
-
-                $sqlreserve = 'SELECT '.$db['fsctaccount'].'.reservemoney.*
-                               FROM '.$db['fsctaccount'].'.reservemoney
-
-                               WHERE '.$db['fsctaccount'].'.reservemoney.branch = "'.$branch_id.'"
-                                AND '.$db['fsctaccount'].'.reservemoney.dateporef  BETWEEN "'.$start_date2.'" AND  "'.$end_date2.'"
-                                AND '.$db['fsctaccount'].'.reservemoney.status IN (0 , 1 , 2)
-                                AND '.$db['fsctaccount'].'.reservemoney.vat >= 1
-                                AND '.$db['fsctaccount'].'.reservemoney.po_ref != 0
-                                ORDER BY '.$db['fsctaccount'].'.reservemoney.date_bill_no
-                               ';
-
-                $datatresultreserve = DB::connection('mysql')->select($sqlreserve);
+              $datatresult = DB::connection('mysql')->select($sql);
 
 
+              $sqlreserve = 'SELECT '.$db['fsctaccount'].'.reservemoney.*
+                             FROM '.$db['fsctaccount'].'.reservemoney
 
+                             WHERE '.$db['fsctaccount'].'.reservemoney.branch = "'.$branch_id.'"
+                              AND '.$db['fsctaccount'].'.reservemoney.dateporef  BETWEEN "'.$start_date2.'" AND  "'.$end_date2.'"
+                              AND '.$db['fsctaccount'].'.reservemoney.status IN (0 , 1 , 2)
+                              AND '.$db['fsctaccount'].'.reservemoney.vat >= 1
+                              AND '.$db['fsctaccount'].'.reservemoney.po_ref != 0
+                              ORDER BY '.$db['fsctaccount'].'.reservemoney.date_bill_no
+                             ';
+
+              $datatresultreserve = DB::connection('mysql')->select($sqlreserve);
+
+              // echo "<pre>";
+              // print_r($datatresult);
+              // echo "<br>";
+              // print_r($datatresultreserve);
+              // exit;
 
             ?>
 
             <!-- <form action="configreportcashdailynow" onSubmit="if(!confirm('ยืนยันการทำรายการ?')){return false;}" method="post" class="form-horizontal"> -->
             <!-- <input type="hidden" name="_token" value="{{ csrf_token() }}"> -->
-            <form action="saveapprovedpo" method="post" enctype="multipart/form-data" onSubmit="JavaScript:return fncSubmit();">
+            <form action="savebuyvatwaituse" method="post" enctype="multipart/form-data" onSubmit="JavaScript:return fncSubmit();">
               <input type="hidden" name="_token" value="{{ csrf_token() }}">
             <!-- <table class="table table-striped"> -->
-            <table id="example" class="table table-striped table-bordered fontslabel" style="width:100%">
+            <table  class="table table-striped table-bordered fontslabel" style="width:100%">
                <thead>
                  <tr>
                    <th>ลำดับ</th>
@@ -226,11 +230,10 @@ use  App\Api\DateTime;
                    <th>มูลค่าสินค้าหรือบริการ</th>
                    <th>จำนวนเงินภาษีมูลค่าเพิ่ม</th>
                    <th>จำนวนเงินรวมทั้งหมด</th>
-                   <th>หมายเหตุ</th>
+                   <th>อนุมัติ</th>
                  </tr>
                </thead>
                <tbody>
-
                  <?php
 
                    $sumtotalloss = 0;
@@ -288,7 +291,7 @@ use  App\Api\DateTime;
                           ?>
                         </td>
                         <td>
-                          -
+                            <input type="checkbox" name="id_checkinform[]" value="<?php echo $value->id; ?>">
                         </td>
                      </tr>
 
@@ -336,26 +339,18 @@ use  App\Api\DateTime;
                         ?>
                       </td>
                       <td>
-                      -
+                        <input type="checkbox" name="id_checkrev[]" value="<?php echo $value2->id; ?>">
                       </td>
                    </tr>
 
                    <?php $i++; } ?>
-                <tr>
-                  <td colspan="5" align="right"></td>
-                  <td><center><b>รวม</b></center></td>
-                  <td><b><?php echo number_format($sumsubtotal,2);  ?></b></td>
-                  <td><b><?php echo number_format($sumvat,2);  ?></b></td>
-                  <td><b><?php echo number_format($sumgrandtotal,2); ?></b></td>
-                  <td></td>
-                </tr>
 
               </tbody>
              </table>
+            <br>
+               <input type="submit" class="btn btn-success" style="float: right;margin: 0px 12px 10px 10px;" value="บันทึก">
 
-
-
-
+          </form>
 
              <?php  }  ?>
 
