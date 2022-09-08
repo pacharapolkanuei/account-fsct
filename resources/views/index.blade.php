@@ -318,6 +318,7 @@ use App\Api\Connectdb;
 								</span> <span class="menu-arrow"></span></a>
 							<ul class="list-unstyled">
 								<li><a href="/account-fsct/public/percent_main_cost" id="fontsmenu2">แก้ไขเปอร์เซ็นค่าบริหารกลาง</a></li>
+                <li><a href="/account-fsct/public/supplier_pay_type" id="fontsmenu2">แก้ไขประเภทการจ่ายเงินของเจ้าหนี้</a></li>
 							</ul>
 						</li>
 

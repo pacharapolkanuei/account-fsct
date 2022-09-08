@@ -270,6 +270,18 @@ $(function() {
     // $('select').selectpicker();
 });
 
+
+function getdata_supplier_pay_type_edit(val){
+
+    var infrom_po_id = val;
+    console.log(infrom_po_id);
+    $('#get_id_edit').val(infrom_po_id);
+    $.get('getdata_percent/'+infrom_po_id, function(res) {
+        console.log(res);
+        $('#get_num_percent').val(res[0].percent);
+    });
+  }
+
 //-----------------------------------edit modal------------------------------------
 function getdataedit(val){
 

@@ -17,6 +17,7 @@ use App\Po_detail;
 use App\Debt;
 use App\Listindebt;
 use Softon\SweetAlert\Facades\SWAL;
+use Illuminate\Support\Facades\Input;
 use PDF;
 
 class ap_listController extends Controller
@@ -39,6 +40,35 @@ class ap_listController extends Controller
 	{
 		return view('AccountsPayable.ap_list_showdateexpire');
 	}
+
+	function index_supplier_pay_type()
+	{
+		$connect1 = Connectdb::Databaseall();
+		$baseAc1 = $connect1['fsctaccount'];
+		$basemain1 = $connect1['fsctmain'];
+		$baseHr1 = $connect1['hr_base'];
+
+		$sql1 = "SELECT $baseAc1 supplier.id as id_supplier_ref
+														,supplier.pre
+														,supplier.name_supplier
+														,supplier.address
+														,supplier.district
+														,supplier.amphur
+														,supplier.province
+														,supplier.zipcode
+														,supplier.type_pay
+
+										FROM $baseAc1.supplier
+
+										WHERE $basemain1.supplier.status = 1
+										ORDER BY $basemain1.supplier.pre ASC ";
+
+		$datas = DB::select($sql1);
+
+		return view('supplier_pay_type');
+	}
+
+
 
 
   public function  ap_list_filters(Request $request)
@@ -272,7 +302,37 @@ class ap_listController extends Controller
 			return view('AccountsPayable.ap_list_showdateexpire', compact('supplier_aps', 'start' , 'end' , 'date' , 'ap'));
 	}
 
+	public function getdata_supplier_pay_type($id)
+  {
+    $connect1 = Connectdb::Databaseall();
+    $baseAc1 = $connect1['fsctaccount'];
+    $baseHr1 = $connect1['hr_base'];
+    $basemain1 = $connect1['fsctmain'];
 
+    $sql1 = "SELECT $baseAc1.supplier.*
+                                    ,supplier.id
+
+                    FROM $baseAc1.supplier
+
+                    WHERE $baseAc1.supplier.id = $id";
+
+      $getdatas = DB::select($sql1);
+      return $getdatas;
+  }
+
+  public function supplier_pay_type_update(Request $request)
+  {
+    $get_id = $request->get('get_id');
+    // dd($get_id);
+    // exit;
+    $property = Percent_maincost::find($get_id);
+    $property->percent = $request->get('type_pay');
+
+    $property->update();
+    SWAL::message('สำเร็จ', 'แก้ไขเรียบร้อย!', 'success', ['timer' => 6000]);
+    return redirect()->route('supplier_pay_type');
+
+  }
 
 
 }

@@ -660,6 +660,13 @@ Route::post('/ap_list_summary/filter','ap_listController@ap_list_summary_filters
 Route::get('/ap_list_showdateexpire', 'ap_listController@index_ap_list_showdateexpire')->name('ap_list_showdateexpire');
 Route::post('/ap_list_showdateexpire/filter','ap_listController@ap_list_showdateexpire_filters')->name('ap_list_showdateexpire_filter');
 
+
+Route::get('/supplier_pay_type', 'ap_listController@index_supplier_pay_type')->name('supplier_pay_type');
+Route::get('/getdata_supplier_pay_type/{id}', 'ap_listController@getdata_supplier_pay_type');
+// Route::post('/define_property/store','DefinePropertyController@store')->name('define_property.store');
+Route::post('/getdata_supplier_pay_type/update','ap_listController@supplier_pay_type_update')->name('supplier_pay_type.update');
+// Route::get('/define_property/delete/{id}','DefinePropertyController@delete')->name('define_property.delete');
+
 //-----------------------------------------------
 
 
