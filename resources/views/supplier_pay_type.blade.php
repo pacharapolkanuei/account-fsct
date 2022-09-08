@@ -60,7 +60,7 @@ swal({!!Session::pull('sweetalert.json')!!});
 
                                 <div >
                                   <div class="table-responsive">
-                                    <table id="example" class="table table-striped table-bordered" style="width:70%">
+                                    <table id="example" class="table table-striped table-bordered" style="width:100%">
                                       <thead>
                                         <tr>
                                           <th>ลำดับ</th>

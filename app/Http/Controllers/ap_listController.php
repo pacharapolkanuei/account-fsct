@@ -12,6 +12,7 @@ use App\Api\Connectdb;
 use DB;
 use App\Api\Datetime;
 use App\Branch;
+use App\Supplier;
 use App\Po;
 use App\Po_detail;
 use App\Debt;
@@ -48,7 +49,7 @@ class ap_listController extends Controller
 		$basemain1 = $connect1['fsctmain'];
 		$baseHr1 = $connect1['hr_base'];
 
-		$sql1 = "SELECT $baseAc1 supplier.id as id_supplier_ref
+		$sql1 = "SELECT supplier.id as id_supplier_ref
 														,supplier.pre
 														,supplier.name_supplier
 														,supplier.address
@@ -60,12 +61,12 @@ class ap_listController extends Controller
 
 										FROM $baseAc1.supplier
 
-										WHERE $basemain1.supplier.status = 1
-										ORDER BY $basemain1.supplier.pre ASC ";
+										WHERE $baseAc1.supplier.status = 1
+										ORDER BY $baseAc1.supplier.pre ASC ";
 
 		$datas = DB::select($sql1);
 
-		return view('supplier_pay_type');
+		return view('supplier_pay_type', compact( 'datas' ));
 	}
 
 
@@ -325,8 +326,8 @@ class ap_listController extends Controller
     $get_id = $request->get('get_id');
     // dd($get_id);
     // exit;
-    $property = Percent_maincost::find($get_id);
-    $property->percent = $request->get('type_pay');
+    $property = Supplier::find($get_id);
+    $property->type_pay = $request->get('type_pay');
 
     $property->update();
     SWAL::message('สำเร็จ', 'แก้ไขเรียบร้อย!', 'success', ['timer' => 6000]);
