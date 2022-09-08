@@ -113,7 +113,7 @@ swal({!!Session::pull('sweetalert.json')!!});
 
               <!-- Modal Header -->
               <div class="modal-header">
-                <h4 class="modal-title" id="fontscontent2"><b>แก้ไขเปอร์เซ็นค่าบริหารกลาง</b></h4>
+                <h4 class="modal-title" id="fontscontent2"><b>แก้ไขประเภทการจ่ายเงินของเจ้าหนี้</b></h4>
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
               </div>
 
