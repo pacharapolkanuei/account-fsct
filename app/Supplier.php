@@ -8,5 +8,5 @@ class Supplier extends Model
 {
     protected $connection = 'mysql2';
     protected $table = 'supplier';
-    protected $fillable = ['id'];
+    public $timestamps = false;
 }
