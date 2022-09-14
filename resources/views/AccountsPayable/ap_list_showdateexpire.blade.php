@@ -123,6 +123,9 @@ swal({!!Session::pull('sweetalert.json')!!});
                 </tr>
               </thead>
               <tbody style="vertical-align : middle;text-align:center;">
+                <?php
+                
+                ?>
                 @foreach ($supplier_aps  as $key => $supplier_ap)
                   @if ($supplier_ap->name_supplier == $ap)
                     <tr>

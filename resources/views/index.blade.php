@@ -120,7 +120,7 @@ use App\Api\Connectdb;
                 </span> <span class="menu-arrow"></span></a>
               <ul class="list-unstyled">
                 <li><a href="/account-fsct/public/ap_list" id="fontsmenu2">รายงานเคลื่อนไหวลูกหนี้รายตัว</a></li>
-                <li><a href="/account-fsct/public/ap_list_summary" id="fontsmenu2">ลูกหนี้คงค้างแบบสรุป</a></li>
+                <li><a href="/account-fsct/public/ap_list_summary" id="fontsmenu2">เจ้าหนี้คงค้างแบบสรุป</a></li>
                 <li><a href="/account-fsct/public/ap_list_showdateexpire" id="fontsmenu2">รายงานวิเคราะห์อายุหนี้ แยกตามลูกหนี้</a></li>
               </ul>
             </li>

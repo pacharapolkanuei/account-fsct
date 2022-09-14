@@ -8,6 +8,36 @@
 
 <script type="text/javascript" src="https://unpkg.com/sweetalert2@7.0.6/dist/sweetalert2.all.js"></script>
 <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<!-- <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script> -->
+<script src="https://code.jquery.com/jquery-1.8.3.js" integrity="sha256-dW19+sSjW7V1Q/Z3KD1saC6NcE5TUIhLJzJbrdKzxKc=" crossorigin="anonymous"></script>
+<script type="text/javascript">
+$(function() {
+//หมวด1
+    $("#e1").select2({closeOnSelect:false});
+    $("#checkbox").click(function(){
+        if($("#checkbox").is(':checked') ){
+            $("#e1 > option").prop("selected","selected");
+            $("#e1").trigger("change");
+        }else{
+            $("#e1 > option").removeAttr("selected");
+             $("#e1").trigger("change");
+         }
+    });
+  // หมวด2
+    $("#e2").select2({closeOnSelect:false});
+    $("#checkbox1").click(function(){
+        if($("#checkbox1").is(':checked') ){
+            $("#e2 > option").prop("selected","selected");
+            $("#e2").trigger("change");
+        }else{
+            $("#e2 > option").removeAttr("selected");
+             $("#e2").trigger("change");
+         }
+    });
+
+  });
+</script>
+
 @if (Session::has('sweetalert.json'))
 <script>
 swal({!!Session::pull('sweetalert.json')!!});
@@ -29,6 +59,10 @@ swal({!!Session::pull('sweetalert.json')!!});
   tr.group:hover {
     background-color: #ddd !important;
   }
+
+  .child {
+  margin: 0 auto;
+}
 </style>
 <script type="text/javascript">
   $(function() {
@@ -67,14 +101,36 @@ swal({!!Session::pull('sweetalert.json')!!});
 
           {!! Form::open(['route' => 'ap_list_summary_filter', 'method' => 'post']) !!}
             <center>
-              <div class="col-sm-3">
+              <div class="col-sm-4">
                   <div class="input-group mb-6">
                       <div class="input-group-prepend">
-                          <label id="fontslabel"><b>วันที่ : &nbsp;</b></label>
+                          <label id="fontslabel"><b>ณ วันที่ : &nbsp;</b></label>
                       </div>
-                      <input type='text' class="form-control" name="daterange" value="" autocomplete="off" />
+                      <input type='date' class="form-control" name="dateend" value="" autocomplete="off" />
                   </div>
               </div>
+              <br>
+
+                <?php if (isset($datas) && isset($datas1)): ?>
+                <div class="form-inline child">
+                  <label id="fontslabel"><b>รหัสเจ้าหนี้ : &nbsp;</b></label>
+                      <select multiple id="e1" style="width:300px" name="ap1[]">
+                        @foreach ($datas as $key => $data)
+                        <option value="{{$data->id_supplier_ref}}">{{$data->pre1}} {{$data->name1}}</option>
+                        @endforeach
+                      </select>
+                      &nbsp;<input type="checkbox" id="checkbox" >
+                    &nbsp;
+                      <select multiple id="e2" style="width:300px" name="ap2[]">
+                        @foreach ($datas1 as $key => $data1)
+                        <option value="{{$data1->id_supplier_ref1}}">{{$data1->pre2}} {{$data1->name2}}</option>
+                        @endforeach
+                      </select>
+                      &nbsp;<input type="checkbox" id="checkbox1" >
+                </div>
+                <?php endif; ?>
+
+              <br>
               <button type="submit" class="btn btn-primary btn-sm fontslabel">ค้นหา</button>
               <a href="{{url('ap_list_summary')}}" class="btn btn-danger btn-md delete-confirm">RESET</a>
             </center>
@@ -83,8 +139,8 @@ swal({!!Session::pull('sweetalert.json')!!});
           <br>
           <br>
           <center>
-            <?php if (isset($start) && isset($end)): ?>
-              <label id="fontslabel"><b>วันที่ <?php echo $start ?> ถึง <?php echo $end ?></b></label>
+            <?php if (isset($dateend)): ?>
+              <label id="fontslabel"><b>วันที่ดึงรายงาน</b> <?php echo $dateend ?></label>
             <?php endif; ?>
           </center>
           <br>

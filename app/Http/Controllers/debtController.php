@@ -110,8 +110,8 @@ class debtController extends Controller
 		$get_po_num = new Po;
 		$get_po_num->setConnection('mysql2');
 		$get_po_num = Po::where('branch_id', $branchcode)
-						->where('type_po', 1)
-						->where('status_head','=',1)
+						// ->where('type_po', 1)
+						->where('status_head','=',2)
 						->where('date', '>=', $start)
 						->where('date', '<=', $end)
 						->get();

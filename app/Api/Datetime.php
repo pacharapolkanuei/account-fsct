@@ -245,7 +245,15 @@ class Datetime
 
             }
 
+            public static function convertDateEnd($date){
+                  $dateset = explode('-',$date);
+                  $enddate = $dateset[0];
+                  $e = explode('/',$enddate);
+                  $e = $e[2].'-'.$e[0].'-'.$e[1];
 
+                  return ['end'=>str_replace(' ', '', $e)];
+
+            }
 
 
 
