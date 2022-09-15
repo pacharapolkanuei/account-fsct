@@ -77,14 +77,45 @@ swal({!!Session::pull('sweetalert.json')!!});
 
           {!! Form::open(['route' => 'ap_list_showdateexpire_filter', 'method' => 'post']) !!}
             <center>
-              <div class="col-sm-3">
+              <div class="col-sm-4">
                   <div class="input-group mb-6">
                       <div class="input-group-prepend">
-                          <label id="fontslabel"><b>วันที่ : &nbsp;</b></label>
+                          <label id="fontslabel"><b>ณ วันที่ : &nbsp;</b></label>
                       </div>
-                      <input type='text' class="form-control" name="daterange" value="" autocomplete="off" />
+                      <input type='date' class="form-control" name="dateend" value="" autocomplete="off" />
                   </div>
               </div>
+              <br>
+
+              <?php if (isset($datas)): ?>
+              <div class="col-sm-4">
+                  <div class="input-group mb-6">
+                      <div class="input-group-prepend">
+                          <label id="fontslabel"><b>รหัสเจ้าหนี้ : &nbsp;</b></label>
+                      </div>
+                      <select class="form-control select2" id="example3" name="ap_list[]" multiple="multiple">
+                        <optgroup label="เจ้าหนี้การค้า">
+                          @foreach ($datas as $key => $data)
+                            @if ($data->type_pay === 1)
+                              <option value="{{$data->id_supplier_ref}}">{{$data->pre1}} {{$data->name1}}</option>
+                            @endif
+                          @endforeach
+      									<optgroup>
+      									<optgroup label="เจ้าหนี้การค้าอื่นๆ">
+                          @foreach ($datas as $key => $data)
+                            @if ($data->type_pay === 2)
+                              <option value="{{$data->id_supplier_ref}}">{{$data->pre1}} {{$data->name1}}</option>
+                            @endif
+                          @endforeach
+      									<optgroup>
+      								</select>
+                  </div>
+              </div>
+              <?php endif; ?>
+
+
+
+
               <button type="submit" class="btn btn-primary btn-sm fontslabel">ค้นหา</button>
               <a href="{{url('ap_list_showdateexpire')}}" class="btn btn-danger btn-md delete-confirm">RESET</a>
             </center>
@@ -93,13 +124,13 @@ swal({!!Session::pull('sweetalert.json')!!});
           <br>
           <br>
           <center>
-            <?php if (isset($start) && isset($end)): ?>
-              <label id="fontslabel"><b>วันที่ <?php echo $start ?> ถึง <?php echo $end ?></b></label>
+            <?php if (isset($dateend)): ?>
+              <label id="fontslabel"><b>วันที่ดึงรายงาน</b> <?php echo $dateend ?></label>
             <?php endif; ?>
           </center>
           <br>
 
-          <?php if (isset($supplier_aps)): ?>
+          <?php if (isset($arrShow)): ?>
             <table class="table table-bordered" cellspacing="0" id="fontslabel" style="margin-left: auto;margin-right: auto;">
               <thead>
                 <tr style="background-color:#aab6c2;color:white;">
@@ -123,226 +154,29 @@ swal({!!Session::pull('sweetalert.json')!!});
                 </tr>
               </thead>
               <tbody style="vertical-align : middle;text-align:center;">
-                <?php
-                
-                ?>
-                @foreach ($supplier_aps  as $key => $supplier_ap)
-                  @if ($supplier_ap->name_supplier == $ap)
-                    <tr>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td>
-                        <?php $keep_totalsum = number_format($supplier_ap->totalsum,2,".",",");
-                              echo $keep_totalsum;
-                        ?>
-                        <?php $sumtotalthis = $sumtotalthis + $supplier_ap->totalsum;?>
-                      </td>
-                      <td>
-                        <?php if ( $number_days = (strtotime($end) - strtotime($supplier_ap->date_to_cal))/(60 * 60 * 24) > 16 && $number_days = (strtotime($end) - strtotime($supplier_ap->date_to_cal))/(60 * 60 * 24) <= 30 && $supplier_ap->day_tocal == 30): ?>
-                          <?php $show_total_for_day = number_format($supplier_ap->totalsum,2,".",",");
-                                echo $show_total_for_day;
-                          ?>
-                        <?php endif; ?>
-                        <?php if ( $number_days = (strtotime($end) - strtotime($supplier_ap->date_to_cal))/(60 * 60 * 24) > 7 && $number_days = (strtotime($end) - strtotime($supplier_ap->date_to_cal))/(60 * 60 * 24) <= 15 && $supplier_ap->day_tocal == 15): ?>
-                          <?php $show_total_for_day = number_format($supplier_ap->totalsum,2,".",",");
-                                echo $show_total_for_day;
-                          ?>
-                        <?php endif; ?>
-                        <?php if ( $number_days = (strtotime($end) - strtotime($supplier_ap->date_to_cal))/(60 * 60 * 24) >= 1 && $number_days = (strtotime($end) - strtotime($supplier_ap->date_to_cal))/(60 * 60 * 24) <= 7 && $supplier_ap->day_tocal == 7): ?>
-                          <?php $show_total_for_day = number_format($supplier_ap->totalsum,2,".",",");
-                                echo $show_total_for_day;
-                          ?>
-                        <?php endif; ?>
-                      </td>
-                      <td>
-                        <?php if ( $number_days = (strtotime($end) - strtotime($supplier_ap->date_to_cal))/(60 * 60 * 24) <= 15 && $supplier_ap->day_tocal == 30): ?>
-                          <?php $show_total_for_day = number_format($supplier_ap->totalsum,2,".",",");
-                                echo $show_total_for_day;
-                          ?>
-                        <?php endif; ?>
-                      </td>
-                      <td></td>
-                      <td>
-                        <?php if ($supplier_ap->day_tocal == 0): ?>
-                          <?php $show_total_for_day = number_format($supplier_ap->totalsum,2,".",",");
-                                echo $show_total_for_day;
-                          ?>
-                        <?php endif; ?>
-                      </td>
-                      <td>
-                        <?php if ( $number_days = (strtotime($end) - strtotime($supplier_ap->date_to_cal))/(60 * 60 * 24) > 30 && $number_days = (strtotime($end) - strtotime($supplier_ap->date_to_cal))/(60 * 60 * 24) <= 37 && $supplier_ap->day_tocal != 0): ?>
-                          <?php $show_total_for_day = number_format($supplier_ap->totalsum,2,".",",");
-                                echo $show_total_for_day;
-                          ?>
-                        <?php endif; ?>
-                      </td>
-                      <td>
-                        <?php if ( $number_days = (strtotime($end) - strtotime($supplier_ap->date_to_cal))/(60 * 60 * 24) > 37 && $number_days = (strtotime($end) - strtotime($supplier_ap->date_to_cal))/(60 * 60 * 24) <= 45 && $supplier_ap->day_tocal != 0): ?>
-                          <?php $show_total_for_day = number_format($supplier_ap->totalsum,2,".",",");
-                                echo $show_total_for_day;
-                          ?>
-                        <?php endif; ?>
-                      </td>
-                      <td>
-                        <?php if ( $number_days = (strtotime($end) - strtotime($supplier_ap->date_to_cal))/(60 * 60 * 24) > 45 && $number_days = (strtotime($end) - strtotime($supplier_ap->date_to_cal))/(60 * 60 * 24) <= 60 && $supplier_ap->day_tocal != 0): ?>
-                          <?php $show_total_for_day = number_format($supplier_ap->totalsum,2,".",",");
-                                echo $show_total_for_day;
-                          ?>
-                        <?php endif; ?>
-                      </td>
-                      <td>
-                        <?php if ( $number_days = (strtotime($end) - strtotime($supplier_ap->date_to_cal))/(60 * 60 * 24) > 60 && $supplier_ap->day_tocal != 0): ?>
-                          <?php $show_total_for_day = number_format($supplier_ap->totalsum,2,".",",");
-                                echo $show_total_for_day;
-                          ?>
-                        <?php endif; ?>
-                      </td>
-                      <td>
-                        <?php $keep_totalsum1 = number_format($supplier_ap->totalsum,2,".",",");
-                              echo $keep_totalsum1;
-                        ?>
-                        <?php $sumtotalthis1 = $sumtotalthis1 + $supplier_ap->totalsum;?>
-                      </td>
-                    </tr>
-                    @if ($key == count($supplier_aps)-1)
-                        <tr>
-                          <th colspan="3" ><b>รวมทั้งสิ้น</b></th>
-                          <td><?php echo number_format($sumtotalthis,2);?></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td><?php echo number_format($sumtotalthis1,2);?></td>
-                        </tr>
-                    @endif
-                  @else
-                    @if ($key != 0)
-                        <!-- ก่อนเปลี่ยนรายการเขียนปิดรายการก่อนหน้า -->
-                        <tr>
-                          <th colspan="3" ><b>รวมทั้งสิ้น</b></th>
-                          <td><?php echo number_format($sumtotalthis,2);?></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td><?php echo number_format($sumtotalthis1,2);?></td>
-                        </tr>
-                        <?php $sumtotalthis = 0;
-                              $sumtotalthis1 = 0;
-                        ?>
-                    @endif
-                    <?php $sumtotalthis = 0;
-                          $sumtotalthis1 = 0;
-                    ?>
-                    <tr style="border-top-style:solid;">
-                      <!-- เขียน row แรก แต่ละรายการ -->
-                      <td>{{ $supplier_ap->codecreditor }}</td>
-                      <td>{{ $supplier_ap->pre }} {{ $supplier_ap->name_supplier }}</td>
-                      <td>{{ $supplier_ap->day_tocal }}</td>
-                      <td>
-                        <?php $keep_totalsum = number_format($supplier_ap->totalsum,2,".",",");
-                              echo $keep_totalsum;
-                        ?>
-                        <?php $sumtotalthis = $sumtotalthis + $supplier_ap->totalsum;?>
-                      </td>
-                      <td>
-                        <?php if ( $number_days = (strtotime($end) - strtotime($supplier_ap->date_to_cal))/(60 * 60 * 24) > 16 && $number_days = (strtotime($end) - strtotime($supplier_ap->date_to_cal))/(60 * 60 * 24) <= 30 && $supplier_ap->day_tocal == 30): ?>
-                          <?php $show_total_for_day = number_format($supplier_ap->totalsum,2,".",",");
-                                echo $show_total_for_day;
-                          ?>
-                        <?php endif; ?>
-                        <?php if ( $number_days = (strtotime($end) - strtotime($supplier_ap->date_to_cal))/(60 * 60 * 24) > 7 && $number_days = (strtotime($end) - strtotime($supplier_ap->date_to_cal))/(60 * 60 * 24) <= 15 && $supplier_ap->day_tocal == 15): ?>
-                          <?php $show_total_for_day = number_format($supplier_ap->totalsum,2,".",",");
-                                echo $show_total_for_day;
-                          ?>
-                        <?php endif; ?>
-                        <?php if ( $number_days = (strtotime($end) - strtotime($supplier_ap->date_to_cal))/(60 * 60 * 24) >= 1 && $number_days = (strtotime($end) - strtotime($supplier_ap->date_to_cal))/(60 * 60 * 24) <= 7 && $supplier_ap->day_tocal == 7): ?>
-                          <?php $show_total_for_day = number_format($supplier_ap->totalsum,2,".",",");
-                                echo $show_total_for_day;
-                          ?>
-                        <?php endif; ?>
-                      </td>
-                      <td>
-                        <?php if ( $number_days = (strtotime($end) - strtotime($supplier_ap->date_to_cal))/(60 * 60 * 24) <= 15 && $supplier_ap->day_tocal == 30): ?>
-                          <?php $show_total_for_day = number_format($supplier_ap->totalsum,2,".",",");
-                                echo $show_total_for_day;
-                          ?>
-                        <?php endif; ?>
-                      </td>
-                      <td></td>
-                      <td>
-                        <?php if ($supplier_ap->day_tocal == 0): ?>
-                          <?php $show_total_for_day = number_format($supplier_ap->totalsum,2,".",",");
-                                echo $show_total_for_day;
-                          ?>
-                        <?php endif; ?>
-                      </td>
-                      <td>
-                        <?php if ( $number_days = (strtotime($end) - strtotime($supplier_ap->date_to_cal))/(60 * 60 * 24) > 30 && $number_days = (strtotime($end) - strtotime($supplier_ap->date_to_cal))/(60 * 60 * 24) <= 37 && $supplier_ap->day_tocal != 0): ?>
-                          <?php $show_total_for_day = number_format($supplier_ap->totalsum,2,".",",");
-                                echo $show_total_for_day;
-                          ?>
-                        <?php endif; ?>
-                      </td>
-                      <td>
-                        <?php if ( $number_days = (strtotime($end) - strtotime($supplier_ap->date_to_cal))/(60 * 60 * 24) > 37 && $number_days = (strtotime($end) - strtotime($supplier_ap->date_to_cal))/(60 * 60 * 24) <= 45 && $supplier_ap->day_tocal != 0): ?>
-                          <?php $show_total_for_day = number_format($supplier_ap->totalsum,2,".",",");
-                                echo $show_total_for_day;
-                          ?>
-                        <?php endif; ?>
-                      </td>
-                      <td>
-                        <?php if ( $number_days = (strtotime($end) - strtotime($supplier_ap->date_to_cal))/(60 * 60 * 24) > 45 && $number_days = (strtotime($end) - strtotime($supplier_ap->date_to_cal))/(60 * 60 * 24) <= 60 && $supplier_ap->day_tocal != 0): ?>
-                          <?php $show_total_for_day = number_format($supplier_ap->totalsum,2,".",",");
-                                echo $show_total_for_day;
-                          ?>
-                        <?php endif; ?>
-                      </td>
-                      <td>
-                        <?php if ( $number_days = (strtotime($end) - strtotime($supplier_ap->date_to_cal))/(60 * 60 * 24) > 60 && $supplier_ap->day_tocal != 0): ?>
-                          <?php $show_total_for_day = number_format($supplier_ap->totalsum,2,".",",");
-                                echo $show_total_for_day;
-                          ?>
-                        <?php endif; ?>
-                      </td>
-                      <td>
-                        <?php $keep_totalsum1 = number_format($supplier_ap->totalsum,2,".",",");
-                              echo $keep_totalsum1;
-                        ?>
-                        <?php $sumtotalthis1 = $sumtotalthis1 + $supplier_ap->totalsum;?>
-                      </td>
-                    </tr>
-
-                      @if ($key == count($supplier_aps)-1)
-                      <!-- เขียนสำหรับรายการสุดท้าย -->
-                          <tr>
-                            <th colspan="3" ><b>รวมทั้งสิ้น</b></th>
-                            <td><?php echo number_format($sumtotalthis,2);?></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td><?php echo number_format($sumtotalthis1,2);?></td>
-                          </tr>
-                          <?php $sumtotalthis = 0;
-                                $sumtotalthis1 = 0;
-                          ?>
-                      @endif
-                  <?php $ap = $supplier_ap->name_supplier ?>
-                  @endif
+                @foreach ($arrShow as $key => $show_data)
+                  <tr>
+                    <td>{{ $show_data->codecreditor }}</td>
+                    <td>{{ $show_data->pre }} {{ $show_data->name_supplier }}</td>
+                    <td>{{ $show_data->day_tocal }}</td>
+                    <td>
+                      <?php $keep_totalsum = number_format($show_data->totalsum,2,".",",");
+                            echo $keep_totalsum;
+                      ?>
+                    </td>
+                    <td>{{ $show_data->daterang1 }}</td>
+                    <td>{{ $show_data->daterang2 }}</td>
+                    <td>{{ $show_data->daterang3 }}</td>
+                    <td>{{ $show_data->daterang4 }}</td>
+                    <td>{{ $show_data->daterang5 }}</td>
+                    <td>{{ $show_data->daterang6 }}</td>
+                    <td>{{ $show_data->daterang7 }}</td>
+                    <td>{{ $show_data->daterang8 }}</td>
+                    <td>
+                      <?php $keep_totalsum = number_format($show_data->totalsum,2,".",",");
+                            echo $keep_totalsum;
+                      ?>
+                  </tr>
                 @endforeach
               </tbody>
             </table>
@@ -363,5 +197,10 @@ swal({!!Session::pull('sweetalert.json')!!});
 <!-- END content-page -->
 <!-- END main -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+<script>
+$(document).ready(function() {
+    $('.select2').select2();
+});
+</script>
 <script type="text/javascript" src = 'js/accountjs/buysteel.js'></script>
 @endsection

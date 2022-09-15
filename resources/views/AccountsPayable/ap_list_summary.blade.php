@@ -10,7 +10,10 @@
 <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 <!-- <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script> -->
 <script src="https://code.jquery.com/jquery-1.8.3.js" integrity="sha256-dW19+sSjW7V1Q/Z3KD1saC6NcE5TUIhLJzJbrdKzxKc=" crossorigin="anonymous"></script>
-<script type="text/javascript">
+<!-- <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" /> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script> -->
+<!-- <script type="text/javascript">
+
 $(function() {
 //หมวด1
     $("#e1").select2({closeOnSelect:false});
@@ -36,7 +39,7 @@ $(function() {
     });
 
   });
-</script>
+</script> -->
 
 @if (Session::has('sweetalert.json'))
 <script>
@@ -111,24 +114,31 @@ swal({!!Session::pull('sweetalert.json')!!});
               </div>
               <br>
 
-                <?php if (isset($datas) && isset($datas1)): ?>
-                <div class="form-inline child">
-                  <label id="fontslabel"><b>รหัสเจ้าหนี้ : &nbsp;</b></label>
-                      <select multiple id="e1" style="width:300px" name="ap1[]">
-                        @foreach ($datas as $key => $data)
-                        <option value="{{$data->id_supplier_ref}}">{{$data->pre1}} {{$data->name1}}</option>
-                        @endforeach
-                      </select>
-                      &nbsp;<input type="checkbox" id="checkbox" >
-                    &nbsp;
-                      <select multiple id="e2" style="width:300px" name="ap2[]">
-                        @foreach ($datas1 as $key => $data1)
-                        <option value="{{$data1->id_supplier_ref1}}">{{$data1->pre2}} {{$data1->name2}}</option>
-                        @endforeach
-                      </select>
-                      &nbsp;<input type="checkbox" id="checkbox1" >
-                </div>
-                <?php endif; ?>
+              <?php if (isset($datas)): ?>
+              <div class="col-sm-4">
+                  <div class="input-group mb-6">
+                      <div class="input-group-prepend">
+                          <label id="fontslabel"><b>รหัสเจ้าหนี้ : &nbsp;</b></label>
+                      </div>
+                      <select class="form-control select2" id="example3" name="ap_list[]" multiple="multiple">
+                        <optgroup label="เจ้าหนี้การค้า">
+                          @foreach ($datas as $key => $data)
+                            @if ($data->type_pay === 1)
+                              <option value="{{$data->id_supplier_ref}}">{{$data->pre1}} {{$data->name1}}</option>
+                            @endif
+                          @endforeach
+      									<optgroup>
+      									<optgroup label="เจ้าหนี้การค้าอื่นๆ">
+                          @foreach ($datas as $key => $data)
+                            @if ($data->type_pay === 2)
+                              <option value="{{$data->id_supplier_ref}}">{{$data->pre1}} {{$data->name1}}</option>
+                            @endif
+                          @endforeach
+      									<optgroup>
+      								</select>
+                  </div>
+              </div>
+              <?php endif; ?>
 
               <br>
               <button type="submit" class="btn btn-primary btn-sm fontslabel">ค้นหา</button>
@@ -201,17 +211,14 @@ swal({!!Session::pull('sweetalert.json')!!});
 
 
 
-
-
-
-
-
-
-
-
 </div>
 <!-- END content-page -->
 <!-- END main -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+<script>
+$(document).ready(function() {
+    $('.select2').select2();
+});
+</script>
 <script type="text/javascript" src = 'js/accountjs/buysteel.js'></script>
 @endsection
