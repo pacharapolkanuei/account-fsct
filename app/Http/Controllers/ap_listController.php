@@ -145,6 +145,9 @@ class ap_listController extends Controller
 											,po_head.po_number as po_number_use
 											,inform_po.payser_number as payser_number_use
 											,inform_po.payout
+											,in_debt.datebill as date_from_ap
+											,in_debt.number_debt as bill_from_ap
+											,in_debt.vat_price as totalsum_from_ap
 
 											FROM $baseAc1.supplier
 
@@ -154,48 +157,53 @@ class ap_listController extends Controller
 											INNER JOIN $baseAc1.po_head
 											ON $baseAc1.supplier.id = $baseAc1.po_head.supplier_id
 
+											INNER JOIN $baseAc1.in_debt
+											ON $baseAc1.supplier.id = $baseAc1.in_debt.supplier_id
+
 											LEFT JOIN $baseAc1.inform_po
 											ON $baseAc1.po_head.id = $baseAc1.inform_po.id_po
 
 											WHERE $baseAc1.po_head.date BETWEEN '$start' AND '$end'
-											AND $baseAc1.po_head.status_head IN ('2','3','4','5')
+											AND $baseAc1.in_debt.status_pay = 0
 											-- AND $baseAc1.supplier_terms.day >= 1
 											-- ORDER BY $baseAc1.supplier.name_supplier ASC";
 
 				$supplier_aps = DB::select($sql);
-				 // echo '<pre>';
-				 // var_dump($supplier_aps);
-				 // echo '</pre>';
+
+
+				// $sql = "SELECT
+				// 								-- po_head.totolsumreal as totalsum
+				// 								supplier.pre
+				// 								,supplier.name_supplier
+				// 								,supplier.codecreditor
+				// 								-- ,supplier_terms.day
+				// 								-- ,po_head.date as date_po
+				// 								-- ,inform_po.datebill as date_inform_po
+				// 								-- ,po_head.po_number as po_number_use
+				// 								-- ,inform_po.payser_number as payser_number_use
+				// 								-- ,inform_po.payout
+				// 								,in_debt.datebill as date_from_ap
+				// 								,in_debt.number_debt as bill_from_ap
+				// 								,in_debt.vat_price as totalsum_from_ap
+				//
+				// 								FROM $baseAc1.in_debt
+				//
+				// 								INNER JOIN $baseAc1.supplier
+				// 								ON $baseAc1.in_debt.supplier_id = $baseAc1.supplier.id
+				//
+				// 								INNER JOIN $baseAc1.po_head
+				// 								ON $baseAc1.in_debt.id_po = $baseAc1.po_head.id
+				//
+				// 								WHERE $baseAc1.in_debt.datebill BETWEEN '$start' AND '$end'
+				// 								AND $baseAc1.in_debt.status_pay = 0";
+				//
+				// 	$supplier_aps = DB::select($sql);
+
+				//  echo '<pre>';
+				//  var_dump($supplier_aps);
+				//  echo '</pre>';
 				// exit;
 				$ap = 'default';
-
-      // $supplier_aps = DB::connection('mysql2')
-      //     ->table('supplier')
-      //     ->select('supplier.pre','supplier.name_supplier','po_head.date as date_po','po_head.status_head','inform_po.datebill as date_inform_po','inform_po.status','po_head.po_number as po_number_use')
-      //     ->join('supplier_terms', 'supplier_terms.id', '=', 'supplier.terms_id')
-      //     ->join('po_head', 'po_head.supplier_id', '=', 'supplier.id')
-      //     ->join('inform_po', 'inform_po.id_po', '=', 'po_head.id')
-      //     // ->orderBy('inform_po.id', 'asc')
-      //     ->whereBetween('po_head.date', [$start.'%', $end.'%'])
-      //     // ->where('inform_po.type',2)
-      //     ->where('po_head.status_head',2)
-      //     // ->where('inform_po.type_newtable',1)
-      //     ->get();
-			//
-      // $ap = 'default';
-			//
-      // $supplier_informs = DB::connection('mysql2')
-      //     ->table('supplier')
-      //     ->select('supplier.pre','supplier.name_supplier','po_head.date as date_po','inform_po.datebill as date_inform_po','inform_po.status')
-      //     ->join('supplier_terms', 'supplier_terms.id', '=', 'supplier.terms_id')
-      //     ->join('po_head', 'po_head.supplier_id', '=', 'supplier.id')
-      //     ->join('inform_po', 'inform_po.id_po', '=', 'po_head.id')
-      //     // ->orderBy('inform_po.id', 'asc')
-      //     ->whereBetween('inform_po.datebill', [$start.'%', $end.'%'])
-      //     // ->where('inform_po.type',2)
-      //     ->where('inform_po.status',1)
-      //     // ->where('inform_po.type_newtable',1)
-      //     ->get();
 
       return view('AccountsPayable.ap_list', compact('supplier_aps', 'supplier_informs', 'start' , 'end','ap'));
   }
@@ -258,11 +266,24 @@ class ap_listController extends Controller
 					$supplier_aps = DB::select($sql);
 			}
 
-			return view('AccountsPayable.ap_list_summary', compact('supplier_aps', 'start' , 'dateend' , 'date'));
+			$sql = "SELECT supplier.id as id_supplier_ref
+															,supplier.pre as pre1
+															,supplier.name_supplier as name1
+															,supplier.type_pay
+
+											FROM $baseAc1.supplier
+
+											ORDER BY $baseAc1.supplier.pre ASC ";
+
+			$datas = DB::select($sql);
+
+			return view('AccountsPayable.ap_list_summary', compact('supplier_aps', 'start' , 'dateend' , 'date','datas'));
 	}
 
 	public function  ap_list_showdateexpire_filters(Request $request)
 	{
+			$data = Input::all();
+
 			$connect1 = Connectdb::Databaseall();
 			$baseAc1 = $connect1['fsctaccount'];
 			$baseHr1 = $connect1['hr_base'];
@@ -271,8 +292,11 @@ class ap_listController extends Controller
 			$dateend = $request->get('dateend');
 
 			if (isset($data['ap_list'])) {
+
 			$select_ap1 = $data['ap_list'];
 			$comma_separated = implode(',', $select_ap1);
+
+
 			$sql = "SELECT	po_head.totolsumreal as totalsum
 											,supplier.pre
 											,supplier.name_supplier
@@ -291,7 +315,6 @@ class ap_listController extends Controller
 											WHERE $baseAc1.po_head.date BETWEEN '$start' AND '$dateend'
 											AND $baseAc1.supplier.id IN ($comma_separated)
 											AND $baseAc1.po_head.status_head = 2
-											-- AND $baseAc1.supplier_terms.day >= 1
 
 											ORDER BY $baseAc1.supplier_terms.day DESC";
 
@@ -303,6 +326,7 @@ class ap_listController extends Controller
 						$arrNewData[$value->supplier_id]['supplier_id']=$value->supplier_id;
 						$arrNewData[$value->supplier_id]['totalsum'][$key]=$value->totalsum;
 						$arrNewData[$value->supplier_id]['pre']=$value->pre;
+						$arrNewData[$value->supplier_id]['day_tocal']=$value->day_tocal;
 						$arrNewData[$value->supplier_id]['name_supplier']=$value->name_supplier;
 						$arrNewData[$value->supplier_id]['codecreditor']=$value->codecreditor;
 						// $arrNewData[$value->supplier_id]['date_to_cal'][$key]=$value->date_to_cal;
@@ -355,6 +379,7 @@ class ap_listController extends Controller
 											$arrShow[$k]['codecreditor']=$v['codecreditor'];
 											$arrShow[$k]['supplier_id']=$v['supplier_id'];
 											$arrShow[$k]['pre']=$v['pre'];
+											$arrShow[$k]['day_tocal']=$v['day_tocal'];
 											$arrShow[$k]['name_supplier']=$v['name_supplier'];
 											$totalsum = 0;
 											foreach ($v['totalsum'] as $a => $b) {
@@ -413,7 +438,7 @@ class ap_listController extends Controller
 											////////////////////////////////
 											$totalrage5 = 0;
 											if(!empty($v['daterang5'])){
-													foreach ($v['daterang5'] as $k => $l) {
+													foreach ($v['daterang5'] as $t => $l) {
 														 $totalrage5 = $totalrage5 + $l;
 													}
 											}else{
@@ -457,7 +482,8 @@ class ap_listController extends Controller
 											}
 											$arrShow[$k]['daterang8']=$daterang8;
 						}
-					}else {
+					}
+					else {
 						$sql = "SELECT	po_head.totolsumreal as totalsum
 														,supplier.pre
 														,supplier.name_supplier
@@ -487,6 +513,7 @@ class ap_listController extends Controller
 									$arrNewData[$value->supplier_id]['supplier_id']=$value->supplier_id;
 									$arrNewData[$value->supplier_id]['totalsum'][$key]=$value->totalsum;
 									$arrNewData[$value->supplier_id]['pre']=$value->pre;
+									$arrNewData[$value->supplier_id]['day_tocal']=$value->day_tocal;
 									$arrNewData[$value->supplier_id]['name_supplier']=$value->name_supplier;
 									$arrNewData[$value->supplier_id]['codecreditor']=$value->codecreditor;
 									// $arrNewData[$value->supplier_id]['date_to_cal'][$key]=$value->date_to_cal;
@@ -539,6 +566,7 @@ class ap_listController extends Controller
 														$arrShow[$k]['codecreditor']=$v['codecreditor'];
 														$arrShow[$k]['supplier_id']=$v['supplier_id'];
 														$arrShow[$k]['pre']=$v['pre'];
+														$arrShow[$k]['day_tocal']=$v['day_tocal'];
 														$arrShow[$k]['name_supplier']=$v['name_supplier'];
 														$totalsum = 0;
 														foreach ($v['totalsum'] as $a => $b) {
@@ -597,7 +625,7 @@ class ap_listController extends Controller
 														////////////////////////////////
 														$totalrage5 = 0;
 														if(!empty($v['daterang5'])){
-																foreach ($v['daterang5'] as $k => $l) {
+																foreach ($v['daterang5'] as $t => $l) {
 																	 $totalrage5 = $totalrage5 + $l;
 																}
 														}else{
@@ -642,8 +670,23 @@ class ap_listController extends Controller
 														$arrShow[$k]['daterang8']=$daterang8;
 									}
 					}
-					dd($arrShow);
-					exit;
+
+					$connect1 = Connectdb::Databaseall();
+					$baseAc1 = $connect1['fsctaccount'];
+
+					$sql = "SELECT supplier.id as id_supplier_ref
+																	,supplier.pre as pre1
+																	,supplier.name_supplier as name1
+																	,supplier.type_pay
+
+													FROM $baseAc1.supplier
+
+													ORDER BY $baseAc1.supplier.pre ASC ";
+
+					$datas = DB::select($sql);
+
+					// dd($arrShow);
+					// exit;
 				// // print_r($arrNewData);
 				// // echo "<br>";
 				// print_r($arrShow);
@@ -652,7 +695,7 @@ class ap_listController extends Controller
 				// // dd($supplier_aps);
 				// exit;
 				// // $ap = 'default';
-			return view('AccountsPayable.ap_list_showdateexpire', compact( 'dateend' , 'date' , 'ap' ,'arrShow'));
+			return view('AccountsPayable.ap_list_showdateexpire', compact( 'dateend' , 'date' , 'ap' ,'arrShow','datas'));
 	}
 
 	public function getdata_supplier_pay_type($id)
