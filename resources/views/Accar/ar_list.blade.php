@@ -2,6 +2,8 @@
 @section('content')
 
 <?php
+  use App\Api\Connectdb;
+  use App\Api\Datetime;
   $level_id = Session::get('level_id');
   // echo $level_id;
 ?>
@@ -12,6 +14,8 @@
 <script>
 swal({!!Session::pull('sweetalert.json')!!});
 </script>
+
+
 @endif
 
 <style media="screen">
@@ -30,11 +34,7 @@ swal({!!Session::pull('sweetalert.json')!!});
     background-color: #ddd !important;
   }
 </style>
-<script type="text/javascript">
-  $(function() {
-      $('input[name="daterange"]').daterangepicker();
-  });
-</script>
+
 
 
 <div class="content-page">
@@ -47,7 +47,7 @@ swal({!!Session::pull('sweetalert.json')!!});
           <div class="breadcrumb-holder" id="fontscontent">
             <h1 class="float-left">Account - FSCT</h1>
             <ol class="breadcrumb float-right">
-              <li class="breadcrumb-item">เจ้าหนี้การค้า</li>
+              <li class="breadcrumb-item">ลูกหนี้้การค้า</li>
               <li class="breadcrumb-item active">รายงานเคลื่อนไหวลูกหนี้รายตัว</li>
             </ol>
             <div class="clearfix"></div>
@@ -64,8 +64,24 @@ swal({!!Session::pull('sweetalert.json')!!});
               </h3>
             </div>
           </div><!-- end card-->
+          <?php
+                    $connect1 = Connectdb::Databaseall();
+                    $baseMain = $connect1['fsctmain'];
+                    $baseAc1 = $connect1['fsctaccount'];
+                    $sql = "SELECT  $baseAc1.initial.per,
+                                    $baseMain.customers.name,
+                                    $baseMain.customers.lastname,
+                                    $baseMain.customers.customerid
+                            FROM $baseMain.customers
+                            INNER JOIN  $baseAc1.initial
+                            ON $baseMain.customers.initial = $baseAc1.initial.id ";
 
-          {!! Form::open(['route' => 'ap_list_filter', 'method' => 'post']) !!}
+                    $datas = DB::select($sql);
+
+          ?>
+
+          <form action="arlist_serch" method="post" id="myForm" files='true' >
+            <input type="hidden" name="_token" value="{{ csrf_token() }}">
             <center>
               <div class="col-sm-3">
                   <div class="input-group mb-6">
@@ -75,154 +91,132 @@ swal({!!Session::pull('sweetalert.json')!!});
                       <input type='text' class="form-control" name="daterange" value="" autocomplete="off" />
                   </div>
               </div>
+              <br>
+              <div class="col-sm-3">
+                  <div class="input-group mb-6">
+                      <div class="input-group-prepend">
+                          <label id="fontslabel"><b>ชื่อลูกหนี้ : &nbsp;</b></label>
+                      </div>
+                      <select name="customerid[]" class="form-control select2"  required>
+                          <option value="">เลือกทั้งหมด</option>
+                          <?php  foreach ($datas as $key => $value) { ?>
+                              <option value="<?php echo $value->customerid; ?>"><?php echo $value->per; ?>&nbsp;&nbsp;<?php echo $value->name; ?>&nbsp;&nbsp; <?php echo $value->lastname; ?></option>
+                          <?php } ?>
+                      </select>
+                  </div>
+              </div>
+              <br>
               <button type="submit" class="btn btn-primary btn-sm fontslabel">ค้นหา</button>
               <a href="{{url('ap_list')}}" class="btn btn-danger btn-md delete-confirm">RESET</a>
             </center>
-          {!! Form::close() !!}
+          </form>
 
 
           <br>
           <br>
           <center>
-            <?php if (isset($start) && isset($end)): ?>
-              <label id="fontslabel"><b>วันที่ <?php echo $start ?> ถึง <?php echo $end ?></b></label>
-            <?php endif; ?>
+            <?php  if(isset($query)){
+
+                  // print_r($daterange);
+                  $dateset = Datetime::convertStartToEnd($daterange);
+                  $start = $dateset['start'];
+                  $end = $dateset['end'];
+
+
+
+
+             ?>
+
+              <label id="fontslabel"><b>วันที่ <?php echo $start; ?>  ถึง <?php echo $end;?> </b></label>
+
           </center>
           <br>
 
-          <?php if (isset($supplier_aps)): ?>
             <table class="table table-bordered" cellspacing="0" id="fontslabel" style="width : 70%;margin-left: auto;margin-right: auto;">
               <thead>
                 <tr style="background-color:#aab6c2;color:white;">
                   <th style="vertical-align : middle;text-align:center;">วันที่</th>
                   <th style="vertical-align : middle;text-align:center;">เลขที่เอกสาร</th>
+                  <th style="vertical-align : middle;text-align:center;">สาขา</th>
                   <th style="vertical-align : middle;text-align:center;">เพิ่มขึ้น</th>
                   <th style="vertical-align : middle;text-align:center;">ลดลง</th>
-                  <th style="vertical-align : middle;text-align:center;">ยอดคงเหลือ</th
+                  <th style="vertical-align : middle;text-align:center;">ยอดคงเหลือ</th>
                 </tr>
               </thead>
               <tbody>
-                @foreach ($supplier_aps  as $key => $supplier_ap)
-                  @if ($supplier_ap->name_supplier == $ap)
-                    <tr>
-                      <td>{{ $supplier_ap->date_po }}</td>
-                      <td>{{ $supplier_ap->po_number_use }}</td>
-                      <td>
-                          <?php $keep_totalsum_inc = number_format($supplier_ap->totalsum,2,".",",");
-                                echo $keep_totalsum_inc;
-                          ?>
-                          <?php $sumtotal_inc = $sumtotal_inc + $supplier_ap->totalsum;?>
-                      </td>
-                      <td></td>
-                      <td>
-                          <?php $keep_totalsum_inc_1 = number_format($supplier_ap->totalsum,2,".",",");
-                                echo $keep_totalsum_inc_1;
-                          ?>
-                          <?php $sumtotal_inc1 = $sumtotal_inc1 + $supplier_ap->totalsum;?>
-                      </td>
-                    </tr>
+              <?php
+                $totalthis = 0;
+                foreach ($customerid as $k => $v) {
+                    $idcard = $v;
 
+                    $sqlrent = "SELECT  $baseMain.bill_rent.date_out ,
+                                        $baseMain.bill_rent.bill_rent ,
+                                        $baseMain.bill_rent.branch_id,
+                                        $baseMain.bill_rent.discount ,
+                                        $baseMain.bill_rent.withhold ,
+                                        $baseMain.bill_rent.type_pay ,
+                                        $baseMain.bill_rent.vat,
+                                        $baseMain.bill_rent.id as bill_rentid,
+                                        sum($baseMain.bill_detail.total) as sumtotal
+
+                            FROM $baseMain.bill_rent
+                            INNER JOIN $baseMain.bill_detail
+                            ON $baseMain.bill_rent.id = $baseMain.bill_detail.bill_rent
+                            WHERE $baseMain.bill_rent.customer_id = '$idcard'
+                            AND $baseMain.bill_rent.status = '3'
+                            AND $baseMain.bill_rent.date_out BETWEEN '$start' AND '$end'
+                            GROUP By  $baseMain.bill_rent.bill_rent ";
+
+                    $datarent = DB::select($sqlrent);
+
+                ?>
+                  <?php foreach ($datarent as $a => $b) { ?>
                     <tr>
-                      <td>{{ $supplier_ap->date_inform_po }}</td>
-                      <td>{{ $supplier_ap->payser_number_use }}</td>
-                      <td></td>
+                      <td><?php echo $b->date_out; ?></td>
+                      <td><?php echo $b->bill_rent; ?></td>
+                      <td><?php echo $b->branch_id; ?></td>
                       <td>
-                          <?php $keep_totalsum_dec = number_format($supplier_ap->payout,2,".",",");
-                                echo $keep_totalsum_dec;
-                          ?>
-                          <?php $sumtotal_dec = $sumtotal_dec + $supplier_ap->payout;?>
-                      </td>
-                      <td>
-                          <?php $keep_totalsum_dec = number_format($supplier_ap->payout,2,".",",");
-                                echo $keep_totalsum_dec;
-                          ?>
-                          <?php $sumtotal_dec1 = $sumtotal_dec1 + $supplier_ap->payout;?>
-                      </td>
-                    </tr>
-                    @if ($key == count($supplier_aps)-1)
-                        <tr>
-                          <td></td>
-                          <td></td>
-                          <td><?php echo number_format($sumtotal_inc,2);?></td>
-                          <td><?php echo number_format($sumtotal_dec,2);?></td>
-                          <td>
-                            <?php $calculate = $sumtotal_inc1 - $sumtotal_dec1;
-                                  echo number_format($calculate,2);
-                            ?>
-                          </td>
-                        </tr>
-                    @endif
-                    <?php $ap = $supplier_ap->name_supplier ?>
-                  @else
-                    @if ($key != 0)
-                        <!-- ก่อนเปลี่ยนรายการเขียนปิดรายการก่อนหน้า -->
-                        <tr>
-                          <td></td>
-                          <td></td>
-                          <td><?php echo number_format($sumtotal_inc,2);?></td>
-                          <td><?php echo number_format($sumtotal_dec,2);?></td>
-                          <td>
-                            <?php $calculate = $sumtotal_inc1 - $sumtotal_dec1;
-                                  echo number_format($calculate,2);
-                            ?>
-                          </td>
-                        </tr>
-                        <?php $sumtotal_inc = 0;
-                              $sumtotal_inc1 = 0;
-                              $sumtotal_dec = 0;
-                              $sumtotal_dec1 = 0;
-                              $calculate = 0;
+                        <?php $sumtotal = $b->sumtotal;
+                              $discount = $b->discount;
+                              $withhold = $b->withhold;
+                              $vat = $b->vat;
+                              $discountmoney = $sumtotal * ($b->discount/100);
+                              $sumtotalreal = $sumtotal - $discountmoney;
+                              $showreal = $sumtotalreal + ($sumtotalreal*($vat/100)) - ($sumtotalreal*($withhold/100));
+                              $totalthis = $totalthis + $showreal;
+                              echo number_format($showreal,2);
                         ?>
-                    @endif
-                    <?php $sumtotal_inc = 0;
-                          $sumtotal_inc1 = 0;
-                          $sumtotal_dec = 0;
-                          $sumtotal_dec1 = 0;
-                          $calculate = 0;
-                    ?>
-                    <tr style="border-top-style:solid;">
-                      <!-- เขียน row แรก แต่ละรายการ -->
-                      <td><b>{{ $supplier_ap->pre }} {{ $supplier_ap->name_supplier }}</b></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
+                      </td>
+                      <td>-</td>
+                      <td><?php echo number_format($totalthis,2);?></td>
                     </tr>
+                    <?php
+                      ////////////// เงินสด
+                        $bill_rentid = $b->bill_rentid;
+                        $sqltax = "SELECT *   FROM $baseAc1.taxinvoice_abb WHERE $baseAc1.taxinvoice_abb.bill_rent = '$bill_rentid' AND  $baseAc1.taxinvoice_abb.status != '99' ";
+                      $taxinvoiceabbdata = DB::select($sqltax);
+                    if(!empty($taxinvoiceabbdata) && $b->type_pay == 1){?>
                     <tr>
-                      <td><b>ยอดยกมา</b></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td> - </td>
+                      <td><?php echo $taxinvoiceabbdata[0]->time; ?></td>
+                      <td><?php echo $taxinvoiceabbdata[0]->number_taxinvoice; ?></td>
+                      <td><?php echo $taxinvoiceabbdata[0]->branch_id; ?></td>
+                      <td>-</td>
+                      <td><?php echo number_format($taxinvoiceabbdata[0]->grandtotal,2); $totalthis = $totalthis - $taxinvoiceabbdata[0]->grandtotal; ?></td>
+                      <td><?php echo number_format($totalthis,2);?></td>
                     </tr>
+                  <?php }?>
+                <?php } ?>
+              <?php } $totalthis=0;?>
 
-                      @if ($key == count($supplier_aps)-1)
-                      <!-- เขียนสำหรับรายการสุดท้าย -->
-                          <tr>
-                            <td></td>
-                            <td></td>
-                            <td><?php echo number_format($sumtotal_inc,2);?></td>
-                            <td><?php echo number_format($sumtotal_dec,2);?></td>
-                            <td>
-                              <?php $calculate = $sumtotal_inc1 - $sumtotal_dec1;
-                                    echo number_format($calculate,2);
-                              ?>
-                            </td>
-                          </tr>
-                          <?php $sumtotal_inc = 0;
-                                $sumtotal_inc1 = 0;
-                                $sumtotal_dec = 0;
-                                $sumtotal_dec1 = 0;
-                                $calculate = 0;
-                          ?>
-                      @endif
-                  <?php $ap = $supplier_ap->name_supplier ?>
-                  @endif
-                @endforeach
+
+
+
+
+              
               </tbody>
             </table>
 
-          <?php endif; ?>
+          <?php  } ?>
 
 
 

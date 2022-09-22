@@ -760,4 +760,16 @@ Route::get('asset_list_sale', 'Asset_listController@asset_list_sale');
 Route::post('searchassetlistsale', 'Asset_listController@searchassetlistsale');
 Route::post('searchassetlisttool', 'Asset_listController@searchassetlisttool');
 
+
+
+//-------------------------------------- ar_list --------------------------
+Route::get('/ar_list', 'ar_listController@index');
+Route::get('/ar_list_summary', 'ar_listController@ar_list_summary');
+Route::get('/ar_list_showdateexpire', 'ar_listController@ar_list_showdateexpire');
+
+Route::post('/arlist_serch', 'ar_listController@arlist_serch');
+Route::post('/arlistsummary_serch', 'ar_listController@arlistsummary_serch');
+Route::post('/ar_list_showdateexpire_serch', 'ar_listController@ar_list_showdateexpire_serch');
+
+//-----------------------------------------------
 ?>

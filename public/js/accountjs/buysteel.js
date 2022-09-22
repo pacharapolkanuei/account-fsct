@@ -1,6 +1,9 @@
 $(document).ready(function() {
   console.log( "ready!" );
-
+      $('input[name="daterange"]').daterangepicker();
+      $('.select2').select2({
+            dropdownAutoWidth: true
+       });
     // $.get('getmaterial', function(res) {
     //     // console.log(res);
     //   var option = '<option disabled selected>โปรดเลือกรายการ</option>';

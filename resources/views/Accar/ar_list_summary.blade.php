@@ -2,6 +2,8 @@
 @section('content')
 
 <?php
+use App\Api\Connectdb;
+use App\Api\Datetime;
   $level_id = Session::get('level_id');
   // echo $level_id;
 ?>
@@ -101,8 +103,24 @@ swal({!!Session::pull('sweetalert.json')!!});
               </h3>
             </div>
           </div><!-- end card-->
+          <?php
+                    $connect1 = Connectdb::Databaseall();
+                    $baseMain = $connect1['fsctmain'];
+                    $baseAc1 = $connect1['fsctaccount'];
+                    $sql = "SELECT  $baseAc1.initial.per,
+                                    $baseMain.customers.name,
+                                    $baseMain.customers.lastname,
+                                    $baseMain.customers.customerid
+                            FROM $baseMain.customers
+                            INNER JOIN  $baseAc1.initial
+                            ON $baseMain.customers.initial = $baseAc1.initial.id ";
 
-          {!! Form::open(['route' => 'ap_list_summary_filter', 'method' => 'post']) !!}
+                    $datas = DB::select($sql);
+
+          ?>
+
+          <form action="arlistsummary_serch" method="post" id="myForm" files='true' >
+            <input type="hidden" name="_token" value="{{ csrf_token() }}">
             <center>
               <div class="col-sm-4">
                   <div class="input-group mb-6">
@@ -113,38 +131,24 @@ swal({!!Session::pull('sweetalert.json')!!});
                   </div>
               </div>
               <br>
-
-              <?php if (isset($datas)): ?>
-              <div class="col-sm-4">
+              <div class="col-sm-3">
                   <div class="input-group mb-6">
                       <div class="input-group-prepend">
-                          <label id="fontslabel"><b>รหัสเจ้าหนี้ : &nbsp;</b></label>
+                          <label id="fontslabel"><b>ชื่อลูกหนี้ : &nbsp;</b></label>
                       </div>
-                      <select class="form-control select2" id="example3" name="ap_list[]" multiple="multiple">
-                        <optgroup label="เจ้าหนี้การค้า">
-                          @foreach ($datas as $key => $data)
-                            @if ($data->type_pay === 1)
-                              <option value="{{$data->id_supplier_ref}}">{{$data->pre1}} {{$data->name1}}</option>
-                            @endif
-                          @endforeach
-      									<optgroup>
-      									<optgroup label="เจ้าหนี้การค้าอื่นๆ">
-                          @foreach ($datas as $key => $data)
-                            @if ($data->type_pay === 2)
-                              <option value="{{$data->id_supplier_ref}}">{{$data->pre1}} {{$data->name1}}</option>
-                            @endif
-                          @endforeach
-      									<optgroup>
-      								</select>
+                      <select name="customerid[]" class="form-control select2"  required>
+                          <option value="">เลือกทั้งหมด</option>
+                          <?php  foreach ($datas as $key => $value) { ?>
+                              <option value="<?php echo $value->customerid; ?>"><?php echo $value->per; ?>&nbsp;&nbsp;<?php echo $value->name; ?>&nbsp;&nbsp; <?php echo $value->lastname; ?></option>
+                          <?php } ?>
+                      </select>
                   </div>
               </div>
-              <?php endif; ?>
-
               <br>
               <button type="submit" class="btn btn-primary btn-sm fontslabel">ค้นหา</button>
-              <a href="{{url('ap_list_summary')}}" class="btn btn-danger btn-md delete-confirm">RESET</a>
+              <button type="reset" class="btn btn-danger btn-sm fontslabel">reset</button>
             </center>
-          {!! Form::close() !!}
+          </form>
 
           <br>
           <br>
