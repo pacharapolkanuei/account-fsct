@@ -105,20 +105,20 @@ swal({!!Session::pull('sweetalert.json')!!});
                 @foreach ($supplier_aps  as $key => $supplier_ap)
                   @if ($supplier_ap->name_supplier == $ap)
                     <tr>
-                      <td>{{ $supplier_ap->date_po }}</td>
-                      <td>{{ $supplier_ap->po_number_use }}</td>
+                      <td>{{ $supplier_ap->date_from_ap }}</td>
+                      <td>{{ $supplier_ap->bill_from_ap }}</td>
                       <td>
-                          <?php $keep_totalsum_inc = number_format($supplier_ap->totalsum,2,".",",");
+                          <?php $keep_totalsum_inc = number_format($supplier_ap->totalsum_from_ap,2,".",",");
                                 echo $keep_totalsum_inc;
                           ?>
-                          <?php $sumtotal_inc = $sumtotal_inc + $supplier_ap->totalsum;?>
+                          <?php $sumtotal_inc = $sumtotal_inc + $supplier_ap->totalsum_from_ap;?>
                       </td>
                       <td></td>
                       <td>
-                          <?php $keep_totalsum_inc_1 = number_format($supplier_ap->totalsum,2,".",",");
+                          <?php $keep_totalsum_inc_1 = number_format($supplier_ap->totalsum_from_ap,2,".",",");
                                 echo $keep_totalsum_inc_1;
                           ?>
-                          <?php $sumtotal_inc1 = $sumtotal_inc1 + $supplier_ap->totalsum;?>
+                          <?php $sumtotal_inc1 = $sumtotal_inc1 + $supplier_ap->totalsum_from_ap;?>
                       </td>
                     </tr>
 

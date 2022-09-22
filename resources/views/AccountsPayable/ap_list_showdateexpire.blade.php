@@ -156,29 +156,69 @@ swal({!!Session::pull('sweetalert.json')!!});
               <tbody style="vertical-align : middle;text-align:center;">
                 @foreach ($arrShow as $key => $show_data)
                   <tr>
-                    <td>{{ $show_data->codecreditor }}</td>
-                    <td>{{ $show_data->pre }} {{ $show_data->name_supplier }}</td>
-                    <td>{{ $show_data->day_tocal }}</td>
+                    <td>{{ $show_data['codecreditor'] }}</td>
+                    <td>{{ $show_data['pre'] }} {{ $show_data['name_supplier'] }}</td>
+                    <td>{{ $show_data['day_tocal'] }}</td>
                     <td>
-                      <?php $keep_totalsum = number_format($show_data->totalsum,2,".",",");
+                      <?php $keep_totalsum = number_format( $show_data['totalsum'],2,".",",");
                             echo $keep_totalsum;
                       ?>
                     </td>
-                    <td>{{ $show_data->daterang1 }}</td>
-                    <td>{{ $show_data->daterang2 }}</td>
-                    <td>{{ $show_data->daterang3 }}</td>
-                    <td>{{ $show_data->daterang4 }}</td>
-                    <td>{{ $show_data->daterang5 }}</td>
-                    <td>{{ $show_data->daterang6 }}</td>
-                    <td>{{ $show_data->daterang7 }}</td>
-                    <td>{{ $show_data->daterang8 }}</td>
                     <td>
-                      <?php $keep_totalsum = number_format($show_data->totalsum,2,".",",");
+                      @if ($show_data['daterang1'] > 0)
+                        {{ $show_data['daterang1'] }}
+                      @endif
+                    </td>
+                    <td>
+                      @if ($show_data['daterang2'] > 0)
+                        {{ $show_data['daterang2'] }}
+                      @endif
+                    </td>
+                    <td>
+                      @if ($show_data['daterang3'] > 0)
+                        {{ $show_data['daterang3'] }}
+                      @endif
+                    </td>
+                    <td>
+                      @if ($show_data['daterang4'] > 0)
+                        {{ $show_data['daterang4'] }}
+                      @endif
+                    </td>
+                    <td>
+                      @if ($show_data['daterang5'] > 0)
+                        {{ $show_data['daterang5'] }}
+                      @endif
+                    </td>
+                    <td>
+                      @if ($show_data['daterang6'] > 0)
+                        {{ $show_data['daterang6'] }}
+                      @endif
+                    </td>
+                    <td>
+                      @if ($show_data['daterang7'] > 0)
+                        {{ $show_data['daterang7'] }}
+                      @endif
+                    </td>
+                    <td>
+                      @if ($show_data['daterang8'] > 0)
+                        {{ $show_data['daterang8'] }}
+                      @endif
+                    </td>
+                    <td>
+                      <?php $keep_totalsum = number_format( $show_data['totalsum'],2,".",",");
                             echo $keep_totalsum;
                       ?>
                   </tr>
                 @endforeach
               </tbody>
+              <tfoot>
+                  <tr>
+                    <td><b>รวมทั้งสิ้น</b></td>
+                    <td></td>
+                    <td></td>
+                    <td><b></b></td>
+                  </tr>
+              </tfoot>
             </table>
 
           <?php endif; ?>

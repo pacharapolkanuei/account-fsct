@@ -145,9 +145,9 @@ class ap_listController extends Controller
 											,po_head.po_number as po_number_use
 											,inform_po.payser_number as payser_number_use
 											,inform_po.payout
-											,in_debt.datebill as date_from_ap
-											,in_debt.number_debt as bill_from_ap
-											,in_debt.vat_price as totalsum_from_ap
+											-- ,in_debt.datebill as date_from_ap
+											-- ,in_debt.number_debt as bill_from_ap
+											-- ,in_debt.vat_price as totalsum_from_ap
 
 											FROM $baseAc1.supplier
 
@@ -157,14 +157,11 @@ class ap_listController extends Controller
 											INNER JOIN $baseAc1.po_head
 											ON $baseAc1.supplier.id = $baseAc1.po_head.supplier_id
 
-											INNER JOIN $baseAc1.in_debt
-											ON $baseAc1.supplier.id = $baseAc1.in_debt.supplier_id
-
 											LEFT JOIN $baseAc1.inform_po
 											ON $baseAc1.po_head.id = $baseAc1.inform_po.id_po
 
 											WHERE $baseAc1.po_head.date BETWEEN '$start' AND '$end'
-											AND $baseAc1.in_debt.status_pay = 0
+											-- AND $baseAc1.in_debt.status_pay = 0
 											-- AND $baseAc1.supplier_terms.day >= 1
 											-- ORDER BY $baseAc1.supplier.name_supplier ASC";
 
