@@ -90,7 +90,7 @@ swal({!!Session::pull('sweetalert.json')!!});
           </center>
           <br>
 
-          <?php if (isset($supplier_aps)): ?>
+          <?php if (isset($list)): ?>
             <table class="table table-bordered" cellspacing="0" id="fontslabel" style="width : 70%;margin-left: auto;margin-right: auto;">
               <thead>
                 <tr style="background-color:#aab6c2;color:white;">
@@ -102,122 +102,84 @@ swal({!!Session::pull('sweetalert.json')!!});
                 </tr>
               </thead>
               <tbody>
-                @foreach ($supplier_aps  as $key => $supplier_ap)
-                  @if ($supplier_ap->name_supplier == $ap)
-                    <tr>
-                      <td>{{ $supplier_ap->date_from_ap }}</td>
-                      <td>{{ $supplier_ap->bill_from_ap }}</td>
-                      <td>
-                          <?php $keep_totalsum_inc = number_format($supplier_ap->totalsum_from_ap,2,".",",");
-                                echo $keep_totalsum_inc;
-                          ?>
-                          <?php $sumtotal_inc = $sumtotal_inc + $supplier_ap->totalsum_from_ap;?>
-                      </td>
-                      <td></td>
-                      <td>
-                          <?php $keep_totalsum_inc_1 = number_format($supplier_ap->totalsum_from_ap,2,".",",");
-                                echo $keep_totalsum_inc_1;
-                          ?>
-                          <?php $sumtotal_inc1 = $sumtotal_inc1 + $supplier_ap->totalsum_from_ap;?>
-                      </td>
-                    </tr>
-
-                    <tr>
-                      <td>{{ $supplier_ap->date_inform_po }}</td>
-                      <td>{{ $supplier_ap->payser_number_use }}</td>
-                      <td></td>
-                      <td>
-                          <?php $keep_totalsum_dec = number_format($supplier_ap->payout,2,".",",");
-                                echo $keep_totalsum_dec;
-                          ?>
-                          <?php $sumtotal_dec = $sumtotal_dec + $supplier_ap->payout;?>
-                      </td>
-                      <td>
-                          <?php $keep_totalsum_dec = number_format($supplier_ap->payout,2,".",",");
-                                echo $keep_totalsum_dec;
-                          ?>
-                          <?php $sumtotal_dec1 = $sumtotal_dec1 + $supplier_ap->payout;?>
-                      </td>
-                    </tr>
-                    @if ($key == count($supplier_aps)-1)
-                        <tr>
-                          <td></td>
-                          <td></td>
-                          <td><?php echo number_format($sumtotal_inc,2);?></td>
-                          <td><?php echo number_format($sumtotal_dec,2);?></td>
-                          <td>
-                            <?php $calculate = $sumtotal_inc1 - $sumtotal_dec1;
-                                  echo number_format($calculate,2);
+                <?php
+                $sumgrandtotal = 0;
+                $sumdebit = 0;
+                $sumcredit = 0;
+                ?>
+                @foreach ($list as $name_supplier => $item)
+                  <tr>
+                    <td colspan="5"><b>{{ $name_supplier }}</b></td>
+                  </tr>
+                  @foreach ($item as $supplier_ap)
+                    @if ($supplier_ap->status_head_check === 2)
+                      <tr>
+                        <td>{{ $supplier_ap->date_po }}</td>
+                        <td>{{ $supplier_ap->po_number_use }}</td>
+                        <td>
+                            <?php
+                                  $keep_totalsum_inc = number_format($supplier_ap->totalsum,2,".",",");
+                                  echo $keep_totalsum_inc;
                             ?>
-                          </td>
-                        </tr>
-                    @endif
-                    <?php $ap = $supplier_ap->name_supplier ?>
-                  @else
-                    @if ($key != 0)
-                        <!-- ก่อนเปลี่ยนรายการเขียนปิดรายการก่อนหน้า -->
-                        <tr>
-                          <td></td>
-                          <td></td>
-                          <td><?php echo number_format($sumtotal_inc,2);?></td>
-                          <td><?php echo number_format($sumtotal_dec,2);?></td>
-                          <td>
-                            <?php $calculate = $sumtotal_inc1 - $sumtotal_dec1;
-                                  echo number_format($calculate,2);
-                            ?>
-                          </td>
-                        </tr>
-                        <?php $sumtotal_inc = 0;
-                              $sumtotal_inc1 = 0;
-                              $sumtotal_dec = 0;
-                              $sumtotal_dec1 = 0;
-                              $calculate = 0;
-                        ?>
-                    @endif
-                    <?php $sumtotal_inc = 0;
-                          $sumtotal_inc1 = 0;
-                          $sumtotal_dec = 0;
-                          $sumtotal_dec1 = 0;
-                          $calculate = 0;
-                    ?>
-                    <tr style="border-top-style:solid;">
-                      <!-- เขียน row แรก แต่ละรายการ -->
-                      <td><b>{{ $supplier_ap->pre }} {{ $supplier_ap->name_supplier }}</b></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                    </tr>
-                    <tr>
-                      <td><b>ยอดยกมา</b></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td> - </td>
-                    </tr>
 
-                      @if ($key == count($supplier_aps)-1)
-                      <!-- เขียนสำหรับรายการสุดท้าย -->
-                          <tr>
-                            <td></td>
-                            <td></td>
-                            <td><?php echo number_format($sumtotal_inc,2);?></td>
-                            <td><?php echo number_format($sumtotal_dec,2);?></td>
-                            <td>
-                              <?php $calculate = $sumtotal_inc1 - $sumtotal_dec1;
-                                    echo number_format($calculate,2);
-                              ?>
-                            </td>
-                          </tr>
-                          <?php $sumtotal_inc = 0;
-                                $sumtotal_inc1 = 0;
-                                $sumtotal_dec = 0;
-                                $sumtotal_dec1 = 0;
-                                $calculate = 0;
-                          ?>
-                      @endif
-                  <?php $ap = $supplier_ap->name_supplier ?>
-                  @endif
+                        </td>
+                        <td></td>
+                        <td>
+                            <?php
+                                  // $keep_totalsum_inc_1 = number_format($supplier_ap->totalsum,2,".",",");
+                                  // echo $keep_totalsum_inc_1;
+                                  if($supplier_ap->totalsum != 0){
+                                    echo number_format ((($supplier_ap->totalsum) + $sumgrandtotal),2);
+                                    $sumgrandtotal = (($supplier_ap->totalsum) + $sumgrandtotal);
+                                  }
+                            ?>
+
+                        </td>
+                      </tr>
+                    @else
+                      <tr>
+                        <td>{{ $supplier_ap->date_po }}</td>
+                        <td>{{ $supplier_ap->po_number_use }}</td>
+                        <td>
+                            <?php $keep_totalsum_inc = number_format($supplier_ap->totalsum,2,".",",");
+                                  echo $keep_totalsum_inc;
+                            ?>
+
+                        </td>
+                        <td></td>
+                        <td>
+                            <?php $keep_totalsum_inc_1 = number_format($supplier_ap->totalsum,2,".",",");
+                                  echo $keep_totalsum_inc_1;
+                            ?>
+
+                        </td>
+                      </tr>
+
+                      <tr>
+                        <td>{{ $supplier_ap->date_inform_po }}</td>
+                        <td>{{ $supplier_ap->payser_number_use }}</td>
+                        <td></td>
+                        <td>
+                            <?php $keep_totalsum_dec = number_format($supplier_ap->payout,2,".",",");
+                                  echo $keep_totalsum_dec;
+                            ?>
+
+                        </td>
+                        <td>
+                            <?php $keep_totalsum_dec = number_format($supplier_ap->payout,2,".",",");
+                                  echo $keep_totalsum_dec;
+                            ?>
+
+                        </td>
+                      </tr>
+                    @endif
+                  @endforeach
+                  <tr>
+                    <td colspan="2" style="vertical-align : middle;text-align:right;"><b>รวมทั้งสิ้น</b></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                  </tr>
                 @endforeach
               </tbody>
             </table>

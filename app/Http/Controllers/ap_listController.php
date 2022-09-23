@@ -134,9 +134,15 @@ class ap_listController extends Controller
       // echo $start;
       // echo $end;
       // exit;
+			// $date1 = str_replace('-', '/', $start);
+			// $tomorrow = date('d-m-Y',strtotime($date1 . "-1 days"));
 
 			$sql = "SELECT	po_head.totolsumreal as totalsum
+											-- ,SUM(CASE
+											-- WHEN po_head.date BETWEEN '2022-01-01' AND '2022-08-01' THEN po_head.totolsumreal
+											-- END) AS totalsum_past
 											,supplier.pre
+											,supplier.id as id_ref_sup
 											,supplier.name_supplier
 											,supplier.codecreditor
 											-- ,supplier_terms.day
@@ -145,6 +151,7 @@ class ap_listController extends Controller
 											,po_head.po_number as po_number_use
 											,inform_po.payser_number as payser_number_use
 											,inform_po.payout
+											,po_head.status_head as status_head_check
 											-- ,in_debt.datebill as date_from_ap
 											-- ,in_debt.number_debt as bill_from_ap
 											-- ,in_debt.vat_price as totalsum_from_ap
@@ -161,13 +168,19 @@ class ap_listController extends Controller
 											ON $baseAc1.po_head.id = $baseAc1.inform_po.id_po
 
 											WHERE $baseAc1.po_head.date BETWEEN '$start' AND '$end'
+											AND $baseAc1.po_head.status_head IN ('2','3')
+											ORDER BY $baseAc1.supplier.pre ASC
 											-- AND $baseAc1.in_debt.status_pay = 0
 											-- AND $baseAc1.supplier_terms.day >= 1
 											-- ORDER BY $baseAc1.supplier.name_supplier ASC";
 
 				$supplier_aps = DB::select($sql);
-
-
+				// dd($supplier_aps);
+				// exit;
+				$list = [];
+				foreach($supplier_aps as $item) {
+				      $list[$item->name_supplier][] = $item;
+				}
 				// $sql = "SELECT
 				// 								-- po_head.totolsumreal as totalsum
 				// 								supplier.pre
@@ -202,7 +215,7 @@ class ap_listController extends Controller
 				// exit;
 				$ap = 'default';
 
-      return view('AccountsPayable.ap_list', compact('supplier_aps', 'supplier_informs', 'start' , 'end','ap'));
+      return view('AccountsPayable.ap_list', compact('supplier_aps', 'supplier_informs', 'start' , 'end','ap' , 'list'));
   }
 
 
