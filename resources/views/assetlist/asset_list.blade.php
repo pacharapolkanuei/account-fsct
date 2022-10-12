@@ -193,7 +193,7 @@ swal({!!Session::pull('sweetalert.json')!!});
                                                   <select style="width: 365px;" class="form-control" name="assetlist_different" id="assetlist_different" onchange="selectassetlist()" required>
                                                     <option value="" selected>โปรดเลือกประเภทสินทรัพย์</option>
                                                     <option value="1">สำนักงาน</option>
-                                                    <option value="2">สินค้าให้เช่า</option>
+                                                    
                                                     </option>
                                                   </select>
                                                 </div>

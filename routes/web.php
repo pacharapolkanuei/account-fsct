@@ -648,6 +648,8 @@ Route::get('/asset_list/serchassetrefmaterial', 'Asset_listController@serchasset
 Route::get('getlisttypeasset', 'Asset_listController@getlisttypeasset');
 Route::get('getlisttypeassetrefaccnumber', 'Asset_listController@getlisttypeassetrefaccnumber');
 Route::get('serchassetrefmaterial', 'Asset_listController@serchassetrefmaterial');
+Route::get('asset_listaddbypo', 'Asset_listController@asset_listaddbypo');
+Route::post('saveassetlistbypo', 'Asset_listController@saveassetlistbypo');
 
 
 //-------------------------------------- ap_list --------------------------

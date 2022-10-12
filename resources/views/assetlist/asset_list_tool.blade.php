@@ -193,7 +193,7 @@ swal({!!Session::pull('sweetalert.json')!!});
                                                 <div class="col-sm">
                                                   <select style="width: 365px;" class="form-control" name="assetlist_different" id="assetlist_different" onchange="selectassetlist()" required>
                                                     <option value="" selected>โปรดเลือกประเภทสินทรัพย์</option>
-                                                    <option value="1">สำนักงาน</option>
+
                                                     <option value="2">สินค้าให้เช่า</option>
                                                     </option>
                                                   </select>
@@ -413,54 +413,15 @@ swal({!!Session::pull('sweetalert.json')!!});
                                                          <th><input type="text" name="primary_depreciation"  id="primary_depreciation" readonly class="form-control"></th>
                                                        </tr>
                                                        <tr class="container10">
-                                                         <!-- <th style="text-align: right;"><label class="col-form-label" id="fontslabel"><font color="red"><b>ค่าเสื่อมสะสมยกมาสุทธิ&nbsp;</b></font></label></th>
-                                                         <th><input type="text" name="depreciation_buy" class="form-control" readonly></th>
-                                                         <th></th>
-                                                         <th></th> -->
+
                                                        </tr>
-                                                       <!-- <tr>
-                                                         <th><label class="col-form-label" id="fontslabel"><b>ค่าเสื่อมที่คำนวณเอง&nbsp;</b></label></th>
-                                                         <th><input type="text" name="cal_depreciation_buy" class="form-control" id="cal_selfz" readonly></th>
-                                                         <th>&nbsp;&nbsp;<label class="col-form-label" id="fontslabel"><b>ราคาขาย&nbsp;</b></label></th>
-                                                         <th><input type="text" name="depreciation_sell" class="form-control"></th>
-                                                       </tr> -->
-                                                       <!-- <tr>
-                                                         <th><label class="col-form-label" id="fontslabel"><b>คำนวณเองถึงวันที่&nbsp;</b></label></th>
-                                                         <th><input type="date" autocomplete="off" class="form-control" name="cal_date" id="get_date_calselfz" onchange="get_date()"></th>
-                                                         <th>&nbsp;&nbsp;<label class="col-form-label" id="fontslabel"><b>กำไร/ขาดทุน&nbsp;</b></label></th>
-                                                         <th><input type="text" name="profit_loss" class="form-control"></th>
-                                                       </tr> -->
+                                                   
                                                      </thead>
                                                    </table>
                                                  </center>
                                               </fieldset>
 
                                               <br>
-                                              <!--
-                                              <fieldset class="border p-2">
-                                                <legend id="fontscontent2" class="w-auto">&nbsp; กำไร / ขาดทุน &nbsp;</legend>
-                                                 <center>
-
-                                                   <table border="0">
-                                                     <thead>
-                                                       <tr>
-                                                          <th><label class="col-form-label" id="fontslabel"><b>คำนวณเองถึงวันที่&nbsp;</b></label></th>
-                                                         <th><input type="date" autocomplete="off" class="form-control" name="cal_date" id="get_date_calselfz" onchange="get_date()"></th>
-                                                         <th><label class="col-form-label" id="fontslabel"><b>ราคาขาย&nbsp;</b></label></th>
-                                                         <th><input type="text" name="depreciation_sell" class="form-control"></th>
-                                                         <th>&nbsp;&nbsp;<label class="col-form-label" id="fontslabel"><b>กำไร/ขาดทุน&nbsp;</b></label></th>
-                                                         <th><input type="text" name="profit_loss" class="form-control"></th>
-                                                         <th>&nbsp;&nbsp;<label class="col-form-label" id="fontslabel"><b>วันที่อนุมัติตัดจำหน่าย&nbsp;</b></label></th>
-                                                         <th><input type="date" autocomplete="off" class="form-control" name="date_sell"></th>
-                                                       </tr>
-                                                     </thead>
-                                                   </table>
-
-                                                 </center>
-                                              </fieldset>
-                                              -->
-
-                                            </div>
 
                                       <!-- Modal footer -->
 

@@ -468,6 +468,44 @@ class Asset_listController extends Controller
 
       }
 
+      public function asset_listaddbypo(){
+
+          $data= Input::all();
+          print_r($data);
+          $idpo = $data['idpo'];
+
+
+
+          $accounttypes = new Accounttype;
+          $accounttypes->setConnection('mysql2');
+          $accounttypes = Accounttype::where('status','=',1)
+                        ->get();
+
+          $group_propertys = new Group_Property;
+          $group_propertys->setConnection('mysql2');
+          $group_propertys = Group_Property::where('statususe','=',1)
+                        ->get();
+
+          // $branchs = new Branch;
+          // $group_propertys->setConnection('mysql2');
+          // $group_propertys = Group_Property::where('statususe','=',1)
+          //               ->get();
+
+          $branchs = new Branch;
+          $branchs->setConnection('hr_base');
+          $branchs = Branch::get();
+
+            return view('assetlist.asset_listaddbypo' , compact('accounttypes' , 'group_propertys' ,  'branchs','idpo' ));
+      }
+
+
+      public function saveassetlistbypo(){
+
+        
+      }
+
+
+
 
 
 
